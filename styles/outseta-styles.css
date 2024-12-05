@@ -1,0 +1,419 @@
+/* Utility Classes */
+.o--Widget--widget .o--color-accent {
+  color: var(--chakra-colors-primary-solid) !important;
+}
+
+.o--Widget--widget .o--color-danger,
+.o--Widget--widget .o--color-danger:hover {
+  color: var(--chakra-colors-fg-error) !important;
+}
+
+.o--Widget--widget .o--text-sm {
+  font-size: var(--chakra-font-sizes-sm) !important;
+}
+.o--Widget--widget .o--text-xs {
+  font-size: var(--chakra-font-sizes-xs) !important;
+}
+
+.o--Widget--cornerShape-square {
+  border-radius: 0;
+}
+
+.o--Widget--cornerShape-rounded,
+.o--Widget--cornerShape-pill {
+  border-radius: var(--chakra-radii-l2) !important;
+}
+
+/* Popup Widget */
+.o--Widget--widget {
+  background: transparent !important;
+}
+
+.o--App--profileWidget .o--Widget--widgetBody,
+.o--App--authWidget .o--Widget--widgetBody,
+.o--App--emailListWidget .o--Widget--widgetBody,
+.o--App--leadCaptureWidget .o--Widget--widgetBody {
+  border-radius: var(--chakra-radii-l3) !important;
+  font-size: var(--chakra-font-sizes-sm) !important;
+  line-height: 1.25rem !important;
+  background: var(--chakra-colors-bg-panel-panel) !important;
+  box-shadow: var(--chakra-shadows-lg) !important;
+}
+
+.o--Widget--popupBg {
+  background: var(--chakra-colors-black-alpha-500) !important;
+}
+
+.o--Widget--popupBg .false {
+  animation-name: fade-in;
+  animation-duration: var(--chakra-durations-fast);
+}
+
+.o--Widget--popupBg .o--Widget--closed {
+  animation-name: fade-out;
+  animation-duration: var(--chakra-durations-fast);
+}
+
+/* Display-mode */
+.o--Widget--displayMode-light,
+.o--Widget--widget.o--Widget--displayMode-auto {
+  background: var(--chakra-colors-bg-panel) !important;
+}
+.o--Widget--displayMode-light,
+.o--Widget--displayMode-light *,
+.o--Widget--widget.o--Widget--displayMode-auto,
+.o--Widget--widget.o--Widget--displayMode-auto * {
+  color: var(--chakra-colors-fg) !important;
+}
+
+.o--Widget--displayMode-dark {
+  background: var(--chakra-colors-bg-panel) !important;
+}
+.o--Widget--displayMode-dark,
+.o--Widget--displayMode-dark * {
+  color: var(--chakra-colors-fg) !important;
+}
+/* Odd Chrome default-style-sheet issue */
+.o--Widget--displayMode-dark table {
+  color: var(--chakra-colors-fg) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .o--Widget--widget.o--Widget--displayMode-auto {
+    background: var(--chakra-colors-bg-panel) !important;
+  }
+  .o--Widget--widget.o--Widget--displayMode-auto,
+  .o--Widget--widget.o--Widget--displayMode-auto * {
+    color: var(--chakra-colors-fg) !important;
+  }
+  /* Odd Chrome default-style-sheet issue */
+  .o--Widget--widget.o--Widget--displayMode-auto table {
+    color: var(--chakra-colors-fg) !important;
+  }
+}
+
+/* General Text */
+.o--Widget--widget,
+.o--Widget--widget *:not(.material-icons),
+.o--Widget--widget *:-webkit-autofill::first-line,
+.o--Widget--widget h2,
+.o--Widget--widget h3,
+.o--Widget--widget h4,
+.o--Widget--widget h5,
+.o--Widget--widget h6 {
+  font-family: var(--chakra-fonts-body) !important;
+}
+
+/* Headings */
+.o--Widget--widget .o--Widget--widgetBody h1 {
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 40px;
+  font-family: var(--chakra-fonts-heading) !important;
+}
+
+.o--Widget--widget .o--Widget--widgetBody h2 {
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 30px;
+  font-family: var(--chakra-fonts-heading) !important;
+}
+
+/* General Links */
+.o--Widget--widget a,
+.o--Widget--widget a *:not(.material-icons) {
+  color: var(--chakra-colors-primary-fg) !important;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+  text-underline-offset: 3px;
+  --mix-textDecorationColor: color-mix(in srgb, currentColor 20%, transparent);
+  text-decoration-color: var(--mix-textDecorationColor, currentColor);
+}
+
+.o--Widget--widget a:hover {
+  color: var(--chakra-colors-primary-fg) !important;
+}
+
+/* Labels */
+.o--Widget--widget .o--Widget--widgetBody label.o--Label--label {
+  display: flex !important;
+  -moz-box-align: center !important;
+  align-items: center !important;
+  text-align: start !important;
+  font-size: var(--chakra-font-sizes-sm) !important;
+  line-height: 1.25rem !important;
+  font-weight: var(--chakra-font-weights-medium) !important;
+  gap: var(--chakra-spacing-1) !important;
+  user-select: none !important;
+}
+
+/* Inputs */
+.o--Widget--widget .o--Widget--widgetBody .o--Input--input {
+  width: 100% !important;
+  min-width: var(--input-height) !important;
+  outline: 0px !important;
+  position: relative !important;
+  appearance: none !important;
+  text-align: start !important;
+  border-radius: var(--chakra-radii-l2) !important;
+  height: var(--input-height) !important;
+  --focus-color: var(--chakra-colors-primary-focus-ring) !important;
+  --error-color: var(--chakra-colors-border-error) !important;
+  font-size: var(--chakra-font-sizes-sm) !important;
+  line-height: 1.25rem !important;
+  padding-inline: var(--chakra-spacing-3) !important;
+  --input-height: var(--chakra-sizes-10) !important;
+  background: var(--chakra-colors-transparent) !important;
+  --bg-currentcolor: var(--chakra-colors-transparent) !important;
+  border-width: 1px !important;
+  border-color: var(--chakra-colors-border) !important;
+  --focus-ring-color: var(--chakra-colors-primary-focus-ring) !important;
+}
+
+.o--Widget--widget
+  .o--Widget--widgetBody
+  .o--Input--input:is(:focus-visible, [data-focus-visible]) {
+  outline-offset: 0px !important;
+  outline-width: var(--focus-ring-width, 1px) !important;
+  outline-color: var(--focus-ring-color) !important;
+  outline-style: var(--focus-ring-style, solid) !important;
+  border-color: var(--focus-ring-color) !important;
+}
+
+/* Buttons */
+.o--Widget--widget .o--Widget--widgetBody .o--Button--btn {
+  display: -webkit-inline-box !important;
+  display: inline-flex !important;
+  appearance: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+  border-width: 1px !important;
+  flex-shrink: 0 !important;
+  outline: 0 !important;
+  line-height: 1.5rem !important;
+  isolation: isolate !important;
+  transition-property: background-color, border-color, color, fill, stroke,
+    opacity, box-shadow, translate, transform !important;
+  transition-duration: var(--chakra-durations-moderate) !important;
+  --focus-ring-color: var(--chakra-colors-primary-focus-ring) !important;
+  height: var(--chakra-sizes-12) !important;
+  min-width: var(--chakra-sizes-12) !important;
+  font-size: var(--chakra-font-sizes-md) !important;
+  padding-inline: var(--chakra-spacing-5) !important;
+  gap: var(--chakra-spacing-2\.5) !important;
+  border-radius: var(--chakra-radii-l2) !important;
+  border-color: var(--chakra-colors-transparent) !important;
+  cursor: var(--chakra-cursor-button) !important;
+  font-weight: var(--chakra-font-weights-medium) !important;
+  background: var(--chakra-colors-primary-solid) !important;
+  color: var(--chakra-colors-primary-contrast) !important;
+}
+
+.o--Widget--widget
+  .o--Button--buttonType-cancel.o--Button--buttonStyle-solid.o--Button--displayMode-light
+  .o--Button--children,
+.o--Widget--widget
+  .o--Button--buttonType-cancel.o--Button--buttonStyle-solid.o--Button--displayMode-auto
+  .o--Button--children {
+  color: var(--chakra-colors-primary-contrast) !important;
+}
+
+.o--Widget--widget
+  .o--Widget--widgetBody
+  .o--Button--btn:is(:hover, [data-hover]):not(:disabled, [data-disabled]) {
+  --mix-background: color-mix(
+    in srgb,
+    var(--chakra-colors-primary-solid) 90%,
+    transparent
+  ) !important;
+  background: var(
+    --mix-background,
+    var(--chakra-colors-primary-solid)
+  ) !important;
+  --bg-currentcolor: var(
+    --mix-background,
+    var(--chakra-colors-primary-solid)
+  ) !important;
+}
+
+.o--Widget--widget a.btn-link {
+  display: inline-block;
+  padding: 12px 0;
+}
+
+.o--Widget--widget a.btn-link .material-icons {
+  line-height: 24px;
+  vertical-align: top;
+}
+
+/* Profile Navigation (Desktop) */
+@media only screen and (min-width: 600px) {
+  .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-light
+    li.o--NavDesktop--active::before,
+  .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-auto
+    li.o--NavDesktop--active::before {
+    background: var(--chakra-colors-color-palette-subtle) !important;
+    opacity: 1 !important;
+  }
+
+  .o--NavDesktop--navDesktop ul li a {
+    color: var(--chakra-colors-color-palette-fg) !important;
+    font-weight: var(--chakra-font-weights-medium) !important;
+    text-decoration-line: none !important;
+  }
+
+  .o--NavDesktop--navDesktop ul li.a:hover {
+    color: var(--chakra-colors-color-palette-fg) !important;
+  }
+
+  .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-light li:hover::before,
+  .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-auto li:hover::before {
+    background: var(--chakra-colors-color-palette-subtle) !important;
+    opacity: 0.75 !important;
+  }
+}
+
+.o--Widget--widget
+  .o--StickyActionRow--stickyActionRow.o--StickyActionRow--displayMode-light,
+.o--Widget--widget
+  .o--StickyActionRow--stickyActionRow.o--StickyActionRow--displayMode-auto {
+  background: var(--chakra-colors-bg-panel) !important;
+  border-color: var(--global-color-border) !important;
+}
+
+.o--Widget--widget .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-light,
+.o--Widget--widget .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-auto {
+  border-color: var(--global-color-border) !important;
+}
+
+/* Chat Trigger */
+.o--Trigger--trigger .Open_svg__w-fill-dark,
+.o--Trigger--trigger .Close_svg__w-fill-dark {
+  fill: var(--chakra-colors-primary-solid) !important;
+}
+
+.o--Chat--chat .o--Chat--header,
+.o--Widget--widget
+  .o--ChatMessage--chatMessage.o--ChatMessage--in
+  .o--ChatMessage--body
+  .o--ChatMessage--content {
+  background-color: var(--chakra-colors-primary-solid) !important;
+  color: var(--chakra-colors-primary-contrast) !important;
+}
+
+.o--Widget--widget
+  .o--ChatMessage--chatMessage.o--ChatMessage--in
+  .o--ChatMessage--body
+  .o--ChatMessage--content
+  span {
+  color: var(--chakra-colors-primary-contrast) !important;
+}
+
+.o--Chat--chat .o--Chat--header h4 {
+  color: var(--chakra-colors-primary-contrast) !important;
+}
+
+.o--Chat--chat .o--ChatMessage--body .o--ChatMessage--content {
+  color: white !important;
+}
+
+#widget-Outseta_chat .chatMessage.in .body .content {
+  background: var(--accent-color);
+}
+#widget-Outseta_chat .chatMessage.in .body .content * {
+  color: #fff !important;
+}
+
+.o--Widget--widget
+  .o--Chat--chat.o--Chat--displayMode-light
+  .o--Chat--body
+  .o--Chat--fileUploadOverlay,
+.o--Widget--widget
+  .o--Chat--chat.o--Chat--displayMode-auto
+  .o--Chat--body
+  .o--Chat--fileUploadOverlay {
+  border: 2px dashed var(--global-color-border) !important;
+}
+
+/* ****************************************
+ * Theming
+ * ****************************************/
+
+/* corner-shape */
+#widget-Outseta_chat.cornerShape-square {
+  border-radius: 0;
+}
+
+#widget-Outseta_chat.cornerShape-rounded,
+#widget-Outseta_chat.cornerShape-pill {
+  border-radius: var(--chakra-radii-l2) !important;
+}
+#widget-Outseta_chat.cornerShape-rounded .header,
+#widget-Outseta_chat.cornerShape-pill .header {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+#widget-Outseta_chat.cornerShape-rounded .body .fileUploadOverlay,
+#widget-Outseta_chat.cornerShape-pill .body .fileUploadOverlay,
+.chatOffline.cornerShape-rounded .header,
+.chatOffline.cornerShape-pill .header {
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+/* display-mode */
+
+.o--Widget--widget .o--Chat--chat.o--Chat--displayMode-light,
+.o--Widget--widget .o--Chat--chat.o--Chat--displayMode-auto {
+  background: var(--chakra-colors-bg-panel) !important;
+  box-shadow: var(--chakra-shadows-lg) !important;
+}
+
+.o--Widget--widget .o--Chat--chat.displayMode-light,
+.o--Widget--widget .o--Chat--chat.displayMode-auto {
+  background: var(--chakra-colors-bg-panel) !important;
+  box-shadow: var(--chakra-shadows-lg) !important;
+}
+
+#widget-Outseta_chat.displayMode-light .body .fileUploadOverlay,
+#widget-Outseta_chat.displayMode-auto .body .fileUploadOverlay {
+  background: var(--chakra-colors-bg-panel);
+  border-color: var(--global-color-border) !important;
+}
+#widget-Outseta_chat.displayMode-light .body .input textarea,
+#widget-Outseta_chat.displayMode-auto .body .input textarea {
+  border-color: var(--global-color-border) !important;
+}
+
+#widget-Outseta_chat.displayMode-dark {
+  background: var(--chakra-colors-bg-panel) !important;
+  box-shadow: var(--chakra-shadows-lg) !important;
+}
+
+#widget-Outseta_chat.displayMode-dark .body .fileUploadOverlay {
+  background: var(--dark-mode-bg-color) !important;
+  border-color: var(--global-color-border) !important;
+}
+#widget-Outseta_chat.displayMode-dark .body .input textarea {
+  border-color: var(--global-color-border) !important;
+}
+@media (prefers-color-scheme: dark) {
+  #widget-Outseta_chat.displayMode-auto {
+    background: var(--chakra-colors-bg-panel) !important;
+    box-shadow: var(--chakra-shadows-lg) !important;
+  }
+
+  #widget-Outseta_chat.displayMode-auto .body .fileUploadOverlay {
+    background: var(--dark-mode-bg-color) !important;
+    border-color: var(--global-color-border) !important;
+  }
+
+  #widget-Outseta_chat.displayMode-auto .body .input textarea {
+    border-color: var(--global-color-border) !important;
+  }
+}

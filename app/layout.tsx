@@ -2,24 +2,38 @@
 
 import { Inter } from "next/font/google";
 import Provider from "@/components/provider/provider";
+import Head from "next/head";
+import { siteConfig } from "@/config/site";
+import { useChatVisibility } from "@/hooks/use-chat-visibility";
+import "vanilla-cookieconsent/dist/cookieconsent.css";
+import "@/styles/cookie-banner-styles.css";
+import "@/styles/outseta-styles.css";
+import * as CookieConsent from "vanilla-cookieconsent";
+import { useEffect } from "react";
 import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
-import Head from "next/head";
-import { outsetaOptions } from "@/config/outseta";
-
-console.log("outsetaOptions → ", outsetaOptions);
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  useChatVisibility();
+
+  useEffect(() => {
+    if (siteConfig.cookieBannerOptions) {
+      CookieConsent.run(siteConfig.cookieBannerOptions);
+    } else {
+      console.warn("Cookie banner options are not defined in siteConfig.");
+    }
+  }, []);
+
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning className="cc--theme">
       <Head>
         <title>Project Starter</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,7 +43,7 @@ export default function RootLayout({
           id="outseta-config"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: outsetaOptions,
+            __html: `var o_options = ${JSON.stringify(siteConfig.outsetaOptions)};`,
           }}
         />
         <Script

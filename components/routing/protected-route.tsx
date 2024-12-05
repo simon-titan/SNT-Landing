@@ -4,7 +4,7 @@ import { useAuth } from "../provider/auth-provider";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 
-const PLANS = siteConfig.outseta.plans;
+const PLANS = siteConfig.outsetaPlans.plans;
 
 function hasCorrectPlan(
   plans: Array<(typeof PLANS)[keyof typeof PLANS]>,

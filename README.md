@@ -5,7 +5,7 @@ A starter template for building a web application, membership site, course or an
 ## Features 
 
 - Theme customization
-- Authentication
+- Authenticationr
 - Payments and subscriptions
 - Billing portal
 - Account management

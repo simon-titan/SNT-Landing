@@ -13,17 +13,17 @@ export const neutralPalettes = {
     "950": { value: "oklch(0.129 0.042 264.695)" },
   },
   gray: {
-    "50": { value: "oklch(0.985 0.002 247.839)" },
-    "100": { value: "oklch(0.967 0.003 264.542)" },
-    "200": { value: "oklch(0.928 0.006 264.531)" },
-    "300": { value: "oklch(0.872 0.01 258.338)" },
-    "400": { value: "oklch(0.707 0.022 261.325)" },
-    "500": { value: "oklch(0.551 0.027 264.364)" },
-    "600": { value: "oklch(0.446 0.03 256.802)" },
-    "700": { value: "oklch(0.373 0.034 259.733)" },
-    "800": { value: "oklch(0.278 0.033 256.848)" },
-    "900": { value: "oklch(0.21 0.034 264.665)" },
-    "950": { value: "oklch(0.13 0.028 261.692)" },
+    50: { value: "#fafafa" },
+    100: { value: "#f4f4f5" },
+    200: { value: "#e4e4e7" },
+    300: { value: "#d4d4d8" },
+    400: { value: "#a1a1aa" },
+    500: { value: "#71717a" },
+    600: { value: "#52525b" },
+    700: { value: "#3f3f46" },
+    800: { value: "#27272a" },
+    900: { value: "#18181b" },
+    950: { value: "#111111" },
   },
   zinc: {
     "50": { value: "oklch(0.985 0 0)" },
@@ -67,6 +67,19 @@ export const neutralPalettes = {
 } as const;
 
 export const colorPalettes = {
+  gray: {
+    "50": { value: "oklch(0.985 0.002 247.839)" },
+    "100": { value: "oklch(0.967 0.003 264.542)" },
+    "200": { value: "oklch(0.928 0.006 264.531)" },
+    "300": { value: "oklch(0.872 0.01 258.338)" },
+    "400": { value: "oklch(0.707 0.022 261.325)" },
+    "500": { value: "oklch(0.551 0.027 264.364)" },
+    "600": { value: "oklch(0.446 0.03 256.802)" },
+    "700": { value: "oklch(0.373 0.034 259.733)" },
+    "800": { value: "oklch(0.278 0.033 256.848)" },
+    "900": { value: "oklch(0.21 0.034 264.665)" },
+    "950": { value: "oklch(0.13 0.028 261.692)" },
+  },
   red: {
     50: { value: "#fef2f2" },
     100: { value: "#fee2e2" },

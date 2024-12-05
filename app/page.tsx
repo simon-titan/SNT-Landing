@@ -45,11 +45,24 @@ export default async function Page() {
             direction={{ base: "column", md: "row" }}
             gap="3"
           >
-            <Button size="xl">
-              Get started <LuChevronRight />
+            <Button
+              size="xl"
+              key="email"
+              data-o-email-list="1"
+              data-mode="popup"
+              data-email-list-uid="OW4k4p9g"
+            >
+              Join wait list <LuChevronRight />
             </Button>
-            <Button variant="ghost" size="xl">
-              Learn more <LuChevronRight />
+            <Button
+              variant="ghost"
+              key="leadcapture"
+              size="xl"
+              data-o-lead-capture="1"
+              data-mode="popup"
+              data-form-uid="BWzy5a9E"
+            >
+              Talk to sales <LuChevronRight />
             </Button>
           </Stack>
 
