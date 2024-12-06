@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Container, Heading, Stack, VStack, Text } from "@chakra-ui/react";
 
 import { ImagePlaceholder } from "@/components/layout/image-placeholder";
@@ -6,14 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/layout/section";
 import { generateMetadata } from "@/utils/metadata";
 
-export const metadata = generateMetadata({
-  title: "Home",
-  description: "Welcome to our powerful web application starter template",
-});
-
 export default async function Page() {
   return (
-    <Box>
+    <>
       <Section header>
         <VStack gap="10" textAlign="center">
           <Stack gap="4">
@@ -69,6 +66,6 @@ export default async function Page() {
           </Box>
         </VStack>
       </Section>
-    </Box>
+    </>
   );
 }

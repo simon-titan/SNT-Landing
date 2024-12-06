@@ -11,6 +11,9 @@ import "@/styles/outseta-styles.css";
 import * as CookieConsent from "vanilla-cookieconsent";
 import { useEffect } from "react";
 import Script from "next/script";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { Box } from "@chakra-ui/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,7 +57,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             console.error("Error loading Outseta:", e);
           }}
         />
-        <Provider>{children}</Provider>
+        <Provider>
+          <Navbar />
+          <Box as="main">{children}</Box>
+          <Footer />
+        </Provider>
       </body>
     </html>
   );
