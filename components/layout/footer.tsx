@@ -2,7 +2,6 @@ import {
   Container,
   HStack,
   Icon,
-  Link,
   Stack,
   Text,
   type TextProps,
@@ -10,6 +9,7 @@ import {
 import { SiGithub, SiLinkedin, SiX } from "react-icons/si";
 import { Logo } from "./logo";
 import { siteConfig } from "@/config/site";
+import { Link } from "../ui/link";
 
 const Copyright = (props: TextProps) => {
   return (

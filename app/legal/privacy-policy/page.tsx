@@ -1,11 +1,20 @@
+import { Section } from "@/components/layout/section";
 import { Prose } from "@/components/ui/prose";
+import { generateMetadata } from "@/utils/metadata";
 import Markdown from "react-markdown";
+
+export const metadata = generateMetadata({
+  title: "Privacy Policy",
+  description:
+    "Understand how we collect, use, and protect your personal information",
+});
 
 export default function PrivacyPolicy() {
   return (
-    <Prose mx="auto">
-      <Markdown>
-        {`
+    <Section>
+      <Prose mx="auto" size="lg" mt="">
+        <Markdown>
+          {`
 # Privacy Policy
 
 **Effective Date:** [Insert Date]
@@ -88,7 +97,8 @@ If you have any questions about this Privacy Policy or our privacy practices, pl
 
 **Last Updated:** [Insert Date]
           `}
-      </Markdown>
-    </Prose>
+        </Markdown>
+      </Prose>
+    </Section>
   );
 }

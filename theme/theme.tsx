@@ -47,12 +47,15 @@ const customConfig = defineConfig({
       colors: {
         bg: {
           DEFAULT: {
-            value: { _light: "{colors.white}", _dark: "{colors.black}" },
-          },
-          subtle: {
             value: {
               _light: "{colors.neutral.50}",
               _dark: "{colors.neutral.950}",
+            },
+          },
+          subtle: {
+            value: {
+              _light: "{colors.neutral.100}",
+              _dark: "{colors.neutral.900}",
             },
           },
           muted: {
@@ -286,12 +289,6 @@ const customConfig = defineConfig({
           },
         },
       },
-    },
-  },
-  globalCss: {
-    ":root": {
-      "--header-height": { base: "64px", md: "104px" },
-      "--content-height": "calc(100dvh - var(--header-height))",
     },
   },
 });

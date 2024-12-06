@@ -1,15 +1,16 @@
 "use client";
 
 import {
+  Card,
   Center,
   CollapsibleContent,
   CollapsibleRoot,
   Container,
   HStack,
-  Link,
   Spacer,
   Stack,
   StackProps,
+  Box,
 } from "@chakra-ui/react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { CollapsibleTrigger } from "@/components/ui/collapsible-trigger";
 import { useAuth } from "../provider/auth-provider";
 import { UserMenu } from "../ui/user-menu";
 import { FeedbackButton } from "../ui/feedback-button";
+import { Link } from "@/components/ui/link";
 
 export const NavbarLinks = (props: StackProps) => {
   return (
@@ -25,16 +27,11 @@ export const NavbarLinks = (props: StackProps) => {
       gap={{ base: "6", md: "8" }}
       {...props}
     >
-      {[].map((item) => (
-        <Link
-          key={item}
-          fontWeight="medium"
-          color="fg.muted"
-          _hover={{
-            _hover: { color: "colorPalette.fg", textDecoration: "none" },
-          }}
-        >
-          {item}
+      {["About"].map((item) => (
+        <Link href={`/${item.toLowerCase()}`} key={item}>
+          <Button colorPalette="gray" variant="plain">
+            {item}
+          </Button>
         </Link>
       ))}
     </Stack>
@@ -44,49 +41,59 @@ export const NavbarLinks = (props: StackProps) => {
 export const Navbar = () => {
   const { user, logout, openLogin, openSignup, openProfile, isLoading } =
     useAuth();
-
   return (
-    <Center position="absolute" zIndex="docked" top="6" left="4" right="4">
-      <Container
-        background="bg.panel"
-        borderRadius="l3"
-        boxShadow="xs"
-        maxW={{ base: "full", md: "2xl" }}
-        px="4"
-        py="3"
-      >
-        <CollapsibleRoot>
-          <HStack gap={{ base: "3", md: "8" }} justify="space-between">
-            <Logo />
-            <HStack>
-              <Spacer hideFrom="md" />
-              <NavbarLinks hideBelow="md" />
-              {user ? (
-                <>
-                  <FeedbackButton />
-                  <UserMenu />
-                </>
-              ) : !isLoading ? (
-                <>
-                  <Button
-                    size={{ base: "sm", md: "md" }}
-                    variant="outline"
-                    onClick={openLogin}
-                  >
-                    Login
-                  </Button>
-                  <Button size={{ base: "sm", md: "md" }} onClick={openSignup}>
-                    Sign up
-                  </Button>
-                </>
-              ) : null}
+    <Center as="header" position="fixed" zIndex="docked" top="6" w="full">
+      <Container maxW={{ base: "full", md: "2xl" }}>
+        <Box
+          w="full"
+          px="4"
+          py="3"
+          boxShadow="xs"
+          background="bg.panel"
+          borderRadius="l3"
+        >
+          <CollapsibleRoot>
+            <HStack gap={{ base: "3", md: "8" }} justify="space-between">
+              <Link href="/">
+                <Logo />
+              </Link>
+
+              <HStack>
+                <Spacer hideFrom="md" />
+                <NavbarLinks hideBelow="md" />
+                {user ? (
+                  <>
+                    <FeedbackButton />
+                    <UserMenu />
+                  </>
+                ) : !isLoading ? (
+                  <>
+                    <Button
+                      size={{ base: "sm", md: "md" }}
+                      variant="outline"
+                      colorPalette="gray"
+                      onClick={openLogin}
+                      display={{ base: "none", md: "flex" }}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      size={{ base: "sm", md: "md" }}
+                      onClick={openSignup}
+                      display={{ base: "none", md: "flex" }}
+                    >
+                      Sign up
+                    </Button>
+                  </>
+                ) : null}
+              </HStack>
+              <CollapsibleTrigger />
             </HStack>
-            <CollapsibleTrigger />
-          </HStack>
-          <CollapsibleContent hideFrom="md">
-            <NavbarLinks pt="5" pb="2" alignItems="center" />
-          </CollapsibleContent>
-        </CollapsibleRoot>
+            <CollapsibleContent hideFrom="md">
+              <NavbarLinks pt="5" pb="2" alignItems="center" />
+            </CollapsibleContent>
+          </CollapsibleRoot>
+        </Box>
       </Container>
     </Center>
   );

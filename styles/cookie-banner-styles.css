@@ -118,6 +118,8 @@
 }
 
 #cc-main .cc__link,
+#cc-main a,
+#cc-main .cc__link,
 #cc-main a {
   background-image: none !important;
   font-weight: normal;
@@ -134,8 +136,15 @@
   text-decoration-color: var(--mix-textDecorationColor, currentColor);
 }
 
-#cc-main .cc__link:hover,
-#cc-main a:hover {
-  color: var(--chakra-colors-primary-fg) !important;
-  text-decoration: underline;
+#cc-main .cm__link-group a {
+  color: var(--chakra-colors-fg-muted) !important;
+}
+
+#cc-main .cm__link-group a:hover {
+  color: var(--chakra-colors-fg-muted) !important;
+  overflow: visible !important;
+}
+
+#cc-main .cm__link-group > * + * {
+  margin-left: 1rem !important;
 }

@@ -250,6 +250,17 @@
   vertical-align: top;
 }
 
+.o--Widget--widget
+  .o--Button--btn:is(
+    :disabled,
+    [disabled],
+    [data-disabled],
+    [aria-disabled="true"]
+  ) {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
 /* Profile Navigation (Desktop) */
 @media only screen and (min-width: 600px) {
   .o--NavDesktop--navDesktop.o--NavDesktop--displayMode-light

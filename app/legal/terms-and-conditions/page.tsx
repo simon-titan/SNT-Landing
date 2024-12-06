@@ -1,12 +1,20 @@
+import { Section } from "@/components/layout/section";
 import { Prose } from "@/components/ui/prose";
+import { generateMetadata } from "@/utils/metadata";
 import Markdown from "react-markdown";
-import { VStack } from "@chakra-ui/react";
+
+export const metadata = generateMetadata({
+  title: "Terms and Conditions",
+  description:
+    "Read our terms of service and legal agreements for using our platform",
+});
 
 export default function TermsAndConditions() {
   return (
-    <Prose mx="auto">
-      <Markdown>
-        {`
+    <Section>
+      <Prose mx="auto" size="lg" mt="28">
+        <Markdown>
+          {`
 # Terms and Conditions
 
 **Effective Date:** [Insert Date]
@@ -86,7 +94,8 @@ If you have any questions about these Terms, please contact us at:
 **Last Updated:** [Insert Date]
 
           `}
-      </Markdown>
-    </Prose>
+        </Markdown>
+      </Prose>
+    </Section>
   );
 }

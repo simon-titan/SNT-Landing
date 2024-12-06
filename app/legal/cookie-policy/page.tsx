@@ -1,11 +1,20 @@
+import { Section } from "@/components/layout/section";
 import { Prose } from "@/components/ui/prose";
+import { generateMetadata } from "@/utils/metadata";
 import Markdown from "react-markdown";
+
+export const metadata = generateMetadata({
+  title: "Cookie Policy",
+  description:
+    "Learn about how we use cookies and similar technologies to improve your experience",
+});
 
 export default function CookiePolicy() {
   return (
-    <Prose mx="auto">
-      <Markdown>
-        {`
+    <Section>
+      <Prose mx="auto" size="lg" mt="28">
+        <Markdown>
+          {`
 # Cookie Policy
 
 **Effective Date:** [Insert Date]
@@ -57,7 +66,8 @@ If you have any questions about this Cookie Policy, please contact us at:
 
 **Last Updated:** [Insert Date]
           `}
-      </Markdown>
-    </Prose>
+        </Markdown>
+      </Prose>
+    </Section>
   );
 }

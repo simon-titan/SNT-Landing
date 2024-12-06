@@ -1,7 +1,10 @@
 export const siteConfig = {
   name: "Project Starter",
+  description: "A powerful starter template for building web applications",
+  siteUrl: "https://your-domain.com",
+  ogImage: "/og-image.jpg",
   theme: {
-    neutralColorPalette: "gray",
+    neutralColorPalette: "stone",
     primaryColorPalette: "green",
     secondaryColorPalette: "purple",
     headingFont: "Inter",
@@ -89,7 +92,7 @@ export const siteConfig = {
         en: {
           consentModal: {
             description:
-              "We use cookies to enhance your experience, analyze site traffic and deliver personalized content. Read our <a href='/legal/cookie-policy'>Cookie Policy</a>.",
+              "We use cookies to improve your experience and understand site traffic. Read our <a href='/legal/cookie-policy'>Cookie Policy</a> or <a data-cc='show-preferencesModal'>manage your preferences</a>.",
             acceptAllBtn: "Accept all",
             acceptNecessaryBtn: "Reject all",
           },
@@ -141,6 +144,15 @@ export const siteConfig = {
         },
       },
     },
+  },
+  seo: {
+    titleTemplate: "%s | Project Starter",
+    defaultTitle: "Project Starter - Build Web Apps Faster",
+    robotsDisallowPaths: ["/app/*", "/api/*"],
+    defaultDescription:
+      "A powerful starter template for building web applications with Next.js, Chakra UI, and Outseta",
+    twitterHandle: "@yourtwitterhandle",
+    locale: "en_US",
   },
 };
 

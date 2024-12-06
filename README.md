@@ -67,3 +67,18 @@ Visit `http://localhost:3000` to see your website.
 
 MIT License
 This README provides a clear overview of the project's features and setup instructions while maintaining a clean, professional format. The theme customization section references the actual code from the project, showing the relevant configuration options.
+
+
+## Color Mode
+
+Change the color mode by updating the `forcedTheme` prop in the `ColorModeProvider` component in `components/provider/provider.tsx`. Or remove it to use the system default.
+
+## Folder Structure
+
+src/app
+
+The app
+folder contains all the routes of the Next.js application. The page.tsx
+file at the root directory of /app
+is the homepage of the application. The layout.tsx
+file is used to wrap the application with providers. See Next.js documentation↗ for more information.
