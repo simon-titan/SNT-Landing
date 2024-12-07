@@ -10,7 +10,7 @@ import {
   Headset,
   DownloadSimple,
   EnvelopeSimple,
-} from "@phosphor-icons/react";
+} from "@phosphor-icons/react/dist/ssr";
 
 export type LinkProps = Omit<ChakraLinkProps, "asChild"> & {
   href: NextLinkProps["href"];

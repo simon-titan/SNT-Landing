@@ -7,9 +7,10 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { Text, VStack, HStack } from "@chakra-ui/react";
-import { Question, SignOut, User, Star } from "@phosphor-icons/react";
+import { Question, SignOut, User, Star } from "@phosphor-icons/react/dist/ssr";
 import { Tag } from "@/components/ui/tag";
 import { useAuth } from "../provider/auth-provider";
+import Show from "../auth/show";
 
 export const UserMenu = () => {
   const { user, logout, openProfile } = useAuth();
@@ -38,9 +39,16 @@ export const UserMenu = () => {
         <VStack py={2} px="14px" align="start" gap="0">
           <HStack>
             <Text fontSize="sm">{user?.FullName}</Text>
-            <Tag colorPalette="purple" size="sm" startElement={<Star />}>
-              Pro
-            </Tag>
+            <Show.Plan basic>
+              <Tag colorPalette="purple" size="sm" startElement={<Star />}>
+                Pro
+              </Tag>
+            </Show.Plan>
+            <Show.Plan pro>
+              <Tag colorPalette="gray" size="sm" startElement={<Star />}>
+                Basic
+              </Tag>
+            </Show.Plan>
           </HStack>
           <Text fontSize="sm" color="fg.muted">
             {user?.Email}

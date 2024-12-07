@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Container,
@@ -12,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { siteConfig } from "@/config/site";
 import { generateMetadata } from "@/utils/metadata";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata = generateMetadata({
   title: "Page Not Found",

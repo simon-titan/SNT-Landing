@@ -10,6 +10,7 @@ export const siteConfig = {
     headingFont: "Inter",
     bodyFont: "Inter",
     borderRadius: "md",
+    colorMode: "light",
   },
   outsetaOptions: {
     domain: "easy-timer.outseta.com",

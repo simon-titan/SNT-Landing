@@ -37,9 +37,7 @@ export function useAuth() {
 
 function getOutseta() {
   if (typeof window === "undefined") return null;
-  if (window.Outseta) return window.Outseta;
-  console.error("Outseta is not loaded yet");
-  return null;
+  return window.Outseta;
 }
 
 export default function AuthProvider({
@@ -53,107 +51,79 @@ export default function AuthProvider({
   const [status, setStatus] = useState("init");
   const [user, setUser] = useState<OutsetaUser | null>(null);
   const outsetaRef = useRef<any>(null);
+  const initializingRef = useRef(false);
+
+  const updateUser = async () => {
+    try {
+      const outsetaUser = await outsetaRef.current.getUser();
+      setUser(outsetaUser);
+      setStatus("ready");
+      return outsetaUser;
+    } catch (error) {
+      console.error("[Auth] Error updating user:", error);
+      setStatus("error");
+      throw error;
+    }
+  };
+
+  const verifyAndSetToken = async (token: string) => {
+    const certificate = siteConfig.outsetaOptions.auth.publicKey;
+    try {
+      const publicKey = await importX509(certificate, "RS256");
+      await jwtVerify(token, publicKey);
+      outsetaRef.current.setAccessToken(token);
+      return await updateUser();
+    } catch (error) {
+      console.error("[Auth] Token verification failed:", error);
+      logout();
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    const initializeAuth = () => {
-      console.log("[Auth] Initializing authentication...");
-      try {
-        if (!outsetaRef.current) {
-          outsetaRef.current = getOutseta();
-          if (!outsetaRef.current) {
-            console.log("[Auth] Outseta not loaded yet");
-            return;
-          }
-        }
+    if (initializingRef.current) return;
+    initializingRef.current = true;
 
-        handleOutsetaUserEvents(updateUser);
+    const outseta = getOutseta();
+    if (!outseta) return;
 
-        const accessToken = searchParams.get("access_token");
-        if (accessToken) {
-          console.log("[Auth] Access token found in URL, verifying...");
-          verifyAndSetToken(accessToken)
-            .then(() => {
-              // Clear the access_token from URL
-              const params = new URLSearchParams(searchParams);
-              params.delete("access_token");
-              const newUrl =
-                pathname + (params.toString() ? `?${params.toString()}` : "");
-              router.replace(newUrl);
-            })
-            .catch((error) => {
-              console.error("[Auth] Token verification failed:", error);
-              setStatus("error");
-            });
-          return;
-        }
+    outsetaRef.current = outseta;
 
-        if (outsetaRef.current.getAccessToken()) {
-          console.log("[Auth] Existing token found, updating user...");
-          updateUser();
-        } else {
-          console.log("[Auth] No token found, ready for authentication");
-          setStatus("ready");
-        }
-      } catch (error) {
-        console.error("[Auth] Error initializing Outseta:", error);
-        setStatus("error");
+    const accessToken = searchParams.get("access_token");
+    if (accessToken) {
+      verifyAndSetToken(accessToken).then(() => {
+        const params = new URLSearchParams(searchParams);
+        params.delete("access_token");
+        const newUrl =
+          pathname + (params.toString() ? `?${params.toString()}` : "");
+        router.replace(newUrl);
+      });
+    } else if (outseta.getAccessToken()) {
+      updateUser();
+    } else {
+      setStatus("ready");
+    }
+
+    // Event handlers
+    const handleUserUpdate = () => {
+      if (outsetaRef.current?.getAccessToken()) {
+        updateUser();
       }
     };
 
-    initializeAuth();
-    return () => handleOutsetaUserEvents(() => {});
-  }, [searchParams, pathname, router]);
-
-  const verifyAndSetToken = (token: string) => {
-    console.log("[Auth] Verifying token...");
-    const certificate = siteConfig.outsetaOptions.auth.publicKey;
-
-    return importX509(certificate, "RS256")
-      .then((publicKey) => jwtVerify(token, publicKey))
-      .then(() => {
-        outsetaRef.current.setAccessToken(token);
-        console.log("[Auth] Token verified successfully");
-        return updateUser();
-      })
-      .catch((error) => {
-        console.error("[Auth] Token verification failed:", error);
-        logout();
-        throw error;
-      });
-  };
-
-  const updateUser = () => {
-    console.log("[Auth] Updating user information...");
-    return outsetaRef.current
-      .getUser()
-      .then((outsetaUser: OutsetaUser) => {
-        setUser(outsetaUser);
-        setStatus("ready");
-        console.log("[Auth] User updated successfully", outsetaUser);
-        if (pathname !== "/app") {
-          router.push("/app");
-        }
-      })
-      .catch((error: Error) => {
-        console.error("[Auth] Error updating user:", error);
-        setStatus("error");
-      });
-  };
-
-  const handleOutsetaUserEvents = (onEvent: () => void) => {
-    const outseta = outsetaRef.current;
-    outseta.on("subscription.update", onEvent);
-    outseta.on("profile.update", onEvent);
-    outseta.on("account.update", onEvent);
-  };
+    outseta.on("subscription.update", handleUserUpdate);
+    outseta.on("profile.update", handleUserUpdate);
+    outseta.on("account.update", handleUserUpdate);
+  }, [searchParams, pathname]);
 
   const logout = () => {
-    outsetaRef.current.setAccessToken("");
+    outsetaRef.current?.setAccessToken("");
     setUser(null);
+    setStatus("ready");
   };
 
   const openLogin = (options?: any) => {
-    outsetaRef.current.auth.open({
+    outsetaRef.current?.auth.open({
       widgetMode: "login|register",
       authenticationCallbackUrl: window.location.href,
       ...options,
@@ -161,7 +131,7 @@ export default function AuthProvider({
   };
 
   const openSignup = (options?: any) => {
-    outsetaRef.current.auth.open({
+    outsetaRef.current?.auth.open({
       widgetMode: "register",
       authenticationCallbackUrl: window.location.href,
       ...options,
@@ -169,7 +139,7 @@ export default function AuthProvider({
   };
 
   const openProfile = (options?: any) => {
-    outsetaRef.current.profile.open({ tab: "profile", ...options });
+    outsetaRef.current?.profile.open({ tab: "profile", ...options });
   };
 
   return (

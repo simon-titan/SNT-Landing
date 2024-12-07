@@ -11,9 +11,9 @@ export default function WebsiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute>
+    <>
       <Navbar />
       <Box as="main">{children}</Box>
-    </ProtectedRoute>
+    </>
   );
 }

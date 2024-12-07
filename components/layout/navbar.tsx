@@ -11,6 +11,7 @@ import {
   Stack,
   StackProps,
   Box,
+  Text,
 } from "@chakra-ui/react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -19,15 +20,16 @@ import { useAuth } from "../provider/auth-provider";
 import { UserMenu } from "../ui/user-menu";
 import { FeedbackButton } from "../ui/feedback-button";
 import { Link } from "@/components/ui/link";
+import Show from "../auth/show";
 
 export const NavbarLinks = (props: StackProps) => {
   return (
     <Stack
       direction={{ base: "column", md: "row" }}
-      gap={{ base: "6", md: "8" }}
+      gap={{ base: "2", md: "0" }}
       {...props}
     >
-      {["About"].map((item) => (
+      {["About", "Pricing"].map((item) => (
         <Link href={`/${item.toLowerCase()}`} key={item}>
           <Button colorPalette="gray" variant="plain">
             {item}
@@ -60,14 +62,15 @@ export const Navbar = () => {
 
               <HStack>
                 <Spacer hideFrom="md" />
-                <NavbarLinks hideBelow="md" />
+
                 {user ? (
                   <>
-                    <FeedbackButton />
+                    {/* <FeedbackButton /> */}
                     <UserMenu />
                   </>
                 ) : !isLoading ? (
                   <>
+                    <NavbarLinks hideBelow="md" />
                     <Button
                       size={{ base: "sm", md: "md" }}
                       variant="outline"

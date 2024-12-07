@@ -7,6 +7,7 @@ import { LuChevronRight } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/layout/section";
 import { generateMetadata } from "@/utils/metadata";
+import Show from "@/components/auth/show";
 
 export default async function Page() {
   return (
@@ -23,16 +24,18 @@ export default async function Page() {
             >
               Consequat ut laboris non sunt sint
             </Heading>
-            <Text
-              color="fg.muted"
-              textStyle={{ base: "lg", md: "xl" }}
-              maxW={{ md: "2xl" }}
-              mx="auto"
-            >
-              Deserunt veniam voluptate aliqua consectetur laboris voluptate est
-              labore qui commodo. Esse cillum ea voluptate aliqua magna ipsum
-              qui voluptate. Culpa officia ullamco eu.
-            </Text>
+            <Show.Authenticated trialing>
+              <Text
+                color="fg.muted"
+                textStyle={{ base: "lg", md: "xl" }}
+                maxW={{ md: "2xl" }}
+                mx="auto"
+              >
+                Deserunt veniam voluptate aliqua consectetur laboris voluptate
+                est labore qui commodo. Esse cillum ea voluptate aliqua magna
+                ipsum qui voluptate. Culpa officia ullamco eu.
+              </Text>
+            </Show.Authenticated>
           </Stack>
 
           <Stack
