@@ -1,6 +1,7 @@
-import { Heading } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 import { generateMetadata } from "@/utils/metadata";
 import { Section } from "@/components/layout/section";
+import { SignedIn } from "../../components/auth/protect";
 
 export const metadata = generateMetadata({
   title: "Dashboard",
@@ -10,8 +11,13 @@ export const metadata = generateMetadata({
 
 export default function App() {
   return (
-    <Section header>
-      <Heading>App Page</Heading>
-    </Section>
+    <SignedIn>
+      <Section header>
+        <Heading>App Page</Heading>
+        <SignedIn isPrimaryContact={false}>
+          <Text>Primary content</Text>
+        </SignedIn>
+      </Section>
+    </SignedIn>
   );
 }

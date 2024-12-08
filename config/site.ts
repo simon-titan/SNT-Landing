@@ -10,11 +10,11 @@ export const siteConfig = {
     headingFont: "Inter",
     bodyFont: "Inter",
     borderRadius: "md",
-    colorMode: "light",
+    colorMode: "dark",
   },
   outsetaOptions: {
     domain: "easy-timer.outseta.com",
-    load: "auth,profile,support,chat,nocode,emailList,leadCapture",
+    load: "auth,profile,support,chat,emailList,leadCapture",
     monitorDom: true,
     tokenStorage: "cookie",
     translationLang: "en",

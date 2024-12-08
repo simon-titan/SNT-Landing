@@ -24,7 +24,7 @@ export const Section = ({ header, size = "md", ...props }: SectionProps) => {
     },
   };
   if (header) {
-    const topPadding = (size: string) => {
+    const topPadding = (size: "sm" | "md" | "lg") => {
       const conversion = {
         sm: {
           base: "112px",
@@ -38,7 +38,7 @@ export const Section = ({ header, size = "md", ...props }: SectionProps) => {
           base: "152px",
           md: "184px",
         },
-      };
+      } as const;
 
       return conversion[size];
     };

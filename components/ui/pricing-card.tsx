@@ -11,7 +11,6 @@ import {
   Stack,
   type StackProps,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import {
   LuArrowRight,
@@ -20,7 +19,7 @@ import {
   LuPackage,
   LuUser,
 } from "react-icons/lu";
-import type { PlanData } from "./data";
+import type { PlanData } from "../../app/(website)/pricing/data";
 
 const iconMap: Record<string, React.ReactNode> = {
   team: <LuBuilding />,

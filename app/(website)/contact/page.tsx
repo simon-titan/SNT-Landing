@@ -1,29 +1,14 @@
-import { Box, Card, Heading, Text, VStack } from "@chakra-ui/react";
+"use client";
+
+import { Card, Heading, Text, VStack } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Image } from "@/components/ui/image";
-import { generateMetadata } from "@/utils/metadata";
-
-export const metadata = generateMetadata({
-  title: "Contact Us",
-  description: "Get in touch with our team for support, feedback, or inquiries",
-});
+import { Support } from "@/components/auth/embed";
+import "@/styles/contact-page-styles.css";
 
 export default function ContactPage() {
   return (
     <>
-      <style>{`
-        .o--SupportRequestForm--supportRequestForm > .o--SectionGroup--sectionGroup {
-          display: none !important;
-        }
-
-        .o--SupportRequestForm--supportRequestForm form > div:nth-child(2) {
-          display: none !important;
-        }
-
-        .o--Widget--widget .o--Button--btn {
-          width: 100% !important;
-        }
-      `}</style>
       <Section
         header
         bg="bg.muted"
@@ -57,7 +42,7 @@ export default function ContactPage() {
       </Section>
       <Section>
         <Card.Root mt={{ base: "-40", md: "-44" }}>
-          <Box data-o-support="1" data-mode="embed"></Box>
+          <Support />
         </Card.Root>
       </Section>
     </>

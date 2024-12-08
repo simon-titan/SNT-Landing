@@ -1,8 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { Box, Center } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { Link } from "@/components/ui/link";

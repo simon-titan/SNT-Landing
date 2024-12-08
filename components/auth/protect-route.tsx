@@ -14,16 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Lock, SignIn } from "@phosphor-icons/react/dist/ssr";
-
-interface User {
-  Account?: {
-    CurrentSubscription?: {
-      Plan?: {
-        Uid: string;
-      };
-    };
-  };
-}
+import { OutsetaUser } from "@/types/outseta";
 
 // Add readonly to prevent accidental mutations
 interface Plan
@@ -40,9 +31,12 @@ interface ProtectedRouteProps
     fallback?: React.ReactNode; // Consider removing if unused
   }> {}
 
-function userHasAccessToPlans(plans: Plan[], user: User | null): boolean {
-  if (!user) return false;
-  const planIdForUser = user.Account?.CurrentSubscription?.Plan?.Uid;
+function userHasAccessToPlans(
+  plans: Plan[],
+  user: OutsetaUser | null
+): boolean {
+  if (!user?.Account) return false;
+  const planIdForUser = user.Account.CurrentSubscription?.Plan?.Uid;
   return !!plans.find((plan) => plan.uid === planIdForUser);
 }
 
@@ -100,7 +94,7 @@ export default function ProtectedRoute({
       </Box>
     );
   } else if (allowAccess) {
-    return children;
+    return children as React.ReactElement;
   } else {
     return (
       <Box p="relative" h="100vh" w="100vw">

@@ -1,24 +1,17 @@
 "use client";
 
-import { useEffect, useState, createContext, useContext, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useRef,
+  Suspense,
+} from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { jwtVerify, importX509 } from "jose";
 import { siteConfig } from "@/config/site";
-
-type OutsetaUser = {
-  Account?: {
-    CurrentSubscription?: {
-      Plan?: {
-        Uid: string;
-        Name: string;
-        Price: number;
-      };
-    };
-  };
-  Email: string;
-  FullName: string;
-  ProfileImageS3Url?: string;
-};
+import { OutsetaUser } from "@/types/outseta";
 
 interface AuthContextType {
   user: OutsetaUser | null;
@@ -37,7 +30,7 @@ export function useAuth() {
 
 function getOutseta() {
   if (typeof window === "undefined") return null;
-  return window.Outseta;
+  return (window as any).Outseta;
 }
 
 export default function AuthProvider({
@@ -45,6 +38,14 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <Suspense>
+      <AuthProviderContent>{children}</AuthProviderContent>
+    </Suspense>
+  );
+}
+
+function AuthProviderContent({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();

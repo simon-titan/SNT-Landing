@@ -1,13 +1,13 @@
 import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import { HStack, Text, VStack } from "@chakra-ui/react";
+import { HStack, VStack } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { ChatTeardropText } from "@phosphor-icons/react/dist/ssr";
 
 export const FeedbackButton = () => {
-  const handleFeedbackSubmission = (feedback) => {
-    console.log("Feedback sent");
+  const handleSubmit = (feedback: string) => {
+    console.log("Feedback sent:", feedback);
   };
 
   return (
@@ -33,7 +33,12 @@ export const FeedbackButton = () => {
             />
           </Field>
           <HStack w="full">
-            <Button variant="solid" size="xs" w="full">
+            <Button
+              variant="solid"
+              size="xs"
+              w="full"
+              onClick={() => handleSubmit}
+            >
               Send
             </Button>
           </HStack>

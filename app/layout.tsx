@@ -22,7 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (siteConfig.cookieBannerOptions) {
-      CookieConsent.run(siteConfig.cookieBannerOptions);
+      CookieConsent.run(siteConfig.cookieBannerOptions as any);
     } else {
       console.warn("Cookie banner options are not defined in siteConfig.");
     }
@@ -33,6 +33,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Head>
         <title>Project Starter</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <noscript>
+          <meta httpEquiv="refresh" content="0; url=/javascript" />
+        </noscript>
       </Head>
       <body className={inter.className}>
         <Script

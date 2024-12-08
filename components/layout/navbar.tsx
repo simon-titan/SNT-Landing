@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Card,
   Center,
   CollapsibleContent,
   CollapsibleRoot,
@@ -11,16 +10,14 @@ import {
   Stack,
   StackProps,
   Box,
-  Text,
 } from "@chakra-ui/react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTrigger } from "@/components/ui/collapsible-trigger";
-import { useAuth } from "../provider/auth-provider";
 import { UserMenu } from "../ui/user-menu";
-import { FeedbackButton } from "../ui/feedback-button";
 import { Link } from "@/components/ui/link";
-import Show from "../auth/show";
+import { SignedIn, SignedOut } from "../auth/protect";
+import { Login, SignUp } from "../auth/embed";
 
 export const NavbarLinks = (props: StackProps) => {
   return (
@@ -40,9 +37,8 @@ export const NavbarLinks = (props: StackProps) => {
   );
 };
 
-export const Navbar = () => {
-  const { user, logout, openLogin, openSignup, openProfile, isLoading } =
-    useAuth();
+export const Navbar = ({ type }: { type: "website" | "app" }) => {
+  console.log(type);
   return (
     <Center as="header" position="fixed" zIndex="docked" top="6" w="full">
       <Container maxW={{ base: "full", md: "2xl" }}>
@@ -59,36 +55,41 @@ export const Navbar = () => {
               <Link href="/">
                 <Logo />
               </Link>
-
               <HStack>
                 <Spacer hideFrom="md" />
-
-                {user ? (
-                  <>
-                    {/* <FeedbackButton /> */}
-                    <UserMenu />
-                  </>
-                ) : !isLoading ? (
-                  <>
+                <SignedOut>
+                  <HStack gap="2">
                     <NavbarLinks hideBelow="md" />
-                    <Button
-                      size={{ base: "sm", md: "md" }}
-                      variant="outline"
-                      colorPalette="gray"
-                      onClick={openLogin}
-                      display={{ base: "none", md: "flex" }}
-                    >
-                      Login
-                    </Button>
-                    <Button
-                      size={{ base: "sm", md: "md" }}
-                      onClick={openSignup}
-                      display={{ base: "none", md: "flex" }}
-                    >
-                      Sign up
-                    </Button>
-                  </>
-                ) : null}
+
+                    <Login popup>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        colorPalette="gray"
+                        display={{ base: "none", md: "flex" }}
+                      >
+                        Login
+                      </Button>
+                    </Login>
+                    <SignUp popup>
+                      <Button size="sm" display={{ base: "none", md: "flex" }}>
+                        Sign up
+                      </Button>
+                    </SignUp>
+                  </HStack>
+                </SignedOut>
+                <SignedIn>
+                  {type == "app" ? (
+                    <UserMenu />
+                  ) : (
+                    <>
+                      <NavbarLinks hideBelow="md" />
+                      <Link href="/app/">
+                        <Button size="sm">Go to app</Button>
+                      </Link>
+                    </>
+                  )}
+                </SignedIn>
               </HStack>
               <CollapsibleTrigger />
             </HStack>

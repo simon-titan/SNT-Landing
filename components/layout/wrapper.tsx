@@ -1,6 +1,5 @@
 import { Box, type BoxProps } from "@chakra-ui/react";
 import type React from "react";
-import Markdown from "react-markdown";
 
 export interface ContentProps extends BoxProps {
   children?: React.ReactNode;

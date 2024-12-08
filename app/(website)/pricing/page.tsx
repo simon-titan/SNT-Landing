@@ -9,8 +9,14 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
-import { PricingCard } from "./pricing-card";
+import { PricingCard } from "../../../components/ui/pricing-card";
 import { plans } from "./data";
+import { generateMetadata } from "@/utils/metadata";
+
+export const metadata = generateMetadata({
+  title: "Pricing",
+  description: "Explore our pricing plans tailored to your needs.",
+});
 
 export default function PricingPage() {
   return (

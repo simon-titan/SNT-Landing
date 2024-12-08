@@ -15,7 +15,7 @@ export const metadata = generateMetadata({
 export default function ThankYouPage() {
   return (
     <>
-      <Confetti />
+      <Confetti type="fireworks" />
       <Box p="relative" h="100vh" w="100vw">
         <AbsoluteCenter>
           <VStack>

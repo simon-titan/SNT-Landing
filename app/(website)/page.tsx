@@ -1,13 +1,17 @@
-"use client";
-
-import { Box, Container, Heading, Stack, VStack, Text } from "@chakra-ui/react";
+import { Box, Heading, Stack, VStack, Text } from "@chakra-ui/react";
 
 import { ImagePlaceholder } from "@/components/layout/image-placeholder";
 import { LuChevronRight } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/layout/section";
 import { generateMetadata } from "@/utils/metadata";
-import Show from "@/components/auth/show";
+import { SignedIn } from "@/components/auth/protect";
+
+export const metadata = generateMetadata({
+  title: "Home",
+  description:
+    "Deserunt veniam voluptate aliqua consectetur laboris voluptate est labore qui commodo.",
+});
 
 export default async function Page() {
   return (
@@ -24,7 +28,7 @@ export default async function Page() {
             >
               Consequat ut laboris non sunt sint
             </Heading>
-            <Show.Authenticated trialing>
+            <SignedIn>
               <Text
                 color="fg.muted"
                 textStyle={{ base: "lg", md: "xl" }}
@@ -35,7 +39,7 @@ export default async function Page() {
                 est labore qui commodo. Esse cillum ea voluptate aliqua magna
                 ipsum qui voluptate. Culpa officia ullamco eu.
               </Text>
-            </Show.Authenticated>
+            </SignedIn>
           </Stack>
 
           <Stack
