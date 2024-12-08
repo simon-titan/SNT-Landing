@@ -19,8 +19,14 @@ export const siteConfig = {
     tokenStorage: "cookie",
     translationLang: "en",
     auth: {
-      postRegistrationUrl: "http://localhost:3000/thank-you",
-      authenticationCallbackUrl: "http://localhost:3000/app",
+      postRegistrationUrl:
+        process.env.NODE_ENV === "production"
+          ? "https://outseta.danielwirtz.com/thank-you"
+          : "http://localhost:3000/thank-you",
+      authenticationCallbackUrl:
+        process.env.NODE_ENV === "production"
+          ? "https://outseta.danielwirtz.com/app"
+          : "http://localhost:3000/app",
       rememberLastEmail: true,
       publicKey: `-----BEGIN CERTIFICATE----- 
 MIICzDCCAbSgAwIBAgIQANOnyWX39GOTemR5gtC1pTANBgkqhkiG9w0BAQ0FADAhMR8wHQYDVQQD
