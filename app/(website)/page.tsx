@@ -68,7 +68,7 @@ export default async function Page() {
                 Get started <ArrowRight />
               </Button>
             </Link>
-            <Link href="/docs">
+            <Link href="https://github.com/wirtzdan/project-rocket">
               <Button variant="ghost" size="xl">
                 Github <ArrowSquareOut />
               </Button>

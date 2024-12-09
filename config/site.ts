@@ -2,7 +2,7 @@ export const siteConfig = {
   /** Basic site information used throughout the application */
   name: "Project Starter",
   description: "A powerful starter template for building web applications",
-  siteUrl: "https://your-domain.com",
+  siteUrl: "https://project-rocket.danielwirtz.com/",
   ogImage: "/og-image.jpg",
 
   /** Theme customization settings */
@@ -101,9 +101,9 @@ GEtwkQBpw6TGcCdD5QsNQ09z5Cm2KCm/RQjsXImYK/dhWYEc
 
   /** Social media links */
   links: {
-    twitter: "https://twitter.com",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
+    twitter: "https://x.com/wirtzdan",
+    github: "https://github.com/wirtzdan/project-rocket",
+    linkedin: "https://www.linkedin.com/in/wirtzdan/",
   },
 
   cookieBannerOptions: {
