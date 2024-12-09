@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import Provider from "@/components/provider/provider";
 import Head from "next/head";
 import { siteConfig } from "@/config/site";
-import { useChatVisibility } from "@/hooks/use-chat-visibility";
+import { useChatVisibility } from "@/utils/use-chat-visibility";
 import "vanilla-cookieconsent/dist/cookieconsent.css";
 import "@/styles/cookie-banner-styles.css";
 import "@/styles/outseta-styles.css";

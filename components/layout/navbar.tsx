@@ -17,21 +17,100 @@ import { UserMenu } from "../ui/user-menu";
 import { Link } from "@/components/ui/link";
 import { SignedIn, SignedOut } from "../auth/protect";
 import { Login, SignUp } from "../auth/embed";
+import {
+  MenuContent,
+  MenuItem,
+  MenuItemGroup,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+} from "../ui/menu";
 
 // TODO: Improve nav links
 export const NavbarLinks = (props: StackProps) => {
   return (
     <>
-      <Link href="/pricing">
+      <Link href="/docs">
         <Button colorPalette="gray" variant="plain">
-          Pricing
+          Docs
         </Button>
       </Link>
-      <Link href="/contact">
-        <Button colorPalette="gray" variant="plain">
-          Contact
-        </Button>
-      </Link>
+      <MenuRoot>
+        <MenuTrigger asChild>
+          <Button colorPalette="gray" variant="plain">
+            Demo
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItemGroup title="Pages">
+            <Link href="/pricing">
+              <MenuItem value="pricing" cursor="pointer">
+                Pricing
+              </MenuItem>
+            </Link>
+            <Link href="/contact">
+              <MenuItem value="contact" cursor="pointer">
+                Contact
+              </MenuItem>
+            </Link>
+          </MenuItemGroup>
+          <MenuSeparator />
+          <MenuItemGroup title="Utility">
+            <Link href="/thank-you">
+              <MenuItem value="thank-you" cursor="pointer">
+                Thank you
+              </MenuItem>
+            </Link>
+            <Link href="/not-found">
+              <MenuItem value="not-found" cursor="pointer">
+                Not found
+              </MenuItem>
+            </Link>
+            <Link href="/javascript">
+              <MenuItem value="javascript" cursor="pointer">
+                Javascript
+              </MenuItem>
+            </Link>
+            <Link href="/legal/terms-and-conditions">
+              <MenuItem value="terms-and-conditions" cursor="pointer">
+                Terms & Conditions
+              </MenuItem>
+            </Link>
+          </MenuItemGroup>
+          <MenuSeparator />
+          <MenuItemGroup title="Auth">
+            <Link href="/app/basic">
+              <MenuItem value="basic" cursor="pointer">
+                Protected Page (Basic plan)
+              </MenuItem>
+            </Link>
+            <Link href="/app/pro">
+              <MenuItem value="pro" cursor="pointer">
+                Protected Page (Pro plan)
+              </MenuItem>
+            </Link>
+          </MenuItemGroup>
+          <MenuSeparator />
+          <MenuItemGroup title="Embeds">
+            <Link href="/embed/login">
+              <MenuItem value="login" cursor="pointer">
+                Login
+              </MenuItem>
+            </Link>
+
+            <Link href="/embed/lead-capture">
+              <MenuItem value="lead-capture" cursor="pointer">
+                Lead Capture
+              </MenuItem>
+            </Link>
+            <Link href="/embed/email-list">
+              <MenuItem value="email-list" cursor="pointer">
+                Email List
+              </MenuItem>
+            </Link>
+          </MenuItemGroup>
+        </MenuContent>
+      </MenuRoot>
       <Link href="/pricing">
         <Button colorPalette="gray" variant="plain">
           About
@@ -45,7 +124,7 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
   console.log(type);
   return (
     <Center as="header" position="fixed" zIndex="docked" top="6" w="full">
-      <Container maxW={{ base: "full", md: "2xl" }}>
+      <Container maxW={{ base: "full", md: "3xl" }}>
         <Box
           w="full"
           px="4"

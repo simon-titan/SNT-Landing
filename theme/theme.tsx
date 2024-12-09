@@ -48,14 +48,14 @@ const customConfig = defineConfig({
         bg: {
           DEFAULT: {
             value: {
-              _light: "{colors.neutral.50}",
+              _light: "white",
               _dark: "{colors.neutral.950}",
             },
           },
           subtle: {
             value: {
-              _light: "{colors.neutral.100}",
-              _dark: "{colors.neutral.900}",
+              _light: "{colors.neutral.50}",
+              _dark: "{colors.neutral.950}",
             },
           },
           muted: {

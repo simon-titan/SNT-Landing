@@ -45,7 +45,7 @@ export const Section = ({ header, size = "md", ...props }: SectionProps) => {
 
     return (
       <Box as="header" w="full" {...rootProps}>
-        <Container maxW={{ base: "full", md: "2xl" }}>
+        <Container maxW={{ base: "full", md: "3xl" }}>
           <Box
             pt={{ base: topPadding(size).base, md: topPadding(size).md }}
             pb={{ base: paddingY[size].base, md: paddingY[size].md }}
@@ -58,7 +58,7 @@ export const Section = ({ header, size = "md", ...props }: SectionProps) => {
   }
   return (
     <Box as="section" w="full" {...rootProps}>
-      <Container maxW={{ base: "full", md: "2xl" }}>
+      <Container maxW={{ base: "full", md: "3xl" }}>
         <Box py={{ base: paddingY[size].base, md: paddingY[size].md }}>
           {props.children}
         </Box>

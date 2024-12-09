@@ -1,33 +1,47 @@
 export const siteConfig = {
+  /** Basic site information used throughout the application */
   name: "Project Starter",
   description: "A powerful starter template for building web applications",
   siteUrl: "https://your-domain.com",
   ogImage: "/og-image.jpg",
+
+  /** Theme customization settings */
   theme: {
-    neutralColorPalette: "stone",
+    /** Base neutral colors for UI elements */
+    neutralColorPalette: "gray",
+    /** Primary brand color used for main actions and highlights */
     primaryColorPalette: "green",
+    /** Secondary brand color for complementary elements */
     secondaryColorPalette: "purple",
     headingFont: "Inter",
     bodyFont: "Inter",
     borderRadius: "md",
-    colorMode: "dark",
+    colorMode: "light",
   },
+
+  /** Outseta integration configuration */
   outsetaOptions: {
-    domain: "easy-timer.outseta.com",
+    /** Your Outseta domain */
+    domain: "project-rocket.outseta.com",
+    /** Modules to load: auth, profile, support, etc */
     load: "auth,profile,support,chat,emailList,leadCapture,nocode",
     monitorDom: true,
     tokenStorage: "cookie",
     translationLang: "en",
+    /** Authentication specific settings */
     auth: {
+      /** URL to redirect after successful registration */
       postRegistrationUrl:
         process.env.NODE_ENV === "production"
-          ? "https://outseta.danielwirtz.com/thank-you"
+          ? "https://project-rocket.danielwirtz.com/thank-you"
           : "http://localhost:3000/thank-you",
+      /** URL to redirect after successful authentication */
       authenticationCallbackUrl:
         process.env.NODE_ENV === "production"
-          ? "https://outseta.danielwirtz.com/app"
+          ? "https://project-rocket.danielwirtz.com/app"
           : "http://localhost:3000/app",
       rememberLastEmail: true,
+      /** Public JWT for Outseta (Find under Sign Up > Advanced in Outseta) */
       publicKey: `-----BEGIN CERTIFICATE----- 
 MIICzDCCAbSgAwIBAgIQANOnyWX39GOTemR5gtC1pTANBgkqhkiG9w0BAQ0FADAhMR8wHQYDVQQD
 
@@ -57,29 +71,41 @@ GEtwkQBpw6TGcCdD5QsNQ09z5Cm2KCm/RQjsXImYK/dhWYEc
 -----END CERTIFICATE-----`,
     },
   },
+
+  /** Subscription plan configuration */
   outsetaPlans: {
     plans: {
+      /** Basic tier configuration */
       basic: {
         uid: "L9nqaeQZ",
         label: "Basic",
       },
+      /** Pro tier configuration */
       pro: {
         uid: "LmJZpYmP",
         label: "Pro",
       },
     },
   },
+
+  /** Additional Outseta widget options */
   outsetaExtraOptions: {
+    /** Pages where chat widget should be shown */
     showChatOn: "**",
   },
+
+  /** Support contact information */
   support: {
-    email: "support@project.com",
+    email: "support@project-rocket.com",
   },
+
+  /** Social media links */
   links: {
     twitter: "https://twitter.com",
     github: "https://github.com",
     linkedin: "https://linkedin.com",
   },
+
   cookieBannerOptions: {
     root: "body",
     guiOptions: {
@@ -181,8 +207,8 @@ GEtwkQBpw6TGcCdD5QsNQ09z5Cm2KCm/RQjsXImYK/dhWYEc
     },
   },
   seo: {
-    titleTemplate: "%s | Project Starter",
-    defaultTitle: "Project Starter - Build Web Apps Faster",
+    titleTemplate: "%s | Project Rocket",
+    defaultTitle: "Project Rocket - Build Web Apps Faster",
     robotsDisallowPaths: ["/app/*", "/api/*"],
     defaultDescription:
       "A powerful starter template for building web applications with Next.js, Chakra UI, and Outseta",

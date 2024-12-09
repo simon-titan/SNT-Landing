@@ -44,7 +44,7 @@ function userHasAccessToPlans(
 export default function ProtectedRoute({
   children,
   pro,
-}: ProtectedRouteProps): JSX.Element {
+}: ProtectedRouteProps): React.ReactElement {
   const { user, isLoading, openLogin, openSignup, openProfile } = useAuth();
 
   const requiredPlans = pro
