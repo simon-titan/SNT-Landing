@@ -10,9 +10,9 @@ export const siteConfig = {
     /** Base neutral colors for UI elements */
     neutralColorPalette: "gray",
     /** Primary brand color used for main actions and highlights */
-    primaryColorPalette: "green",
+    primaryColorPalette: "red",
     /** Secondary brand color for complementary elements */
-    secondaryColorPalette: "purple",
+    secondaryColorPalette: "gray",
     headingFont: "Inter",
     bodyFont: "Inter",
     borderRadius: "md",

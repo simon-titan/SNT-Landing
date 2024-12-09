@@ -111,11 +111,6 @@ export const NavbarLinks = (props: StackProps) => {
           </MenuItemGroup>
         </MenuContent>
       </MenuRoot>
-      <Link href="/pricing">
-        <Button colorPalette="gray" variant="plain">
-          About
-        </Button>
-      </Link>
     </>
   );
 };
