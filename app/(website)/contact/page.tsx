@@ -1,6 +1,5 @@
-import { Box, Card, Heading, Text, VStack } from "@chakra-ui/react";
+import { Card, Heading, Text, VStack } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
-import { Image } from "@/components/ui/image";
 import { Support } from "@/components/auth/embed";
 import "@/styles/contact-page-styles.css";
 
