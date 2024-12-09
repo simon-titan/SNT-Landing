@@ -1,6 +1,4 @@
-"use client";
-
-import { Card, Heading, Text, VStack } from "@chakra-ui/react";
+import { Box, Card, Heading, Text, VStack } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Image } from "@/components/ui/image";
 import { Support } from "@/components/auth/embed";
@@ -31,12 +29,6 @@ export default function ContactPage() {
               Send us a message if you have question, feedback or an idea. We
               typically reply in 24 hours.
             </Text>
-            <Image
-              src="https://picsum.photos/seed/1733476138565/500/500"
-              alt="Contact"
-              width="2xl"
-              height="50"
-            />
           </VStack>
         </VStack>
       </Section>

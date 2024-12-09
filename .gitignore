@@ -1,22 +1,36 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+.cursorrules
+
 # dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
+.yarn/install-state.gz
 
 # testing
 /coverage
+*.lcov
+.nyc_output
 
 # next.js
 /.next/
 /out/
+.next
+next-env.d.ts
+.swc/
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
+*.pem
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # debug
 npm-debug.log*
@@ -29,4 +43,31 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# IDE
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel
+.vercel
 .now
+
+# TypeScript
+*.tsbuildinfo
+
+# Cache
+.cache
+.eslintcache
+.stylelintcache
+
+# Optional
+*.log
+.env
+.env.local
+.env.development
+.env.test
+.env.production
