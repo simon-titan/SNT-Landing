@@ -15,6 +15,7 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import { Lock, SignIn } from "@phosphor-icons/react/dist/ssr";
 import { OutsetaUser } from "@/types/outseta";
+import { Profile, Login, SignUp } from "./embed";
 
 // Add readonly to prevent accidental mutations
 interface Plan
@@ -83,10 +84,12 @@ export default function ProtectedRoute({
               description={`This page is available only to users with a ${pro ? "Pro" : "Basic"} plan. To continue, log in to your existing account or sign up for a ${pro ? "Pro" : "Basic"} plan.`}
             >
               <Group>
-                <Button onClick={openLogin}>Login</Button>
-                <Button variant="outline" onClick={openSignup}>
-                  Sign up
-                </Button>
+                <Login popup>
+                  <Button>Login</Button>
+                </Login>
+                <SignUp popup>
+                  <Button variant="outline">Sign up</Button>
+                </SignUp>
               </Group>
             </EmptyState>
           </VStack>
@@ -105,9 +108,12 @@ export default function ProtectedRoute({
               title="Upgrade to unlock"
               description={`This page is available only to users with a ${requiredPlans[0].label} plan. To continue, please upgrade to a ${requiredPlans[0].label} plan.`}
             >
-              <Button onClick={() => openProfile({ tab: "plan" })}>
-                Change plan
-              </Button>
+              <Profile
+                data-tab="planChange"
+                data-state-props={{ planUid: "LmJZpYmP" }}
+              >
+                <Button>Change plan</Button>
+              </Profile>
             </EmptyState>
           </VStack>
         </AbsoluteCenter>

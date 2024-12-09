@@ -19,6 +19,7 @@ import { Link } from "@/components/ui/link";
 import { SignedIn, SignedOut } from "../auth/protect";
 import { Login, SignUp } from "../auth/embed";
 
+// TODO: Improve nav links
 export const NavbarLinks = (props: StackProps) => {
   return (
     <Stack
@@ -55,7 +56,7 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
               <Link href="/">
                 <Logo />
               </Link>
-              <HStack>
+              <HStack justify="end">
                 <Spacer hideFrom="md" />
                 <SignedOut>
                   <HStack gap="2">
@@ -90,8 +91,8 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                     </>
                   )}
                 </SignedIn>
+                <CollapsibleTrigger />
               </HStack>
-              <CollapsibleTrigger />
             </HStack>
             <CollapsibleContent hideFrom="md">
               <NavbarLinks pt="5" pb="2" alignItems="center" />

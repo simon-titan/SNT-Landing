@@ -24,6 +24,7 @@ export const UserMenu = () => {
         <Avatar
           src={user?.ProfileImageS3Url || undefined}
           name={user?.FullName}
+          size="sm"
         />
       </MenuTrigger>
 
@@ -31,12 +32,12 @@ export const UserMenu = () => {
         <VStack py={2} px="14px" align="start" gap="0">
           <HStack>
             <Text fontSize="sm">{user?.FullName}</Text>
-            <SignedIn>
+            <SignedIn plan="LmJZpYmP">
               <Tag colorPalette="purple" size="sm" startElement={<Star />}>
                 Pro
               </Tag>
             </SignedIn>
-            <SignedIn>
+            <SignedIn plan="L9nqaeQZ">
               <Tag colorPalette="gray" size="sm" startElement={<Star />}>
                 Basic
               </Tag>
@@ -61,7 +62,7 @@ export const UserMenu = () => {
           </MenuItem>
         </Support>
         <MenuSeparator />
-        <LogOut popup>
+        <LogOut>
           <MenuItem value="logout">
             <SignOut weight="bold" />
             Logout

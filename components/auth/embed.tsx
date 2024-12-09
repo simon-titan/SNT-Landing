@@ -81,7 +81,7 @@ export const EmailList = ({ children, popup, uid, ...props }: AuthProps) => {
 export const Support = ({ children, popup, ...props }: AuthProps) => {
   return (
     <Box
-      asChild
+      {...(children ? { asChild: true } : {})}
       data-o-support="1"
       data-mode={popup ? "popup" : "embed"}
       {...props}
@@ -93,7 +93,11 @@ export const Support = ({ children, popup, ...props }: AuthProps) => {
 
 export const LogOut = ({ children, ...props }: AuthProps) => {
   return (
-    <Box asChild data-o-logout-link="1" {...props}>
+    <Box
+      {...(children ? { asChild: true } : {})}
+      data-o-logout-link="1"
+      {...props}
+    >
       {children}
     </Box>
   );
