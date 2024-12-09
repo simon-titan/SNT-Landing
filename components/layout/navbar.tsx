@@ -7,6 +7,7 @@ import {
   Container,
   HStack,
   Spacer,
+  VStack,
   Stack,
   StackProps,
   Box,
@@ -22,19 +23,23 @@ import { Login, SignUp } from "../auth/embed";
 // TODO: Improve nav links
 export const NavbarLinks = (props: StackProps) => {
   return (
-    <Stack
-      direction={{ base: "column", md: "row" }}
-      gap={{ base: "2", md: "0" }}
-      {...props}
-    >
-      {["About", "Pricing"].map((item) => (
-        <Link href={`/${item.toLowerCase()}`} key={item}>
-          <Button colorPalette="gray" variant="plain">
-            {item}
-          </Button>
-        </Link>
-      ))}
-    </Stack>
+    <>
+      <Link href="/pricing">
+        <Button colorPalette="gray" variant="plain">
+          Pricing
+        </Button>
+      </Link>
+      <Link href="/contact">
+        <Button colorPalette="gray" variant="plain">
+          Contact
+        </Button>
+      </Link>
+      <Link href="/pricing">
+        <Button colorPalette="gray" variant="plain">
+          About
+        </Button>
+      </Link>
+    </>
   );
 };
 
@@ -56,28 +61,24 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
               <Link href="/">
                 <Logo />
               </Link>
-              <HStack justify="end">
-                <Spacer hideFrom="md" />
+              <HStack gap="2" hideBelow="md">
                 <SignedOut>
-                  <HStack gap="2">
-                    <NavbarLinks hideBelow="md" />
-
-                    <Login popup>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        colorPalette="gray"
-                        display={{ base: "none", md: "flex" }}
-                      >
-                        Login
-                      </Button>
-                    </Login>
-                    <SignUp popup>
-                      <Button size="sm" display={{ base: "none", md: "flex" }}>
-                        Sign up
-                      </Button>
-                    </SignUp>
-                  </HStack>
+                  <NavbarLinks />
+                  <Login popup>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      colorPalette="gray"
+                      display={{ base: "none", md: "flex" }}
+                    >
+                      Login
+                    </Button>
+                  </Login>
+                  <SignUp popup>
+                    <Button size="sm" display={{ base: "none", md: "flex" }}>
+                      Sign up
+                    </Button>
+                  </SignUp>
                 </SignedOut>
                 <SignedIn>
                   {type == "app" ? (
@@ -91,11 +92,37 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                     </>
                   )}
                 </SignedIn>
-                <CollapsibleTrigger />
               </HStack>
+              <CollapsibleTrigger />
             </HStack>
             <CollapsibleContent hideFrom="md">
-              <NavbarLinks pt="5" pb="2" alignItems="center" />
+              <VStack>
+                <SignedOut>
+                  <NavbarLinks />
+                  <Login popup>
+                    <Button size="sm" variant="outline" colorPalette="gray">
+                      Login
+                    </Button>
+                  </Login>
+                  <SignUp popup>
+                    <Button size="sm">Sign up</Button>
+                  </SignUp>
+                </SignedOut>
+                <SignedIn>
+                  {type == "app" ? (
+                    <>
+                      <UserMenu />
+                    </>
+                  ) : (
+                    <>
+                      <NavbarLinks />
+                      <Link href="/app/">
+                        <Button size="sm">Go to app</Button>
+                      </Link>
+                    </>
+                  )}
+                </SignedIn>
+              </VStack>
             </CollapsibleContent>
           </CollapsibleRoot>
         </Box>
