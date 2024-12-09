@@ -2,6 +2,7 @@ import { Heading, Text } from "@chakra-ui/react";
 import { generateMetadata } from "@/utils/metadata";
 import { Section } from "@/components/layout/section";
 import { SignedIn } from "../../components/auth/protect";
+import { LogOut } from "@/components/auth/embed";
 
 export const metadata = generateMetadata({
   title: "Dashboard",

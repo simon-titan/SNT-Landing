@@ -14,7 +14,7 @@ export const siteConfig = {
   },
   outsetaOptions: {
     domain: "easy-timer.outseta.com",
-    load: "auth,profile,support,chat,emailList,leadCapture",
+    load: "auth,profile,support,chat,emailList,leadCapture,nocode",
     monitorDom: true,
     tokenStorage: "cookie",
     translationLang: "en",
