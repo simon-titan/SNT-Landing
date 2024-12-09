@@ -6,9 +6,7 @@ import {
   CollapsibleRoot,
   Container,
   HStack,
-  Spacer,
   VStack,
-  Stack,
   StackProps,
   Box,
 } from "@chakra-ui/react";
