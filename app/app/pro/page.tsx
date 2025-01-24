@@ -11,7 +11,7 @@ export const metadata = generateMetadata({
 
 export default function Pro() {
   return (
-    <ProtectedRoute pro>
+    <ProtectedRoute plansWithAccess="pro">
       <Section header>
         <Heading>Pro</Heading>
       </Section>

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 
 interface GenerateMetadataProps {
   title?: string;
@@ -15,17 +15,17 @@ export function generateMetadata({
   noIndex = false,
 }: GenerateMetadataProps): Metadata {
   const fullTitle = title
-    ? title + " | " + siteConfig.name
-    : siteConfig.seo.defaultTitle;
+    ? title + " | " + projectConfig.general.name
+    : projectConfig.seo.defaultTitle;
 
-  const fullDescription = description || siteConfig.seo.defaultDescription;
-  const url = `${siteConfig.siteUrl}${path}`;
+  const fullDescription = description || projectConfig.seo.defaultDescription;
+  const url = `${projectConfig.general.siteUrl}${path}`;
 
   return {
     title: fullTitle,
     description: fullDescription,
     robots: noIndex ? "noindex, nofollow" : "index, follow",
-    metadataBase: new URL(siteConfig.siteUrl),
+    metadataBase: new URL(projectConfig.general.siteUrl),
     alternates: {
       canonical: url,
     },
@@ -33,12 +33,12 @@ export function generateMetadata({
       title: fullTitle,
       description: fullDescription,
       url,
-      siteName: siteConfig.name,
-      locale: siteConfig.seo.locale,
+      siteName: projectConfig.general.name,
+      locale: projectConfig.seo.locale,
       type: "website",
       images: [
         {
-          url: siteConfig.ogImage,
+          url: projectConfig.seo.ogImage,
           width: 1200,
           height: 630,
           alt: fullTitle,
@@ -49,8 +49,8 @@ export function generateMetadata({
       card: "summary_large_image",
       title: fullTitle,
       description: fullDescription,
-      creator: siteConfig.seo.twitterHandle,
-      images: [siteConfig.ogImage],
+      creator: projectConfig.seo.twitterHandle,
+      images: [projectConfig.seo.ogImage],
     },
   };
 }

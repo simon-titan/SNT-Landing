@@ -1,5 +1,5 @@
 import { createSystem, defineConfig, defaultConfig } from "@chakra-ui/react";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 import { neutralPalettes } from "@/theme/colors";
 import { colorPalettes } from "@/theme/colors";
 
@@ -10,10 +10,10 @@ const customConfig = defineConfig({
     tokens: {
       fonts: {
         heading: {
-          value: `"${siteConfig.theme.headingFont}", ${fallback}`,
+          value: `"${projectConfig.theme.headingFont}", ${fallback}`,
         },
         body: {
-          value: `"${siteConfig.theme.bodyFont}", ${fallback}`,
+          value: `"${projectConfig.theme.bodyFont}", ${fallback}`,
         },
         mono: {
           value: `SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace`,
@@ -22,9 +22,9 @@ const customConfig = defineConfig({
       colors: {
         black: { value: "#09090B" },
         white: { value: "#FFFFFF" },
-        neutral: neutralPalettes[siteConfig.theme.neutralColorPalette],
-        primary: colorPalettes[siteConfig.theme.primaryColorPalette],
-        secondary: colorPalettes[siteConfig.theme.secondaryColorPalette],
+        neutral: neutralPalettes[projectConfig.theme.neutralColorPalette],
+        primary: colorPalettes[projectConfig.theme.primaryColorPalette],
+        secondary: colorPalettes[projectConfig.theme.secondaryColorPalette],
       },
       fontSizes: {
         "2xs": { value: "0.625rem" },
@@ -223,9 +223,15 @@ const customConfig = defineConfig({
         },
       },
       radii: {
-        l1: { value: getBorderRadiusValue(siteConfig.theme.borderRadius, -1) },
-        l2: { value: getBorderRadiusValue(siteConfig.theme.borderRadius, 0) },
-        l3: { value: getBorderRadiusValue(siteConfig.theme.borderRadius, 1) },
+        l1: {
+          value: getBorderRadiusValue(projectConfig.theme.radius, -1),
+        },
+        l2: {
+          value: getBorderRadiusValue(projectConfig.theme.radius, 0),
+        },
+        l3: {
+          value: getBorderRadiusValue(projectConfig.theme.radius, 1),
+        },
       },
       shadows: {
         xs: {

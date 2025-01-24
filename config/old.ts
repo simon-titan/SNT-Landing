@@ -1,4 +1,4 @@
-export const siteConfig = {
+export const projectConfig = {
   /** Basic site information used throughout the application */
   name: "Project Starter",
   description: "A powerful starter template for building web applications",
@@ -73,9 +73,13 @@ GEtwkQBpw6TGcCdD5QsNQ09z5Cm2KCm/RQjsXImYK/dhWYEc
   },
 
   /** Subscription plan configuration */
-  outsetaPlans: {
+  auth: {
     plans: {
       /** Basic tier configuration */
+      free: {
+        uid: "7maOrK9E",
+        label: "Free",
+      },
       basic: {
         uid: "L9nqaeQZ",
         label: "Basic",

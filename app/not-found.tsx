@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 import { generateMetadata } from "@/utils/metadata";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 
@@ -43,10 +43,10 @@ export default function NotFound() {
               Need some help? Shoot us a note at{" "}
               <Link
                 variant="underline"
-                href={`mailto:${siteConfig.support.email}`}
+                href={`mailto:${projectConfig.general.support.email}`}
                 support
               >
-                {siteConfig.support.email}
+                {projectConfig.general.support.email}
               </Link>
               . We're here to help!
             </Text>

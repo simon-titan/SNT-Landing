@@ -5,7 +5,7 @@ import {
   IconButton,
   useCollapsibleContext,
 } from "@chakra-ui/react";
-import { LuAlignRight, LuX } from "react-icons/lu";
+import { List, X } from "@phosphor-icons/react/dist/ssr";
 
 export const CollapsibleTrigger = () => {
   const context = useCollapsibleContext();
@@ -18,7 +18,7 @@ export const CollapsibleTrigger = () => {
         colorPalette="gray"
         hideFrom="md"
       >
-        <Icon size="md">{context.open ? <LuX /> : <LuAlignRight />}</Icon>
+        <Icon size="lg">{context.open ? <X /> : <List />}</Icon>
       </IconButton>
     </Collapsible.Trigger>
   );

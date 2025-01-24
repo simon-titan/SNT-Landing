@@ -4,14 +4,14 @@ import { ChakraProvider, Box } from "@chakra-ui/react";
 import { system } from "@/theme/theme";
 import AuthProvider from "@/components/provider/auth-provider";
 import { ColorModeProvider } from "./color-mode-provider";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 
 export default function Provider(props: { children: React.ReactNode }) {
   return (
     <ChakraProvider value={system}>
       <ColorModeProvider
-        {...(siteConfig.theme.colorMode !== "auto" && {
-          forcedTheme: siteConfig.theme.colorMode,
+        {...(projectConfig.theme.colorMode !== "auto" && {
+          forcedTheme: projectConfig.theme.colorMode,
         })}
       >
         <AuthProvider>

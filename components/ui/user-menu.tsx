@@ -12,7 +12,7 @@ import { Text, VStack, HStack } from "@chakra-ui/react";
 import { Question, SignOut, User, Star } from "@phosphor-icons/react/dist/ssr";
 import { Tag } from "@/components/ui/tag";
 import { useAuth } from "../provider/auth-provider";
-import { SignedIn } from "../auth/protect";
+import { SignedIn } from "../auth/protect-content";
 import { Profile, Support, LogOut } from "../auth/embed";
 
 export const UserMenu = () => {

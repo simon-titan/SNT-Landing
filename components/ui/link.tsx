@@ -81,5 +81,9 @@ export const Link = ({
     );
   }
 
-  return <NextLink href={href}>{props.children}</NextLink>;
+  return (
+    <ChakraLink asChild {...props}>
+      <NextLink href={href}>{props.children}</NextLink>
+    </ChakraLink>
+  );
 };

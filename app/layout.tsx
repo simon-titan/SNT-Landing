@@ -3,7 +3,7 @@
 import { Inter } from "next/font/google";
 import Provider from "@/components/provider/provider";
 import Head from "next/head";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 import { useChatVisibility } from "@/utils/use-chat-visibility";
 import "vanilla-cookieconsent/dist/cookieconsent.css";
 import "@/styles/cookie-banner-styles.css";
@@ -12,6 +12,7 @@ import * as CookieConsent from "vanilla-cookieconsent";
 import { useEffect } from "react";
 import Script from "next/script";
 
+// TODO: How could fonts be set in a better way? Best case it would be from the projectConfig.
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -21,10 +22,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   useChatVisibility();
 
   useEffect(() => {
-    if (siteConfig.cookieBannerOptions) {
-      CookieConsent.run(siteConfig.cookieBannerOptions as any);
+    if (projectConfig.cookieBannerOptions) {
+      CookieConsent.run(projectConfig.cookieBannerOptions as any);
     } else {
-      console.warn("Cookie banner options are not defined in siteConfig.");
+      console.warn("Cookie banner options are not defined in projectConfig.");
     }
   }, []);
 
@@ -42,7 +43,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           id="outseta-config"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `var o_options = ${JSON.stringify(siteConfig.outsetaOptions)};`,
+            __html: `var o_options = ${JSON.stringify(projectConfig.outsetaOptions)};`,
           }}
         />
         <Script

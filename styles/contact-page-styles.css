@@ -1,11 +1,16 @@
-.o--SupportRequestForm--supportRequestForm > .o--SectionGroup--sectionGroup {
+#contact-form
+  .o--SupportRequestForm--supportRequestForm
+  > .o--SectionGroup--sectionGroup {
   display: none !important;
 }
 
-.o--SupportRequestForm--supportRequestForm form > div:nth-child(2) {
+#contact-form
+  .o--SupportRequestForm--supportRequestForm
+  form
+  > div:nth-child(2) {
   display: none !important;
 }
 
-.o--Widget--widget .o--Button--btn {
+#contact-form .o--Widget--widget .o--Button--btn {
   width: 100% !important;
 }

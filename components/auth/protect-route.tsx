@@ -2,7 +2,7 @@
 
 import { useAuth } from "../provider/auth-provider";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 
 import {
   AbsoluteCenter,
@@ -27,9 +27,8 @@ interface Plan
 interface ProtectedRouteProps
   extends Readonly<{
     children: React.ReactNode;
-    pro?: boolean;
-    basic?: boolean; // Consider removing if unused
-    fallback?: React.ReactNode; // Consider removing if unused
+    plansWithAccess?: string;
+    fallback?: React.ReactNode;
   }> {}
 
 function userHasAccessToPlans(
@@ -38,22 +37,53 @@ function userHasAccessToPlans(
 ): boolean {
   if (!user?.Account) return false;
   const planIdForUser = user.Account.CurrentSubscription?.Plan?.Uid;
+  // If no specific plans are required, any plan is valid
+  if (plans.length === 0) return true;
   return !!plans.find((plan) => plan.uid === planIdForUser);
 }
 
 export default function ProtectedRoute({
   children,
-  pro,
+  plansWithAccess,
 }: ProtectedRouteProps): React.ReactElement {
-  const { user, isLoading, openLogin, openSignup, openProfile } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  const requiredPlans = pro
-    ? [siteConfig.outsetaPlans.plans.pro]
-    : [siteConfig.outsetaPlans.plans.basic, siteConfig.outsetaPlans.plans.pro];
+  console.log("ProtectedRoute:", {
+    isLoading,
+    hasUser: !!user,
+    userPlan: user?.Account?.CurrentSubscription?.Plan?.Uid,
+    plansWithAccess,
+  });
+
+  const requiredPlans = (() => {
+    if (!plansWithAccess) return [];
+    const plans = plansWithAccess
+      .split(",")
+      .map((p) => p.trim().toLowerCase())
+      .map((planName) => {
+        const configPlan =
+          projectConfig.auth.plans[
+            planName as keyof typeof projectConfig.auth.plans
+          ];
+        if (!configPlan) {
+          console.warn(`Unknown plan: ${planName}`);
+          return null;
+        }
+        return configPlan;
+      })
+      .filter((p): p is Plan => p !== null);
+
+    console.log(
+      "Required Plans:",
+      plans.map((p) => ({ uid: p.uid, label: p.label }))
+    );
+    return plans;
+  })();
 
   if (isLoading) {
+    console.log("ProtectedRoute: Loading state");
     return (
-      <Box p="relative" h="100vh" w="100vw">
+      <Box position="relative" h="100vh" w="100vw">
         <AbsoluteCenter>
           <VStack>
             <Spinner
@@ -71,17 +101,20 @@ export default function ProtectedRoute({
     );
   }
 
-  const allowAccess = userHasAccessToPlans(requiredPlans, user);
-
   if (!user) {
+    console.log("ProtectedRoute: No user - showing login screen");
     return (
-      <Box p="relative" h="100vh" w="100vw">
+      <Box position="relative" h="100vh" w="100vw">
         <AbsoluteCenter>
           <VStack>
             <EmptyState
               icon={<SignIn />}
               title="Login to continue"
-              description={`This page is available only to users with a ${pro ? "Pro" : "Basic"} plan. To continue, log in to your existing account or sign up for a ${pro ? "Pro" : "Basic"} plan.`}
+              description={`This page is available only to ${
+                plansWithAccess
+                  ? requiredPlans.map((p) => p.label).join(" or ")
+                  : "registered"
+              } users. To continue, log in to your existing account or sign up.`}
             >
               <Group>
                 <Login popup>
@@ -96,11 +129,24 @@ export default function ProtectedRoute({
         </AbsoluteCenter>
       </Box>
     );
-  } else if (allowAccess) {
+  }
+
+  if (!plansWithAccess) {
+    console.log("ProtectedRoute: No plans required - allowing access");
     return children as React.ReactElement;
-  } else {
+  }
+
+  const allowAccess = userHasAccessToPlans(requiredPlans, user);
+  console.log("ProtectedRoute: Plan check result:", {
+    allowAccess,
+    userPlan: user.Account?.CurrentSubscription?.Plan?.Uid,
+    requiredPlans: requiredPlans.map((p) => p.uid),
+  });
+
+  if (!allowAccess) {
+    console.log("ProtectedRoute: Access denied - showing upgrade screen");
     return (
-      <Box p="relative" h="100vh" w="100vw">
+      <Box position="relative" h="100vh" w="100vw">
         <AbsoluteCenter>
           <VStack>
             <EmptyState
@@ -108,10 +154,8 @@ export default function ProtectedRoute({
               title="Upgrade to unlock"
               description={`This page is available only to users with a ${requiredPlans[0].label} plan. To continue, please upgrade to a ${requiredPlans[0].label} plan.`}
             >
-              <Profile
-                data-tab="planChange"
-                data-state-props={{ planUid: "LmJZpYmP" }}
-              >
+              {/* TODO: Directly open the right plan to upgrade to */}
+              <Profile popup data-tab="planChange">
                 <Button>Change plan</Button>
               </Profile>
             </EmptyState>
@@ -120,4 +164,7 @@ export default function ProtectedRoute({
       </Box>
     );
   }
+
+  console.log("ProtectedRoute: Access granted");
+  return children as React.ReactElement;
 }

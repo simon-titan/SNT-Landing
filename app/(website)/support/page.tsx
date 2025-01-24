@@ -3,7 +3,7 @@ import { Section } from "@/components/layout/section";
 import { Support } from "@/components/auth/embed";
 import "@/styles/contact-page-styles.css";
 
-export default function ContactPage() {
+export default function SupportPage() {
   return (
     <>
       <Section
@@ -17,7 +17,7 @@ export default function ContactPage() {
           <VStack gap={{ base: "5", md: "6" }}>
             <VStack gap={{ base: "3", md: "4" }}>
               <Heading as="h1" textStyle={{ base: "4xl", md: "5xl" }}>
-                Contact us
+                Support
               </Heading>
             </VStack>
             <Text
@@ -25,14 +25,14 @@ export default function ContactPage() {
               textStyle={{ base: "lg", md: "xl" }}
               maxW="lg"
             >
-              Send us a message if you have question, feedback or an idea. We
-              typically reply in 24 hours.
+              Send us a message if you need help. We typically reply in 24
+              hours.
             </Text>
           </VStack>
         </VStack>
       </Section>
       <Section>
-        <Card.Root mt={{ base: "-40", md: "-44" }} id="contact-form">
+        <Card.Root mt={{ base: "-40", md: "-44" }}>
           <Support />
         </Card.Root>
       </Section>

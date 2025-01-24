@@ -1,7 +1,8 @@
 import { Heading, Text } from "@chakra-ui/react";
 import { generateMetadata } from "@/utils/metadata";
 import { Section } from "@/components/layout/section";
-import { SignedIn } from "../../components/auth/protect";
+import { SignedIn } from "../../components/auth/protect-content";
+import ProtectedRoute from "@/components/auth/protect-route";
 
 export const metadata = generateMetadata({
   title: "Dashboard",
@@ -11,13 +12,13 @@ export const metadata = generateMetadata({
 
 export default function App() {
   return (
-    <SignedIn>
+    <ProtectedRoute>
       <Section header>
         <Heading>App Page</Heading>
         <SignedIn isPrimaryContact={false}>
           <Text>Primary content</Text>
         </SignedIn>
       </Section>
-    </SignedIn>
+    </ProtectedRoute>
   );
 }

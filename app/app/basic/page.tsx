@@ -3,15 +3,9 @@ import { generateMetadata } from "@/utils/metadata";
 import { Section } from "@/components/layout/section";
 import ProtectedRoute from "@/components/auth/protect-route";
 
-export const metadata = generateMetadata({
-  title: "Dashboard",
-  description: "Access your personal dashboard and manage your account",
-  noIndex: true,
-});
-
 export default function Basic() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute plansWithAccess="basic">
       <Section header>
         <Heading>Basic</Heading>
       </Section>

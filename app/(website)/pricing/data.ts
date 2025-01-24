@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 
 export const plans: PlanData[] = [
   {
@@ -15,7 +15,7 @@ export const plans: PlanData[] = [
     priceSymbol: "$",
     monthlyPrice: { unit: "month", price: 12 },
     yearlyPrice: { unit: "year", price: 10 },
-    uid: siteConfig.outsetaPlans.plans.basic.uid,
+    uid: projectConfig.auth.plans.basic.uid,
   },
   {
     value: "pro",
@@ -32,7 +32,7 @@ export const plans: PlanData[] = [
     recommended: true,
     monthlyPrice: { unit: "month", price: 25 },
     yearlyPrice: { unit: "year", price: 20 },
-    uid: siteConfig.outsetaPlans.plans.pro.uid,
+    uid: projectConfig.auth.plans.pro.uid,
   },
 ];
 

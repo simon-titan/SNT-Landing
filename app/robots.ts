@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 
 export default function robots() {
   return {
@@ -6,9 +6,9 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: siteConfig.seo.robotsDisallowPaths,
+        disallow: projectConfig.seo.robotsDisallowPaths,
       },
     ],
-    sitemap: `${siteConfig.siteUrl}/sitemap.xml`,
+    sitemap: `${projectConfig.general.siteUrl}/sitemap.xml`,
   };
 }

@@ -8,21 +8,23 @@ import {
 } from "@chakra-ui/react";
 import { SiGithub, SiLinkedin, SiX } from "react-icons/si";
 import { Logo } from "./logo";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 import { Link } from "../ui/link";
 
 const Copyright = (props: TextProps) => {
   return (
     <Text fontSize="sm" color="fg.muted" {...props}>
-      &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+      &copy; {new Date().getFullYear()} {projectConfig.general.name}. All rights
+      reserved.
     </Text>
   );
 };
 
+// TODO: Map only which are available
 const socialLinks = [
-  { href: siteConfig.links.twitter, icon: <SiX /> },
-  { href: siteConfig.links.github, icon: <SiGithub /> },
-  { href: siteConfig.links.linkedin, icon: <SiLinkedin /> },
+  { href: projectConfig.links.twitter, icon: <SiX /> },
+  { href: projectConfig.links.github, icon: <SiGithub /> },
+  { href: projectConfig.links.linkedin, icon: <SiLinkedin /> },
 ];
 
 export const Footer = () => (

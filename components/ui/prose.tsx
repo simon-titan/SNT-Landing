@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { chakra } from "@chakra-ui/react"
+import { chakra } from "@chakra-ui/react";
 
 export const Prose = chakra("div", {
   base: {
@@ -250,15 +250,21 @@ export const Prose = chakra("div", {
   },
   variants: {
     size: {
+      sm: {
+        fontSize: "sm",
+      },
       md: {
         fontSize: "sm",
       },
       lg: {
         fontSize: "md",
       },
+      xl: {
+        fontSize: "xl",
+      },
     },
   },
   defaultVariants: {
     size: "md",
   },
-})
+});

@@ -1,5 +1,7 @@
 "use client";
 
+// TODO: Add similiar logic to protect-route.tsx
+
 import { useAuth } from "../provider/auth-provider";
 
 const billingStages = {

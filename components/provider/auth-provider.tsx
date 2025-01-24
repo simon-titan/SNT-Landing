@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { jwtVerify, importX509 } from "jose";
-import { siteConfig } from "@/config/site";
+import { projectConfig } from "@/config";
 import { OutsetaUser } from "@/types/outseta";
 
 interface AuthContextType {
@@ -68,7 +68,7 @@ function AuthProviderContent({ children }: { children: React.ReactNode }) {
   };
 
   const verifyAndSetToken = async (token: string) => {
-    const certificate = siteConfig.outsetaOptions.auth.publicKey;
+    const certificate = projectConfig.outsetaOptions.auth.publicKey;
     try {
       const publicKey = await importX509(certificate, "RS256");
       await jwtVerify(token, publicKey);
