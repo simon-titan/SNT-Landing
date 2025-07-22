@@ -1,9 +1,9 @@
 export const generalConfig = {
-  name: "Project Starter",
-  title: "Build Web Apps Faster",
-  description: "A powerful starter template for building web applications",
-  siteUrl: "https://project-rocket.danielwirtz.com/",
+  name: "MENTORSHIP-PLATFORM",
+  title: "Die modernste Mentorship-Plattform für Trader",
+  description: "Dein Weg zum Trading-Profi mit Mentorship!",
+  siteUrl: "wwww.snttrades.de",
   support: {
-    email: "support@project-rocket.com",
+    email: "info@snttrades.de",
   },
 };

@@ -45,52 +45,51 @@ export const cookieBannerConfig = {
       en: {
         consentModal: {
           description:
-            "We use cookies to improve your experience and understand site traffic. Read our <a href='/legal/cookie-policy'>Cookie Policy</a> or <a data-cc='show-preferencesModal'>manage your preferences</a>.",
-          acceptAllBtn: "Accept all",
-          acceptNecessaryBtn: "Reject all",
+            "Wir verwenden Cookies, um dein Nutzererlebnis zu verbessern. Lies unsere <a href='/legal/cookie-policy'>Cookie-Richtlinie</a> oder <a data-cc='show-preferencesModal'>verwalte deine Einstellungen</a>.",
+          acceptAllBtn: "Alle akzeptieren",
+          acceptNecessaryBtn: "Alle ablehnen",
         },
         preferencesModal: {
-          title: "Consent Preferences Center",
-          acceptAllBtn: "Accept all",
-          acceptNecessaryBtn: "Reject all",
-          savePreferencesBtn: "Save preferences",
-          closeIconLabel: "Close modal",
+          title: "Cookie-Einstellungen",
+          acceptAllBtn: "Alle akzeptieren",
+          acceptNecessaryBtn: "Alle ablehnen",
+          savePreferencesBtn: "Einstellungen speichern",
+          closeIconLabel: "Modal schließen",
           serviceCounterLabel: "Service|Services",
           sections: [
             {
-              title: "Cookie Usage",
+              title: "Verwendung von Cookies",
               description:
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                "Cookies helfen uns, deine Erfahrung auf unserer Website zu verbessern. Durch die Nutzung unserer Dienste erklärst du dich mit unserer Cookie-Richtlinie einverstanden.",
             },
             {
-              title:
-                'Strictly Necessary Cookies <span class="pm__badge">Always Enabled</span>',
+              title: 'Notwendige Cookies <span class="pm__badge">Immer aktiviert</span>',
               description:
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                "Diese Cookies sind für die Grundfunktionen der Website erforderlich und können nicht deaktiviert werden.",
               linkedCategory: "necessary",
             },
             {
-              title: "Functionality Cookies",
+              title: "Funktionale Cookies",
               description:
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                "Diese Cookies ermöglichen erweiterte Funktionen wie persönliche Einstellungen und gespeicherte Präferenzen.",
               linkedCategory: "functionality",
             },
             {
-              title: "Analytics Cookies",
+              title: "Analytics-Cookies",
               description:
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                "Diese Cookies helfen uns, die Nutzung der Website zu analysieren und die Benutzererfahrung zu optimieren.",
               linkedCategory: "analytics",
             },
             {
-              title: "Advertisement Cookies",
+              title: "Marketing-Cookies",
               description:
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                "Diese Cookies werden für personalisierte Werbung verwendet und können Daten mit Drittanbietern teilen.",
               linkedCategory: "marketing",
             },
             {
-              title: "More information",
+              title: "Weitere Informationen",
               description:
-                'For any query in relation to my policy on cookies and your choices, please <a class="cc__link" href="#yourdomain.com">contact me</a>.',
+                'Bei Fragen zu unserer Cookie-Richtlinie oder deinen Einstellungen <a class="cc__link" href="https://www.snt-elitetrades-platform.de/contact">kontaktiere uns bitte</a>.',
             },
           ],
         },
