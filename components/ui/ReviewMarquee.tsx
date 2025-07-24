@@ -159,7 +159,6 @@ const ReviewCard = ({ text, name, date, rating }) => {
       justifyContent="space-between"
       pb={6}
       border="2px solid #3182CE"
-      borderRadius="lg"
     >
       <HStack gap={1} mb={2} justify="flex-start">
         {Array.from({ length: 5 }).map((_, i) => (
