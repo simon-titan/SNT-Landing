@@ -244,7 +244,7 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
               </HStack>
               {/* Rechts: Buttons */}
               <HStack gap="2">
-                <a href="https://snttrades.de" target="_blank" rel="noopener noreferrer">
+                <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
                   <Button
                     size="sm"
                     variant="outline"
