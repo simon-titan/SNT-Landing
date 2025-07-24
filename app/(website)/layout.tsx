@@ -1,6 +1,6 @@
-import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Box } from "@chakra-ui/react";
+import NavbarConditional from "../../components/layout/NavbarConditional";
 
 export default function WebsiteLayout({
   children,
@@ -9,8 +9,8 @@ export default function WebsiteLayout({
 }) {
   return (
     <>
-      <Navbar type="website" />
-      <Box as="main">{children}</Box>
+      <NavbarConditional />
+      <Box as="main" overflowX="hidden">{children}</Box>
       <Footer />
     </>
   );

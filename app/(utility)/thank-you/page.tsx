@@ -6,9 +6,9 @@ import { generateMetadata } from "@/utils/metadata";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata = generateMetadata({
-  title: "Thank You",
+  title: "Vielen Dank",
   description:
-    "Thank you for signing up. Please check your email to complete registration",
+    "Vielen Dank für deine Anmeldung zur SNT-Mentorship Trading-Plattform. Bitte prüfe deine E-Mails, um deine Registrierung abzuschließen.",
   noIndex: true,
 });
 
@@ -21,19 +21,10 @@ export default function ThankYouPage() {
           <VStack>
             <EmptyState
               icon={<EnvelopeOpen />}
-              title="Almost there! Check your inbox."
-              description="We’ve sent you an email to complete your sign-up and set your
-                password. If you don’t see it shortly, please check your spam
-                folder."
+              title="Du hast es fast geschafft!"
+              description="Wir haben dir eine E-Mail geschickt, um deine Anmeldung für das SNT-Mentorship abzuschließen und dein Passwort zu setzen. Solltest du keine E-Mail erhalten haben, prüfe bitte auch deinen Spam-Ordner."
             >
-              <Box pt="4">
-                <Link href="https://mail.google.com">
-                  <Button size="sm">
-                    <ArrowSquareOut weight="duotone" />
-                    Open Gmail
-                  </Button>
-                </Link>
-              </Box>
+           
             </EmptyState>
           </VStack>
         </AbsoluteCenter>

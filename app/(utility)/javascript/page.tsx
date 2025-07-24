@@ -4,8 +4,8 @@ import { generateMetadata } from "@/utils/metadata";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata = generateMetadata({
-  title: "JavaScript Required",
-  description: "Please enable JavaScript to access this website",
+  title: "JavaScript erforderlich",
+  description: "Bitte aktivieren Sie JavaScript, um auf diese Website zuzugreifen",
   noIndex: true,
 });
 
@@ -16,8 +16,8 @@ export default function ActivateJavaScriptPage() {
         <VStack>
           <EmptyState
             icon={<Code />}
-            title="JavaScript is required"
-            description="This website requires JavaScript to function properly. Please enable JavaScript in your browser settings and reload the page."
+            title="JavaScript ist erforderlich"
+            description="Diese Website benötigt JavaScript, um ordnungsgemäß zu funktionieren. Bitte aktivieren Sie JavaScript in Ihren Browser-Einstellungen und laden Sie die Seite neu."
           ></EmptyState>
         </VStack>
       </AbsoluteCenter>
