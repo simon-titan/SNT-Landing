@@ -10,45 +10,53 @@
 const https = require('https');
 const http = require('http');
 
-// Test-Script für PayPal Webhook Endpunkt
-const testPayload = {
-  id: "WH-TEST-12345",
-  event_type: "PAYMENT.CAPTURE.COMPLETED",
-  resource_type: "capture",
-  summary: "Test Webhook",
-  resource: {
-    id: "TEST123",
-    payer: {
-      email_address: "test@example.com",
-      name: {
-        given_name: "Test",
-        surname: "Nutzer"
-      }
+// Test-Nachricht für den Webhook
+const testMessage = {
+  message: {
+    message_id: 123,
+    from: {
+      id: 123456789,
+      is_bot: false,
+      first_name: "Test",
+      username: "testuser"
     },
-    invoice_id: "NULRVQG5GN8PE"
-  },
-  create_time: new Date().toISOString()
+    chat: {
+      id: 123456789,
+      first_name: "Test",
+      username: "testuser",
+      type: "private"
+    },
+    date: Math.floor(Date.now() / 1000),
+    text: "/start"
+  }
 };
 
 async function testWebhook() {
+  console.log('🧪 Teste Webhook direkt...');
+  
   try {
-    const response = await fetch('http://localhost:3000/api/webhooks/paypal', {
+    const response = await fetch('https://www.snttrades.de/api/telegram/webhook', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'paypal-auth-algo': 'SHA256withRSA',
-        'paypal-transmission-id': 'test-id',
-        'paypal-cert-url': 'https://api.paypal.com/test',
-        'paypal-transmission-sig': 'test-sig',
-        'paypal-transmission-time': new Date().toISOString()
       },
-      body: JSON.stringify(testPayload)
+      body: JSON.stringify(testMessage)
     });
-
-    console.log('Response Status:', response.status);
-    console.log('Response:', await response.text());
+    
+    console.log('📊 Response Status:', response.status);
+    console.log('📊 Response Headers:', Object.fromEntries(response.headers));
+    
+    const result = await response.text();
+    console.log('📊 Response Body:', result);
+    
+    if (response.ok) {
+      console.log('✅ Webhook funktioniert!');
+    } else {
+      console.log('❌ Webhook Problem:', response.status, result);
+    }
+    
   } catch (error) {
-    console.error('Fehler beim Testen:', error);
+    console.error('❌ Fehler beim Testen:', error.message);
   }
 }
 
