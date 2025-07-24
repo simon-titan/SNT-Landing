@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sendSuccessMessageWebhook } from '../webhook/route';
+import { sendSuccessMessage } from '@/lib/telegram';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Sende Erfolgs-Nachricht über Webhook
-    await sendSuccessMessageWebhook(telegramUserId);
+    await sendSuccessMessage(telegramUserId);
 
     return NextResponse.json({ 
       success: true, 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    await sendSuccessMessageWebhook(parseInt(telegramUserId));
+    await sendSuccessMessage(parseInt(telegramUserId));
     return NextResponse.json({ 
       success: true, 
       message: 'Telegram Benachrichtigung erfolgreich gesendet' 

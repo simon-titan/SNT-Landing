@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sendMessage, getUserSession, setUserSession } from '@/lib/telegram';
 
 const TELEGRAM_TOKEN = '8306953306:AAEBzDdHEHC8ZWjQAz6RGO4jXm4DmJwOJgc';
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
-
-// Speichere User-Sessions (in Production solltest du eine Datenbank verwenden)
-const userSessions = new Map<number, { stage: 'start' | 'selection' | 'payment' | 'completed' }>();
 
 // Nachrichten
 const welcomeMessage = `### HERZLICH WILLKOMMEN BEI SNTTRADES,
@@ -38,19 +36,7 @@ Als neues Mitglied hast du direkt Zugang zu unserer Trading Strategie, Community
 
 const successMessage = `Vielen Dank für dein Vertrauen! Jetzt geht´s richtig los!!! 🏆`;
 
-// Hilfsfunktion zum Senden von Nachrichten
-async function sendMessage(chatId: number, text: string, options?: any) {
-  const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text,
-      ...options
-    })
-  });
-  return response.json();
-}
+// Hilfsfunktionen werden aus lib/telegram.ts importiert
 
 // Hilfsfunktion für Callback Query Antworten
 async function answerCallbackQuery(callbackQueryId: string) {
@@ -75,7 +61,7 @@ export async function POST(request: NextRequest) {
         console.log('Empfangen: /start von Chat:', chatId, 'User:', userId);
         
         // Setze User Session
-        userSessions.set(userId, { stage: 'start' });
+        setUserSession(userId, { stage: 'start' });
 
         // Sende Willkommensnachricht
         await sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
@@ -90,7 +76,7 @@ export async function POST(request: NextRequest) {
               ]
             }
           });
-          userSessions.set(userId, { stage: 'selection' });
+          setUserSession(userId, { stage: 'selection' });
         }, 2000);
       }
     }
@@ -116,7 +102,7 @@ Perfekte Wahl für den flexiblen Einstieg!`, {
           },
           parse_mode: 'Markdown'
         });
-        userSessions.set(userId, { stage: 'payment' });
+        setUserSession(userId, { stage: 'payment' });
 
       } else if (data === 'subscription_lifetime') {
         await sendMessage(chatId, `${paymentMessage}
@@ -131,7 +117,7 @@ Die beste Investition in deine Trading-Zukunft!`, {
           },
           parse_mode: 'Markdown'
         });
-        userSessions.set(userId, { stage: 'payment' });
+        setUserSession(userId, { stage: 'payment' });
 
       } else if (data === 'dashboard') {
         await sendMessage(chatId, 'Weiterleitung zum Dashboard...', {
@@ -155,25 +141,4 @@ Die beste Investition in deine Trading-Zukunft!`, {
   }
 }
 
-// Funktion zum Senden der Erfolgs-Nachricht (für externe API calls)
-export async function sendSuccessMessageWebhook(userId: number) {
-  try {
-    const session = userSessions.get(userId);
-    if (!session || session.stage === 'completed') {
-      return;
-    }
-
-    await sendMessage(userId, successMessage, {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: 'SNTTRADES Dashboard', callback_data: 'dashboard' }],
-          [{ text: 'Abo kündigen', callback_data: 'cancel_subscription' }]
-        ]
-      }
-    });
-
-    userSessions.set(userId, { stage: 'completed' });
-  } catch (error) {
-    console.error('Fehler beim Senden der Erfolgs-Nachricht:', error);
-  }
-} 
+// Erfolgs-Nachricht Funktion ist jetzt in lib/telegram.ts 
