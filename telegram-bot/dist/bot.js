@@ -12,31 +12,31 @@ exports.bot = bot;
 // Speichere User-Sessions für Tracking
 const userSessions = new Map();
 // Startnachricht
-const welcomeMessage = `### HERZLICH WILLKOMMEN BEI SNTTRADES,
+const welcomeMessage = ` HERZLICH WILLKOMMEN BEI SNTTRADES,
 
-Diese Entscheidung wird dein *Leben verändern* – **das verspreche ich dir!**
-**Warum?** Ganz einfach: Was du bei uns lernen wirst, ist *unbezahlbar:*
+Diese Entscheidung wird dein *Leben verändern – das verspreche ich dir!
+Warum? Ganz einfach: Was du bei uns lernen wirst, ist unbezahlbar:
 
-Ausführlicher *Video-Kurs* übers *Trading* und unsere eigene *Trading-Strategie! 👇*
+Ausführlicher Video-Kurs übers Trading und unsere eigene *Trading-Strategie! 👇*
 
-✅ *- SCALPING MASTERCLASS (NEFS STRATEGIE)*
+✅ - SCALPING MASTERCLASS (NEFS STRATEGIE)
 
-✅ *- ÜBER 40+ VIDEOS. (STÄNDIG NEU ERSCHEINENDES LERNMATERIAL)*
+✅ - ÜBER 40+ VIDEOS. (STÄNDIG NEU ERSCHEINENDES LERNMATERIAL)
 
-✅ *- RIESIGE COMMUNITY/GLEICH GESINNTE (≈1000 Nutzer)* 
+✅ - RIESIGE COMMUNITY/GLEICH GESINNTE (≈1000 Nutzer)*
 
-✅ *- MEHRERE ZOOM CALLS IM MONAT (MINDSET/LIVETRADING/Q&A)*
+✅ - MEHRERE ZOOM CALLS IM MONAT (MINDSET/LIVETRADING/Q&A)
 
-✅ *- GEWINNSPIELE, PREISKRÖNUNGEN ETC.*
+✅ - GEWINNSPIELE, PREISKRÖNUNGEN ETC.
 
-🏆 Ich zeige dir, wie man *erfolgreich tradet, worauf du achten musst, und geben dir wertvolle* **Tipps und Tricks**. 
+🏆 Ich zeige dir, wie man erfolgreich tradet, worauf du achten musst, und geben dir wertvolle Tipps und Tricks. 
 
-🎖Außerdem wirst du *meine Strategie* und meine Angehens weise, die ich *Tag täglich am Markt anwende*, lernen.
-🎓 Über *≈1000 Mitglieder* auf dem Discord, mit denen du dich täglich austauschen kannst. 
+🎖Außerdem wirst du meine Strategie und meine Angehens weise, die ich Tag täglich am Markt anwende, lernen.
+🎓 Über ≈1000 Mitglieder auf dem Discord, mit denen du dich täglich austauschen kannst. 
 
-Das Ziel ist es die größte *Trading FAMILIE Deutschlands* zu werden.
+Das Ziel ist es die größte Trading FAMILIE Deutschlands zu werden.
 
-*Mach jetzt den ersten Schritt in eine erfolgreiche Zukunft! Schließ dich uns an und werde Teil der SNT Family. Dein Erfolg wartet nicht auf dich* 👇👇👇👇`;
+Mach jetzt den ersten Schritt in eine erfolgreiche Zukunft! Schließ dich uns an und werde Teil der SNT Family. Dein Erfolg wartet nicht auf dich 👇👇👇👇`;
 // Zweite Nachricht
 const paymentMessage = `Fast geschafft! 😮‍💨
 Als neues Mitglied hast du direkt Zugang zu unserer Trading Strategie, Community und der exklusiven Lern-Plattform`;
