@@ -19,7 +19,7 @@ import {
   LuPackage,
   LuUser,
 } from "react-icons/lu";
-import type { PlanData } from "../../app/(website)/pricing/data";
+import type { PlanData } from "../../app/(website)/Produkte/data";
 
 const iconMap: Record<string, React.ReactNode> = {
   team: <LuBuilding />,

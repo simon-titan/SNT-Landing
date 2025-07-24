@@ -1,4 +1,17 @@
 /* Utility Classes */
+
+/*LIFETIME TEXT STYLING*/
+.planUid--496LXdmX .o--PlanSelector--price{
+  color: #199600 !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 10px #46464694 !important;
+}
+
+
+#widget-Outseta_chat {
+  display: none !important;
+}
+
 .o--Widget--widget .o--color-accent {
   color: var(--chakra-colors-primary-solid) !important;
 }

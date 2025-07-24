@@ -9,6 +9,7 @@ import {
   VStack,
   StackProps,
   Box,
+  Heading,
 } from "@chakra-ui/react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "../ui/menu";
+import { useRouter, usePathname } from "next/navigation";
 
 export const MenuLink = (props) => {
   return (
@@ -143,44 +145,122 @@ export const NavbarActionMenu = ({ type }: { type: "website" | "app" }) => {
 };
 
 export const Navbar = ({ type }: { type: "website" | "app" }) => {
-  console.log(type);
+  const router = useRouter();
+  const pathname = usePathname();
   return (
-    <Center
-      as="header"
-      position="fixed"
-      zIndex="docked"
-      top={{ base: "4", md: "6" }}
-      w="full"
-    >
-      <Container maxW={{ base: "full", md: "3xl" }}>
-        <Box
-          w="full"
-          px="4"
-          py="3"
-          boxShadow="xs"
-          background="bg.panel"
-          borderRadius="l3"
+    <Box px="4" py="2" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="docked" style={{margin:0, padding:0, border:0}}>
+      {/* Blauer Infobalken */}
+      <Box
+        w="100vw"
+        bg="#1296f6"
+        color="white"
+        fontSize="sm"
+        px="4"
+        py="4"
+        textAlign="center"
+        style={{ pointerEvents: "auto", margin: 0, boxShadow: "none", border: 0, borderBottom: "none", padding: 0 }}
+      >
+        Nicht sicher, wann du starten sollst?{' '}
+        <Link
+          href="#"
+          color="white"
+          textDecoration="underline"
+          fontWeight="bold"
         >
-          <CollapsibleRoot>
-            <HStack gap={{ base: "3", md: "8" }} justify="space-between">
-              <CollapsibleTrigger />
-              <Link href="/">
-                <Logo />
-              </Link>
-              <HStack justify="flex-end" w="full" hideFrom="md">
-                <NavbarActionMenu type="app" />
+          DANN FANG JETZT AN &gt;
+        </Link>
+      </Box>
+
+      {/* Navbar */}
+      <Box
+        as="header"
+        w="100vw"
+        background="white"
+        px="0"
+        py="2"
+        boxShadow="0 2px 8px rgba(0,0,0,0.06)"
+        borderBottom="1px solid #e2e8f0"
+        style={{ margin: 0, borderTop: "none", padding: 0 }}
+      >
+        <Box w="80%" mx="auto" px="4" py="2">
+          <HStack gap={{ base: "3", md: "8" }} justify="space-between" w="full">
+            {/* Logo links */}
+            <Link href="/">
+              <Heading
+                as="h1"
+                fontSize={{ base: "xl", md: "2xl" }}
+                fontWeight="700"
+                lineHeight="0.9"
+                bg="linear-gradient(0deg, #000000 0%, #6b7280 100%)"
+                bgClip="text"
+              >
+                SNT-TRADES™
+              </Heading>
+            </Link>
+            {/* Navigation + Buttons rechts */}
+            <HStack gap={{ base: 2, md: 8 }}>
+              <HStack gap="6" as="nav">
+                <Button
+                  variant="ghost"
+                  colorPalette="gray"
+                  onClick={() => {
+                    if (pathname === "/") {
+                      const el = document.getElementById('winnings');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      router.push('/#winnings');
+                    }
+                  }}
+                >
+                  Wie es funktioniert
+                </Button>
+                {/* Produkte Dropdown */}
+                <MenuRoot>
+                  <MenuTrigger asChild>
+                    <Button variant="ghost" colorPalette="gray">
+                      Produkte
+                    </Button>
+                  </MenuTrigger>
+                  <MenuContent>
+                    <MenuItem value="uebersicht">
+                      <Link href="/Produkte">Übersicht</Link>
+                    </MenuItem>
+                    <MenuItem value="ressourcen">
+                      <Link href="/Produkte/SNT-Ressourcen-Bibliothek">Ressourcen Bibliothek (Kostenlos)</Link>
+                    </MenuItem>
+                    <MenuItem value="mentorship">
+                      <Link href="/Produkte/SNTTRADES-AUSBILDUNG">Mentorship (Paid-Kurs)</Link>
+                    </MenuItem>
+                  </MenuContent>
+                </MenuRoot>
+                <Link href="/Resultate">
+                  <Button
+                    variant="ghost"
+                    colorPalette="gray"
+                  >
+                    Resultate
+                  </Button>
+                </Link>
               </HStack>
-              <HStack gap="2" hideBelow="md">
-                <NavbarLinkMenu />
-                <NavbarActionMenu type="app" />
+              {/* Rechts: Buttons */}
+              <HStack gap="2">
+                <a href="https://snttrades.de" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    colorPalette="gray"
+                  >
+                    MENTORSHIP LOGIN
+                  </Button>
+                </a>
+                <Button size="sm" colorScheme="blue">
+                  FANG ENDLICH AN
+                </Button>
               </HStack>
             </HStack>
-            <CollapsibleContent hideFrom="md" mt={4}>
-              <NavbarLinkMenu />
-            </CollapsibleContent>
-          </CollapsibleRoot>
+          </HStack>
         </Box>
-      </Container>
-    </Center>
+      </Box>
+    </Box>
   );
 };

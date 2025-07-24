@@ -23,7 +23,7 @@ export default function WebsiteLayout({
         <Link href="/">
           <Button colorPalette="gray" variant="outline">
             <ArrowLeft />
-            Back home
+            Zurück zur Startseite
           </Button>
         </Link>
       </Box>
