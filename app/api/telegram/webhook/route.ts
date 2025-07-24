@@ -5,7 +5,7 @@ const TELEGRAM_TOKEN = '8306953306:AAEBzDdHEHC8ZWjQAz6RGO4jXm4DmJwOJgc';
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 
 // Nachrichten
-const welcomeMessage = `### HERZLICH WILLKOMMEN BEI SNTTRADES,
+const welcomeMessage = `HERZLICH WILLKOMMEN BEI SNTTRADES,
 
 Diese Entscheidung wird dein *Leben verändern* – **das verspreche ich dir!**
 **Warum?** Ganz einfach: Was du bei uns lernen wirst, ist *unbezahlbar:*
@@ -25,6 +25,7 @@ Ausführlicher *Video-Kurs* übers *Trading* und unsere eigene *Trading-Strategi
 🏆 Ich zeige dir, wie man *erfolgreich tradet, worauf du achten musst, und geben dir wertvolle* **Tipps und Tricks**. 
 
 🎖Außerdem wirst du *meine Strategie* und meine Angehens weise, die ich *Tag täglich am Markt anwende*, lernen.
+
 🎓 Über *≈1000 Mitglieder* auf dem Discord, mit denen du dich täglich austauschen kannst. 
 
 Das Ziel ist es die größte *Trading FAMILIE Deutschlands* zu werden.
@@ -66,18 +67,16 @@ export async function POST(request: NextRequest) {
         // Sende Willkommensnachricht
         await sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
 
-        // Sende Plan-Auswahl
-        setTimeout(async () => {
-          await sendMessage(chatId, 'Wähle dein Abo-Modell:', {
-            reply_markup: {
-              inline_keyboard: [
-                [{ text: '📅 Monatlich - 59.99€', callback_data: 'subscription_monthly' }],
-                [{ text: '💎 Lifetime - 367€', callback_data: 'subscription_lifetime' }]
-              ]
-            }
-          });
-          setUserSession(userId, { stage: 'selection' });
-        }, 2000);
+        // Sende Plan-Auswahl direkt danach (ohne setTimeout)
+        await sendMessage(chatId, 'Wähle dein Abo-Modell:', {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '📅 Monatlich - 59.99€', callback_data: 'subscription_monthly' }],
+              [{ text: '💎 Lifetime - 367€', callback_data: 'subscription_lifetime' }]
+            ]
+          }
+        });
+        setUserSession(userId, { stage: 'selection' });
       }
     }
 
