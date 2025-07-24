@@ -2,7 +2,7 @@ const token = '8306953306:AAEBzDdHEHC8ZWjQAz6RGO4jXm4DmJwOJgc';
 
 async function setupWebhook() {
   // WICHTIG: Ersetze diese URL mit deiner tatsächlichen Vercel URL
-  const webhookUrl = 'https://www.snttrades.de//api/telegram/webhook';
+  const webhookUrl = 'https://www.snttrades.de/api/telegram/webhook';
   
   console.log('🔧 Setup Telegram Webhook...');
   console.log('URL:', webhookUrl);
