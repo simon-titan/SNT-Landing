@@ -111,12 +111,12 @@ export default async function Page() {
               </Button>
             </Link>
           </Stack>
-         <Stack direction="row" align="center" justify="center" mt={0}>
-           <WarningCircle size={16} color="#A0AEC0" />
-           <Text fontSize="xs" color="gray.400" textAlign="center">
-             Trading beinhaltet Risiken. <Link href="#" color="gray.400" textDecoration="underline">Lies unseren Disclaimer!</Link>
-           </Text>
-         </Stack>
+          <Stack direction="row" align="center" cursor="pointer" justify="center" mt={0}>
+            <WarningCircle size={16} color="#A0AEC0" />
+            <Text fontSize="xs" color="gray.400" cursor="pointer" textAlign="center" zIndex={1000}>
+              Trading beinhaltet Risiken. <Link href="/legal/disclaimer" color="gray.400" cursor="pointer" textDecoration="underline">Lies unseren Disclaimer!</Link>
+            </Text>
+          </Stack>
         </VStack>
       </Section>
       
@@ -352,7 +352,32 @@ export default async function Page() {
               mb={{ md: 0 }}
               zIndex={1}
               overflow="visible"
+              position="relative"
             >
+              {/* Badge */}
+              <Box
+                position="absolute"
+                top={4}
+                right={4}
+                px={4}
+                py={2}
+                fontSize="sm"
+                fontWeight="bold"
+                borderRadius="xl"
+                color="#22c55e"
+                bg="rgba(34, 197, 94, 0.35)"
+                border="2px solid #22c55e"
+                boxShadow="0 4px 24px 0 rgba(34,197,94,0.25), 0 1.5px 8px 0 rgba(0,0,0,0.10)"
+                backdropFilter="blur(12px)"
+                letterSpacing="wider"
+                zIndex={10}
+                style={{
+                  textShadow: '0 2px 8px rgba(34,197,94,0.5)',
+                  WebkitBackdropFilter: 'blur(12px)'
+                }}
+              >
+                EXKLUSIVES ANGEBOT
+              </Box>
               {/* Bild */}
               <Box 
                 w="100%" 
@@ -377,14 +402,14 @@ export default async function Page() {
                 />
               </Box>
               <Text fontWeight="bold" color="gray.400" fontSize="sm" mb={2}>SNTTRADES</Text>
-              <Heading as="h2" size="lg" mb={2}>SNTTRADES Trading Ausbildung</Heading>
+              <Heading as="h2" size="2xl" mb={2}>SNTTRADES AUSBILDUNG</Heading>
               <Text mb={4}>Lerne alles, was ich in über 6 Jahren Trading- und Investment-Erfahrung gesammelt habe – in einem strukturierten, selbstbestimmten Ausbildungsprozess von Anfänger bis Profi.</Text>
-              <Stack direction="row" align="center" gap="3" mb={2}>
-                <Text as="s" color="red.300" fontWeight="bold" fontSize="lg">567€</Text>
+              <Stack direction="row" align="baseline" gap="1" mb={2}>
+                <Text as="s" color="red.400" fontWeight="bold" fontSize="lg">567€</Text>
                 <Text 
                   color="green.400" 
                   fontWeight="bold" 
-                  fontSize="2xl"
+                  fontSize="4xl"
                   textShadow="0 0 8px rgba(72, 187, 120, 0.6)"
                 >
                   367€
@@ -422,7 +447,32 @@ export default async function Page() {
               display="flex"
               flexDirection="column"
               alignSelf="center"
+              position="relative"
             >
+              {/* Badge */}
+              <Box
+                position="absolute"
+                top={4}
+                right={4}
+                px={4}
+                py={2}
+                fontSize="sm"
+                fontWeight="bold"
+                borderRadius="xl"
+                color="blue"
+                bg="rgba(59, 130, 246, 0.35)"
+                border="2px solid #3b82f6"
+                boxShadow="0 4px 24px 0 rgba(59,130,246,0.25), 0 1.5px 8px 0 rgba(0,0,0,0.10)"
+                backdropFilter="blur(12px)"
+                letterSpacing="wider"
+                zIndex={10}
+                style={{
+                  textShadow: '0 2px 8px rgba(59,130,246,0.5)',
+                  WebkitBackdropFilter: 'blur(12px)'
+                }}
+              >
+                KOSTENLOS
+              </Box>
               {/* Bild */}
               <Box w="100%" h="180px" bg="gray.100" borderRadius="lg" mb={4} overflow="hidden" display="flex" alignItems="center" justifyContent="center">
                 <img src="/assets/V4.png" alt="SNTTRADES Ressourcen Bibliothek" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '0.5rem' }} />

@@ -194,7 +194,7 @@ const DesktopNavigation = () => {
             <Link href="/Produkte/SNT-Ressourcen-Bibliothek">Ressourcen Bibliothek (Kostenlos)</Link>
           </MenuItem>
           <MenuItem value="mentorship">
-            <Link href="/Produkte/SNTTRADES-AUSBILDUNG">Mentorship (Paid-Kurs)</Link>
+            <Link href="/Produkte/SNTTRADES-AUSBILDUNG">SNTTRADES Ausbildung</Link>
           </MenuItem>
         </MenuContent>
       </MenuRoot>

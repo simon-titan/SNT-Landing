@@ -22,7 +22,7 @@ export default function ThankYouPage() {
             <EmptyState
               icon={<EnvelopeOpen />}
               title="Du hast es fast geschafft!"
-              description="Wir haben dir eine E-Mail geschickt, um deine Anmeldung für das SNT-Mentorship abzuschließen und dein Passwort zu setzen. Solltest du keine E-Mail erhalten haben, prüfe bitte auch deinen Spam-Ordner."
+              description="Wir haben dir eine E-Mail geschickt, dort findest du deine KOSTENLOSE Ressourcen Bibliothek, prüfe bitte auch deinen Spam-Ordner."
             >
            
             </EmptyState>

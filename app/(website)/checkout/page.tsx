@@ -64,7 +64,7 @@ export default function CheckoutLandingPage() {
                 </Box>
 
                 {/* Content */}
-                <VStack gap="-4" maxW="900px" mx="auto" position="relative" zIndex={1} mt={{ base: "-16", md: "-24" }}>
+                <VStack gap="0" maxW="900px" mx="auto" position="relative" zIndex={1} mt={{ base: "-16", md: "-24" }}>
                     <Stack gap="2" textAlign="center" mx="auto">
                         {/* SNTTRADES Trading Academy Badge */}
                         <Box
@@ -120,298 +120,293 @@ export default function CheckoutLandingPage() {
             </Section>
 
             {/* Plan Selection Section */}
-            <Section size="lg" bg="white" py={{ base: 6, md: 10 }} px={{ base: 2, md: 24}} mx="unset">
-                <VStack gap="6" mx="auto">
-                    {/* Header */}
-                    <VStack gap="1" textAlign="center">
-                        <Heading
-                            as="h2"
-                            textStyle={{ base: "3xl", md: "4xl" }}
-                            color="gray.900"
-                            lineHeight="tight"
-                        >
-                            Wähle dein{' '}
-                            <Box as="span"
-                                background="linear-gradient(90deg,rgb(246, 236, 92), transparent 95%)"
-                                color="black"
-                                px={2}
-                                py={1}
-                                borderRadius="md"
-                                fontWeight="bold"
-                                display="inline-block"
+                <Box py={{ base: 4, md: 16 }} px={{ base: 4, md: 8}} display="flex" flexDirection="column" justifyContent="center" alignItems="center"  >
+                    <VStack gap="6" >
+                        {/* Header */}
+                        <VStack gap="1" textAlign="center">
+                            <Heading
+                                as="h2"
+                                textStyle={{ base: "3xl", md: "4xl" }}
+                                color="gray.900"
+                                lineHeight="tight"
                             >
-                                Mentorship-Paket
-                            </Box>
-                        </Heading>
-                        <Text color="gray.600" fontSize="sm" maxW="600px">
-                            Beide Pläne beinhalten die komplette SNTTRADES Ausbildung, Live-Calls und Community-Zugang
-                        </Text>
-                    </VStack>
+                                Wähle dein{' '}
+                                <Box as="span"
+                                    background="linear-gradient(90deg,rgb(246, 236, 92), transparent 95%)"
+                                    color="black"
+                                    px={2}
+                                    py={1}
+                                    borderRadius="md"
+                                    fontWeight="bold"
+                                    display="inline-block"
+                                >
+                                    Mentorship-Paket
+                                </Box>
+                            </Heading>
+                            <Text color="gray.600" fontSize="sm" maxW="600px">
+                                Beide Pläne beinhalten die komplette SNTTRADES Ausbildung, Live-Calls und Community-Zugang
+                            </Text>
+                        </VStack>
 
-                    {/* Plan Cards */}
-                    <Flex
-                        direction={{ base: "column", lg: "row" }}
-                        gap={6}
-                        align={{ base: "center", lg: "flex-start" }}
-                        justify={{ base: "center", lg: "space-between" }}
-                        w="full"
-                        px={{ base: 0, md: 2 }}
-                        mx="auto"
-                        position="relative"
-                        overflow="visible"
-                    >
-                        {/* Lifetime Plan - Hervorgehoben */}
-                        <Box
-                            bg="white"
-                            borderRadius="2xl"
-                            boxShadow="2xl"
-                            overflow="visible"
-                            border="3px solid"
-                            borderColor="green.400"
-                            w={{ base: "full", lg: "550px" }}
-                            h="640px"
-                            position="relative"
-                            transform={{ lg: "scale(1.05)" }}
-                            _hover={{
-                                transform: { lg: "scale(1.08) translateY(-4px)" },
-                                boxShadow: "3xl"
-                            }}
-                            transition="all 0.3s ease"
-                            mt="16px"
+                        {/* Plan Cards */}
+                        <Flex
+                            direction={{ base: "column", lg: "row" }}
+                            wrap="nowrap"
+                            gap={6}
+                            justify="center"
+                            align="center"
+                            w="100%"
+                            maxW="1200px"
+                            mx="2"
                         >
-                            {/* SNTTRADES-Empfehlung Badge */}
+                            {/* Lifetime Plan - Hervorgehoben */}
                             <Box
-                                position="absolute"
-                                top="-16px"
-                                right="-16px"
-                                bg="linear-gradient(135deg, #10B981, #34D399)"
-                                color="white"
-                                px={4}
-                                py={2}
-                                borderRadius="full"
-                                fontSize="xs"
-                                fontWeight="bold"
-                                zIndex={50}
-                                boxShadow="0 8px 25px rgba(16, 185, 129, 0.4)"
-                                border="2px solid white"
+                                flex="1"
+                                maxW="400px"
+                                bg="white"
+                                borderRadius="2xl"
+                                boxShadow="2xl"
+                                overflow="visible"
+                                border="3px solid"
+                                borderColor="green.400"
+                                position="relative"
                                 _hover={{
-                                    transform: "scale(1.05)",
-                                    boxShadow: "0 12px 35px rgba(16, 185, 129, 0.6)"
+                                    transform: { lg: "scale(1.08) translateY(-4px)" },
+                                    boxShadow: "3xl"
                                 }}
                                 transition="all 0.3s ease"
                             >
-                                <Box display="flex" alignItems="center" gap="1">
-                                    <CheckCircle size={16} weight="fill" />
-                                    <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.5px">SNTTRADES-EMPFEHLUNG</Text>
-                                </Box>
-                            </Box>
-
-                            {/* Header */}
-                            <Box
-                                bg="linear-gradient(135deg, #10B981, #34D399)"
-                                p={6}
-                                color="white"
-                                textAlign="center"
-                                pt={8}
-                            >
-                                <Box display="flex" alignItems="center" justifyContent="center" gap="2" mb="2">
-                                    <Crown size={28} weight="fill" />
-                                    <Text fontSize="2xl" fontWeight="bold">LIFETIME</Text>
-                                </Box>
-                                <Text fontSize="sm" opacity="0.9">
-                                    Einmalzahlung - Lebenslanger Zugang
-                                </Text>
-                            </Box>
-
-                            {/* Price */}
-                            <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
-                                <Box position="relative">
-                                    <Text
-                                        fontSize="3xl"
-                                        fontWeight="bold"
-                                        color="red.500"
-                                        textDecoration="line-through"
-                                        opacity="0.7"
-                                    >
-                                        567€
-                                    </Text>
-                                    <Text fontSize="6xl" fontWeight="bold" color="gray.900" lineHeight="1" mt="-2">
-                                        367€
-                                    </Text>
-                                </Box>
-                                <Text color="gray.600" fontSize="lg">
-                                    einmalig
-                                </Text>
+                                {/* SNTTRADES-Empfehlung Badge */}
                                 <Box
-                                    bg="green.500"
+                                    position="absolute"
+                                    top="-16px"
+                                    right="-16px"
+                                    bg="linear-gradient(135deg, #10B981, #34D399)"
                                     color="white"
-                                    px={3}
-                                    py={1}
+                                    px={4}
+                                    py={2}
                                     borderRadius="full"
                                     fontSize="xs"
                                     fontWeight="bold"
-                                    mt={2}
-                                    display="inline-block"
+                                    zIndex={50}
+                                    boxShadow="0 8px 25px rgba(16, 185, 129, 0.4)"
+                                    border="2px solid white"
+                                    _hover={{
+                                        transform: "scale(1.05)",
+                                        boxShadow: "0 12px 35px rgba(16, 185, 129, 0.6)"
+                                    }}
+                                    transition="all 0.3s ease"
                                 >
-                                    200€ GESPART
+                                    <Box display="flex" alignItems="center" gap="1">
+                                        <CheckCircle size={16} weight="fill" />
+                                        <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.5px">SNTTRADES-EMPFEHLUNG</Text>
+                                    </Box>
                                 </Box>
-                            </Box>
 
-                            {/* Features */}
-                            <Box p={6}>
-                                <VStack align="start" gap={3}>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm" fontWeight="semibold">Kompletter Videokurs</Text>
+                                {/* Header */}
+                                <Box
+                                    bg="linear-gradient(135deg, #10B981, #34D399)"
+                                    p={6}
+                                    color="white"
+                                    textAlign="center"
+                                    pt={8}
+                                >
+                                    <Box display="flex" alignItems="center" justifyContent="center" gap="2" mb="2">
+                                        <Crown size={28} weight="fill" />
+                                        <Text fontSize="2xl" fontWeight="bold">LIFETIME</Text>
                                     </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm" fontWeight="semibold">Live Mentoring Calls</Text>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm" fontWeight="semibold">Exklusive Community</Text>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm" fontWeight="semibold">Trading Tools & Software</Text>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm" fontWeight="semibold" color="green.600">
-                                            + Lebenslange Updates
+                                    <Text fontSize="sm" opacity="0.9">
+                                        Einmalzahlung - Lebenslanger Zugang
+                                    </Text>
+                                </Box>
+
+                                {/* Price */}
+                                <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
+                                    <Box position="relative">
+                                        <Text
+                                            fontSize="3xl"
+                                            fontWeight="bold"
+                                            color="red.500"
+                                            textDecoration="line-through"
+                                            opacity="0.7"
+                                        >
+                                            567€
+                                        </Text>
+                                        <Text fontSize="6xl" fontWeight="bold" color="gray.900" lineHeight="1" mt="-2">
+                                            367€
                                         </Text>
                                     </Box>
-                                </VStack>
-                            </Box>
-
-                            {/* CTA */}
-                            <Box p={6} pt={2}>
-                                <Button
-                                    size="xl"
-                                    w="full"
-                                    bg="linear-gradient(135deg, #10B981, #34D399)"
-                                    color="white"
-                                    fontWeight="bold"
-                                    _hover={{
-                                        bg: "linear-gradient(135deg, #059669, #10B981)"
-                                    }}
-                                    onClick={() => handlePlanSelection('lifetime')}
-                                >
-                                    LIFETIME SICHERN 🚀
-                                </Button>
-                            </Box>
-                        </Box>
-
-                        {/* Monthly Plan */}
-                        <Box
-                            bg="white"
-                            borderRadius="2xl"
-                            boxShadow="xl"
-                            overflow="hidden"
-                            border="2px solid"
-                            borderColor="gray.200"
-                            w={{ base: "full", lg: "480px" }}
-                            h="520px"
-                            position="relative"
-                            _hover={{
-                                transform: "translateY(-4px)",
-                                boxShadow: "2xl",
-                                borderColor: "blue.300"
-                            }}
-                            transition="all 0.3s ease"
-                        >
-                            {/* Header */}
-                            <Box
-                                bg="linear-gradient(135deg, #4F46E5, #7C3AED)"
-                                p={6}
-                                color="white"
-                                textAlign="center"
-                            >
-                                <Box display="flex" alignItems="center" justifyContent="center" gap="2" mb="2">
-                                    <Lightning size={24} weight="fill" />
-                                    <Text fontSize="xl" fontWeight="bold">MONATLICH</Text>
+                                    <Text color="gray.600" fontSize="lg">
+                                        einmalig
+                                    </Text>
+                                    <Box
+                                        bg="green.500"
+                                        color="white"
+                                        px={3}
+                                        py={1}
+                                        borderRadius="full"
+                                        fontSize="xs"
+                                        fontWeight="bold"
+                                        mt={2}
+                                        display="inline-block"
+                                    >
+                                        200€ GESPART
+                                    </Box>
                                 </Box>
-                                <Text fontSize="sm" opacity="0.9">
-                                    monatlich
+
+                                {/* Features */}
+                                <Box p={6}>
+                                    <VStack align="start" gap={3}>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm" fontWeight="semibold">Kompletter Videokurs</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm" fontWeight="semibold">Live Mentoring Calls</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm" fontWeight="semibold">Exklusive Community</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm" fontWeight="semibold">Trading Tools & Software</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm" fontWeight="semibold" color="green.600">
+                                                + Lebenslange Updates
+                                            </Text>
+                                        </Box>
+                                    </VStack>
+                                </Box>
+
+                                {/* CTA */}
+                                <Box p={6} pt={2}>
+                                    <Button
+                                        size="xl"
+                                        w="full"
+                                        bg="linear-gradient(135deg, #10B981, #34D399)"
+                                        color="white"
+                                        fontWeight="bold"
+                                        _hover={{
+                                            bg: "linear-gradient(135deg, #059669, #10B981)"
+                                        }}
+                                        onClick={() => handlePlanSelection('lifetime')}
+                                    >
+                                        LIFETIME SICHERN 🚀
+                                    </Button>
+                                </Box>
+                            </Box>
+
+                             {/* Info Box */}
+                             <Box
+                                flex="1"
+                                maxW="400px"
+                                bg="blue.50"
+                                borderRadius="lg"
+                                p="6"
+                                border="1px solid"
+                                borderColor="blue.100"
+                                textAlign="center"
+                                mt={{ base: 6, lg: 0 }}
+                                maxH="200px"
+                            >
+                                <Text fontWeight="bold" color="blue.800" mb="3">
+                                    🎯 WARUM LIFETIME WÄHLEN?
+                                </Text>
+                                <Text color="blue.700" fontSize="sm">
+                                    Mit dem Lifetime-Plan sparst du nicht nur 200€, sondern erhältst auch lebenslangen Zugang zu allen zukünftigen Updates,
+                                    neuen Strategien und erweiterten Inhalten - ohne zusätzliche Kosten!
                                 </Text>
                             </Box>
 
-                            {/* Price */}
-                            <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
-                                <Text fontSize="5xl" fontWeight="bold" color="gray.900" lineHeight="1">
-                                    59,99€
-                                </Text>
-                                <Text color="gray.600" fontSize="lg">
-                                    pro Monat
-                                </Text>
-                                <Text color="gray.500" fontSize="sm" mt="1">
-                                    Jederzeit kündbar
-                                </Text>
-                            </Box>
-
-                            {/* Features */}
-                            <Box p={6}>
-                                <VStack align="start" gap={3}>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm">Kompletter Videokurs</Text>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm">Live Mentoring Calls</Text>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm">Exklusive Community</Text>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="3">
-                                        <CheckCircle size={20} color="#10B981" weight="fill" />
-                                        <Text fontSize="sm">Trading Tools & Software</Text>
-                                    </Box>
-                                </VStack>
-                            </Box>
-
-                            {/* CTA */}
-                            <Box p={6} pt={2}>
-                                <Button
-                                    size="lg"
-                                    w="full"
-                                    colorScheme="purple"
-                                    onClick={() => handlePlanSelection('monthly')}
+                            {/* Monthly Plan */}
+                            <Box
+                                flex="1"
+                                maxW="400px"
+                                bg="white"
+                                borderRadius="2xl"
+                                boxShadow="xl"
+                                overflow="hidden"
+                                border="2px solid"
+                                borderColor="gray.200"
+                                position="relative"
+                                maxH="500px"
+                                _hover={{
+                                    transform: "translateY(-4px)",
+                                    boxShadow: "2xl",
+                                    borderColor: "blue.300"
+                                }}
+                                transition="all 0.3s ease"
+                            >
+                                {/* Header */}
+                                <Box
+                                    bg="linear-gradient(135deg,rgb(70, 107, 229),rgb(61, 58, 237))"
+                                    p={6}
+                                    color="white"
+                                    textAlign="center"
                                 >
-                                    MONATLICH WÄHLEN
-                                </Button>
+                                    <Box display="flex" alignItems="center" justifyContent="center" gap="2" mb="2">
+                                        <Lightning size={24} weight="fill" />
+                                        <Text fontSize="xl" fontWeight="bold">MONATLICH</Text>
+                                    </Box>
+                                    <Text fontSize="sm" opacity="0.9">
+                                        monatlich
+                                    </Text>
+                                </Box>
+
+                                {/* Price */}
+                                <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
+                                    <Text fontSize="5xl" fontWeight="bold" color="gray.900" lineHeight="1">
+                                        59,99€
+                                    </Text>
+                                    <Text color="gray.600" fontSize="lg">
+                                        pro Monat
+                                    </Text>
+                                    <Text color="gray.500" fontSize="sm" mt="1">
+                                        Jederzeit kündbar
+                                    </Text>
+                                </Box>
+
+                                {/* Features */}
+                                <Box p={6}>
+                                    <VStack align="start" gap={3}>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm">Kompletter Videokurs</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm">Live Mentoring Calls</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm">Exklusive Community</Text>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap="3">
+                                            <CheckCircle size={20} color="#10B981" weight="fill" />
+                                            <Text fontSize="sm">Trading Tools & Software</Text>
+                                        </Box>
+                                    </VStack>
+                                </Box>
+
+                                {/* CTA */}
+                                <Box p={6} pt={2}>
+                                    <Button
+                                        size="lg"
+                                        w="full"
+                                        colorScheme="purple"
+                                        onClick={() => handlePlanSelection('monthly')}
+                                    >
+                                        MONATLICH WÄHLEN
+                                    </Button>
+                                </Box>
                             </Box>
-                        </Box>
-
-                        {/* Info Box zwischen den Cards - auf Desktop ganz rechts */}
-                        <Box
-                            bg="blue.50"
-                            borderRadius="lg"
-                            p="6"
-                            border="1px solid"
-                            borderColor="blue.100"
-                            w={{ base: "full", lg: "480px" }}
-                            textAlign="center"
-                            alignSelf={{ base: "center", lg: "flex-start" }}
-                            ml={{ base: 0, lg: 4 }}
-                            mt={{ base: 6, lg: 0 }}
-                        >
-                            <Text fontWeight="bold" color="blue.800" mb="3">
-                                🎯 WARUM LIFETIME WÄHLEN?
-                            </Text>
-                            <Text color="blue.700" fontSize="sm">
-                                Mit dem Lifetime-Plan sparst du nicht nur 200€, sondern erhältst auch lebenslangen Zugang zu allen zukünftigen Updates,
-                                neuen Strategien und erweiterten Inhalten - ohne zusätzliche Kosten!
-                            </Text>
-                        </Box>
-                    </Flex>
-
-                    {/* Bottom Info */}
-
-                </VStack>
-            </Section>
+                        </Flex>
+                    </VStack>
+                </Box>
         </>
     );
 } 

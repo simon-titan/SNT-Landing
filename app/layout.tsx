@@ -32,8 +32,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning className="cc--theme light">
       <Head>
-        <title>Project Starter</title>
+        <title>SNTTRADES</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:image" content="/assets/opengraph.png" />
         <noscript>
           <meta httpEquiv="refresh" content="0; url=/javascript" />
         </noscript>

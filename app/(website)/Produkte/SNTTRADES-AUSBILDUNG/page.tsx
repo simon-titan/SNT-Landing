@@ -20,7 +20,7 @@ import { FaCheckCircle } from "react-icons/fa";
 
 export const metadata = generateMetadata({
   title: "SNTTRADES Ausbildung",
-  description: "Lerne den Kryptomarkt mit unserem bewährten Blueprint zu traden.",
+  description: "LERNE ERFOLGREICH IM FUTURES-MARKT ZU TRADEN.",
 });
 
 export default function HeroSection() {
@@ -118,7 +118,7 @@ export default function HeroSection() {
          <Stack direction="row" align="center" justify="center" mt={0}>
            <WarningCircle size={16} color="#A0AEC0" />
            <Text fontSize="xs" color="gray.400" textAlign="center">
-             Trading beinhaltet  Risiken. <Link href="#" color="gray.400" textDecoration="underline">Lies unseren Disclaimer!</Link>
+             Trading beinhaltet  Risiken. <Link href="/legal/disclaimer" color="gray.400" textDecoration="underline">Lies unseren Disclaimer!</Link>
            </Text>
          </Stack>
         </VStack>
