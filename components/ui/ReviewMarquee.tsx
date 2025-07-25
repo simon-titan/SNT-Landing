@@ -9,7 +9,7 @@ const StarIcon = ({ filled = false }) => (
     width="16"
     height="16"
     viewBox="0 0 20 20"
-    fill={filled ? "#3182CE" : "#E2E8F0"}
+    fill={filled ? "#FFD700" : "#E2E8F0"}
     xmlns="http://www.w3.org/2000/svg"
     style={{ display: "inline-block", verticalAlign: "middle" }}
   >
@@ -27,12 +27,12 @@ const StarIconHalf = () => (
     style={{ display: "inline-block", verticalAlign: "middle" }}
   >
     <defs>
-      <linearGradient id="half-blue">
-        <stop offset="50%" stopColor="#3182CE" />
+      <linearGradient id="half-gold">
+        <stop offset="50%" stopColor="#FFD700" />
         <stop offset="50%" stopColor="#E2E8F0" />
       </linearGradient>
     </defs>
-    <path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z" fill="url(#half-blue)" />
+    <path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z" fill="url(#half-gold)" />
   </svg>
 );
 
@@ -148,9 +148,11 @@ const ReviewCard = ({ text, name, date, rating }) => {
       maxW={{ base: "260px", md: "320px" }}
       minH={{ base: "320px", md: "340px" }}
       maxH={{ base: "320px", md: "340px" }}
-      bg="white"
+      bg="rgba(255, 255, 255, 0.1)"
+      backdropFilter="blur(10px)"
       borderRadius="lg"
-      boxShadow="md"
+      boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
+      border="1px solid rgba(255, 255, 255, 0.18)"
       p={4}
       mx={2}
       flexShrink={0}
@@ -158,7 +160,7 @@ const ReviewCard = ({ text, name, date, rating }) => {
       flexDirection="column"
       justifyContent="space-between"
       pb={6}
-      border="2px solid #3182CE"
+      color="white"
     >
       <HStack gap={1} mb={2} justify="flex-start">
         {Array.from({ length: 5 }).map((_, i) => (
@@ -166,18 +168,18 @@ const ReviewCard = ({ text, name, date, rating }) => {
         ))}
       </HStack>
       <Box flexGrow={1} mb={2}>
-        <Text fontSize="md" fontStyle="italic">
+        <Text fontSize="sm" color="grey.400">
           "{displayText}"
           {isLong && !expanded && (
-            <Box as="span" color="#3182CE" ml={1} cursor="pointer" onClick={() => setExpanded(true)}>
+            <Box as="span" color="black" ml={1} cursor="pointer" onClick={() => setExpanded(true)}>
               Mehr lesen
             </Box>
           )}
         </Text>
       </Box>
       <Box>
-        <Text fontWeight="bold">von {name}</Text>
-        <Text fontSize="xs" color="gray.500">{date}</Text>
+        <Text fontSize="xs">von {name}</Text>
+        <Text fontSize="xs" color="black">{date}</Text>
       </Box>
     </Box>
   );
@@ -192,7 +194,7 @@ export const ReviewMarquee = () => {
       overflow="hidden"
       position="relative"
       py={{ base: 8, md: 12 }}
-      bg="bg.subtle"
+      bg="linear-gradient(135deg, rgba(13, 112, 182, 0.8), rgba(35, 0, 63, 0.8))"
       _hover={{ cursor: "pointer" }}
     >
       <style>{`
@@ -215,15 +217,16 @@ export const ReviewMarquee = () => {
             <span key={i}><StarIcon filled={true} /></span>
           ))}
           <span><StarIconHalf /></span>
-          <Text fontWeight="bold" fontSize="md" color="#3182CE" ml={2}>4,5 von 5</Text>
+          <Text fontWeight="semibold" fontSize="md" color="white" ml={2}>4,8 von 5</Text>
         </HStack>
-        <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }} textAlign="center" w="full" textTransform="uppercase">
-          WAS UNSERE TEILNEHMER SAGEN:<span role="img" aria-label="down"></span>
+        <Text fontWeight="500" color="white" fontSize={{ base: "xl", md: "2xl" }} textAlign="center" w="full">
+          Was unsere Teilnehmer sagen:<span role="img" aria-label="down"></span>
         </Text>
         <Box
           w="100%"
           minH={{ base: "180px", md: "210px" }}
           overflow="hidden"
+          position="relative"
           onMouseEnter={e => {
             const track = e.currentTarget.querySelector('.marquee-track');
             if (track) track.classList.add('marquee-paused');
