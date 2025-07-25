@@ -4,9 +4,9 @@ import { generateMetadata } from "@/utils/metadata";
 import Markdown from "react-markdown";
 
 export const metadata = generateMetadata({
-  title: "Privacy Policy",
+  title: "Datenschutzerklärung",
   description:
-    "Understand how we collect, use, and protect your personal information",
+    "Erfahren Sie, wie SEITENNULL - FZCO Ihre persönlichen Daten erhebt, verwendet und schützt",
 });
 
 export default function PrivacyPolicy() {
@@ -15,87 +15,64 @@ export default function PrivacyPolicy() {
       <Prose mx="auto" size="lg" mt="">
         <Markdown>
           {`
-# Privacy Policy
+# Datenschutzerklärung - SEITENNULL - FZCO
 
-**Effective Date:** [Insert Date]
+**Gültigkeitsdatum:** ${new Date().toLocaleDateString('de-DE')}
 
-At [Your Company Name], we are committed to protecting your privacy. This Privacy Policy outlines how we collect, use, disclose, and safeguard your information when you visit our website and use our services. By accessing or using our services, you agree to the terms of this Privacy Policy.
+## 1. Allgemeine Informationen
 
-## 1. Information We Collect
+SEITENNULL - FZCO respektiert die Privatsphäre der Nutzer und verpflichtet sich, die persönlichen Daten der Teilnehmer zu schützen. Diese Datenschutzerklärung beschreibt, wie wir die von dir bereitgestellten personenbezogenen Daten erheben, verwenden, speichern und schützen.
 
-We may collect the following types of information:
+## 2. Erhebung und Verwendung personenbezogener Daten
 
-### 1.1 Personal Information
-When you register for our services, we may collect personal information that can identify you, such as:
--  Name
--  Email address
--  Phone number
--  Billing address
--  Payment information
+Wir erheben folgende personenbezogene Daten:
+- Name
+- E-Mail-Adresse
 
-### 1.2 Non-Personal Information
-We may also collect non-personal information that does not identify you, including:
--  Browser type
--  Device information
--  IP address
--  Pages visited
--  Time spent on pages
+Diese Daten werden verwendet:
+- Zur Kommunikation mit den Nutzern
+- Zur Durchführung von Marketingmaßnahmen, einschließlich Newslettern und Werbeaktionen
 
-## 2. How We Use Your Information
+**Rechtsgrundlage für die Datenverarbeitung ist:**
+- Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)
+- Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an Marketing)
 
-We may use the information we collect for various purposes, including to:
--  Provide, maintain, and improve our services
--  Process your transactions and manage your account
--  Communicate with you about your account or transactions
--  Send you marketing communications and promotional materials
--  Analyze usage and trends to enhance user experience
--  Comply with legal obligations and enforce our terms
+## 3. Weitergabe personenbezogener Daten
 
-## 3. Disclosure of Your Information
+Wir geben **keine personenbezogenen Daten an Dritte weiter**. Alle Daten bleiben innerhalb der unsere Plattform snttrades.de oder snt-elitetrades-platform.de-Plattform und werden ausschließlich für unsere eigenen Zwecke verwendet.
 
-We may share your information in the following circumstances:
--  **With Service Providers:** We may share your information with third-party vendors who perform services on our behalf, such as payment processing, data analysis, email delivery, hosting services, and customer service.
--  **For Legal Reasons:** We may disclose your information if required to do so by law or in response to valid requests by public authorities (e.g., a court or government agency).
--  **Business Transfers:** If we are involved in a merger, acquisition, or asset sale, your information may be transferred as part of that transaction.
+## 4. Speicherdauer
 
-## 4. Data Security
+Es besteht **keine feste Löschfrist**. Die Daten werden so lange gespeichert, wie sie für die genannten Zwecke erforderlich sind. Du kannst jederzeit eine Löschung oder Änderung beantragen.
 
-We implement reasonable security measures to protect your information from unauthorized access, use, or disclosure. However, no method of transmission over the Internet or method of electronic storage is 100% secure. Therefore, we cannot guarantee its absolute security.
+## 5. Rechte der Nutzer
 
-## 5. Your Rights
+Du hast das Recht auf:
+- Auskunft
+- Berichtigung
+- Löschung deiner personenbezogenen Daten
 
-Depending on your location, you may have the following rights regarding your information:
--  The right to access, correct, or delete your personal information
--  The right to object to or restrict the processing of your personal information
--  The right to data portability
--  The right to withdraw consent at any time where we rely on your consent to process your information
+**Kontakt:** seitennulltrades@gmail.com
 
-To exercise these rights, please contact us using the contact information provided below.
+## 6. Datensicherheit
 
-## 6. Third-Party Websites
+Wir schützen deine Daten mit angemessenen technischen und organisatorischen Maßnahmen vor unbefugtem Zugriff, Verlust oder Missbrauch.
 
-Our services may contain links to third-party websites. We do not control and are not responsible for the content or privacy practices of these websites. We encourage you to review the privacy policies of any third-party sites you visit.
+## 7. Verwendung von Cookies
 
-## 7. Children’s Privacy
+Die Plattform unsere Plattform snttrades.de oder snt-elitetrades-platform.de kann Cookies oder Tracking-Technologien einsetzen. Bitte informiere dich direkt über die Datenschutzerklärung von unsere Plattform snttrades.de oder snt-elitetrades-platform.de: [https://whop.com/privacy](https://whop.com/privacy)
 
-Our services are not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware that we have collected personal information from a child under 13, we will take steps to delete such information.
+## 8. Datenübermittlung außerhalb der EU
 
-## 8. Changes to This Privacy Policy
+Bitte beachte, dass **SEITENNULL - FZCO in den Vereinigten Arabischen Emiraten ansässig ist**. Eine Datenverarbeitung außerhalb der EU erfolgt nur im gesetzlich zulässigen Rahmen.
 
-We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on our website with a new effective date. Your continued use of our services after any changes constitutes your acceptance of the updated Privacy Policy.
+## 9. Änderungen dieser Erklärung
 
-## 9. Contact Us
-
-If you have any questions about this Privacy Policy or our privacy practices, please contact us at:
-
-[Your Company Name]  
-[Your Address]  
-[Your Email Address]  
-[Your Phone Number]  
+Wir behalten uns vor, diese Datenschutzerklärung jederzeit zu aktualisieren. Bitte prüfe regelmäßig diese Seite auf Änderungen.
 
 ---
 
-**Last Updated:** [Insert Date]
+**Zuletzt aktualisiert:** ${new Date().toLocaleDateString('de-DE')}
           `}
         </Markdown>
       </Prose>

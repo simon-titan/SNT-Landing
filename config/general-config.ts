@@ -4,6 +4,6 @@ export const generalConfig = {
   description: "Dein Weg zum Trading-Profi mit Mentorship!",
   siteUrl: "https://www.snttrades.de",
   support: {
-    email: "info@snttrades.de",
+    email: "seitennulltrades@gmail.com",
   },
 };

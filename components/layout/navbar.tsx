@@ -10,6 +10,8 @@ import {
   StackProps,
   Box,
   Heading,
+  IconButton,
+  Icon,
 } from "@chakra-ui/react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -26,7 +28,19 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "../ui/menu";
+import {
+  DrawerRoot,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseTrigger,
+  DrawerBackdrop,
+  DrawerTitle,
+} from "../ui/drawer";
 import { useRouter, usePathname } from "next/navigation";
+import { List } from "@phosphor-icons/react/dist/ssr";
+import { useState } from "react";
 
 export const MenuLink = (props) => {
   return (
@@ -144,25 +158,170 @@ export const NavbarActionMenu = ({ type }: { type: "website" | "app" }) => {
   );
 };
 
-export const Navbar = ({ type }: { type: "website" | "app" }) => {
+// Navigation Links Komponente für Desktop
+const DesktopNavigation = () => {
   const router = useRouter();
   const pathname = usePathname();
+  
   return (
-    <Box px="4" py="2" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="docked" style={{margin:0, padding:0, border:0}}>
+    <HStack gap="6" as="nav" display={{ base: "none", md: "flex" }}>
+      <Button
+        variant="ghost"
+        colorPalette="gray"
+        onClick={() => {
+          if (pathname === "/") {
+            const el = document.getElementById('winnings');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            router.push('/#winnings');
+          }
+        }}
+      >
+        Wie es funktioniert
+      </Button>
+      {/* Produkte Dropdown */}
+      <MenuRoot>
+        <MenuTrigger asChild>
+          <Button variant="ghost" colorPalette="gray">
+            Produkte
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem value="uebersicht">
+            <Link href="/Produkte">Übersicht</Link>
+          </MenuItem>
+          <MenuItem value="ressourcen">
+            <Link href="/Produkte/SNT-Ressourcen-Bibliothek">Ressourcen Bibliothek (Kostenlos)</Link>
+          </MenuItem>
+          <MenuItem value="mentorship">
+            <Link href="/Produkte/SNTTRADES-AUSBILDUNG">Mentorship (Paid-Kurs)</Link>
+          </MenuItem>
+        </MenuContent>
+      </MenuRoot>
+      
+    </HStack>
+  );
+};
+
+// Mobile Navigation Drawer
+const MobileNavigation = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleNavigate = (action: () => void) => {
+    setIsOpen(false);
+    setTimeout(action, 100); // Delay für smoother UX
+  };
+
+  return (
+    <Box display={{ base: "block", md: "none" }}>
+      <DrawerRoot open={isOpen} onOpenChange={(e) => setIsOpen(e.open)}>
+        <DrawerTrigger asChild>
+          <IconButton
+            aria-label="Menü öffnen"
+            variant="ghost"
+            size="sm"
+            colorPalette="gray"
+          >
+            <Icon>
+              <List />
+            </Icon>
+          </IconButton>
+        </DrawerTrigger>
+        <DrawerBackdrop />
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Navigation</DrawerTitle>
+            <DrawerCloseTrigger />
+          </DrawerHeader>
+          <DrawerBody>
+            <VStack gap="4" align="stretch">
+              <Button
+                variant="ghost"
+                w="full"
+                justifyContent="flex-start"
+                onClick={() => handleNavigate(() => {
+                  if (pathname === "/") {
+                    const el = document.getElementById('winnings');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    router.push('/#winnings');
+                  }
+                })}
+              >
+                Wie es funktioniert
+              </Button>
+              
+              <VStack gap="2" align="stretch">
+                <Heading size="sm" color="gray.600" px="3">Produkte</Heading>
+                <Button
+                  variant="ghost"
+                  w="full"
+                  justifyContent="flex-start"
+                  pl="6"
+                  onClick={() => handleNavigate(() => router.push('/Produkte'))}
+                >
+                  Übersicht
+                </Button>
+                <Button
+                  variant="ghost"
+                  w="full"
+                  justifyContent="flex-start"
+                  pl="6"
+                  onClick={() => handleNavigate(() => router.push('/Produkte/SNT-Ressourcen-Bibliothek'))}
+                >
+                  Ressourcen Bibliothek (Kostenlos)
+                </Button>
+                <Button
+                  variant="ghost"
+                  w="full"
+                  justifyContent="flex-start"
+                  pl="6"
+                  onClick={() => handleNavigate(() => router.push('/Produkte/SNTTRADES-AUSBILDUNG'))}
+                >
+                  Mentorship (Paid-Kurs)
+                </Button>
+              </VStack>
+              
+              
+              
+              {/* Mentorship Login für Mobile */}
+              <Box pt="4" borderTop="1px solid" borderColor="gray.200">
+                <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    w="full"
+                    variant="outline"
+                    colorPalette="gray"
+                  >
+                    MENTORSHIP LOGIN
+                  </Button>
+                </a>
+              </Box>
+            </VStack>
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerRoot>
+    </Box>
+  );
+};
+
+export const Navbar = ({ type }: { type: "website" | "app" }) => {
+  return (
+    <Box px="0" py="0" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="docked">
       {/* Blauer Infobalken */}
       <Box
         w="100vw"
         bg="#1296f6"
         color="white"
-        fontSize="sm"
+        fontSize="xs"
         px="4"
-        py="4"
+        py="2"
         textAlign="center"
-        style={{ pointerEvents: "auto", margin: 0, boxShadow: "none", border: 0, borderBottom: "none", padding: 0 }}
       >
         Nicht sicher, wann du starten sollst?{' '}
         <Link
-          href="#"
+          href="/checkout"
           color="white"
           textDecoration="underline"
           fontWeight="bold"
@@ -171,24 +330,23 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
         </Link>
       </Box>
 
-      {/* Navbar */}
-      <Box
-        as="header"
-        w="100vw"
-        background="white"
-        px="0"
-        py="2"
-        boxShadow="0 2px 8px rgba(0,0,0,0.06)"
-        borderBottom="1px solid #e2e8f0"
-        style={{ margin: 0, borderTop: "none", padding: 0 }}
-      >
-        <Box w="80%" mx="auto" px="4" py="2">
-          <HStack gap={{ base: "3", md: "8" }} justify="space-between" w="full">
-            {/* Logo links */}
+             {/* Navbar */}
+       <Box
+         as="header"
+         w="100vw"
+         background="white"
+         px="0"
+         py="1"
+         boxShadow="0 2px 8px rgba(0,0,0,0.06)"
+         borderBottom="1px solid #e2e8f0"
+       >
+         <Box w={{ base: "100%", md: "80%" }} mx="auto" px="4" py="2">
+          <HStack justify="space-between" w="full">
+            {/* Logo ganz links */}
             <Link href="/">
               <Heading
                 as="h1"
-                fontSize={{ base: "xl", md: "2xl" }}
+                fontSize={{ base: "lg", md: "2xl" }}
                 fontWeight="700"
                 lineHeight="0.9"
                 bg="linear-gradient(0deg, #000000 0%, #6b7280 100%)"
@@ -197,53 +355,14 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                 SNT-TRADES™
               </Heading>
             </Link>
-            {/* Navigation + Buttons rechts */}
-            <HStack gap={{ base: 2, md: 8 }}>
-              <HStack gap="6" as="nav">
-                <Button
-                  variant="ghost"
-                  colorPalette="gray"
-                  onClick={() => {
-                    if (pathname === "/") {
-                      const el = document.getElementById('winnings');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      router.push('/#winnings');
-                    }
-                  }}
-                >
-                  Wie es funktioniert
-                </Button>
-                {/* Produkte Dropdown */}
-                <MenuRoot>
-                  <MenuTrigger asChild>
-                    <Button variant="ghost" colorPalette="gray">
-                      Produkte
-                    </Button>
-                  </MenuTrigger>
-                  <MenuContent>
-                    <MenuItem value="uebersicht">
-                      <Link href="/Produkte">Übersicht</Link>
-                    </MenuItem>
-                    <MenuItem value="ressourcen">
-                      <Link href="/Produkte/SNT-Ressourcen-Bibliothek">Ressourcen Bibliothek (Kostenlos)</Link>
-                    </MenuItem>
-                    <MenuItem value="mentorship">
-                      <Link href="/Produkte/SNTTRADES-AUSBILDUNG">Mentorship (Paid-Kurs)</Link>
-                    </MenuItem>
-                  </MenuContent>
-                </MenuRoot>
-                <Link href="/Resultate">
-                  <Button
-                    variant="ghost"
-                    colorPalette="gray"
-                  >
-                    Resultate
-                  </Button>
-                </Link>
-              </HStack>
-              {/* Rechts: Buttons */}
-              <HStack gap="2">
+            
+            {/* Rechte Seite mit Navigation und Buttons */}
+            <HStack gap="4">
+              {/* Desktop Navigation */}
+              <DesktopNavigation />
+              
+              {/* Desktop Buttons */}
+              <HStack gap="1" display={{ base: "none", md: "flex" }}>
                 <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
                   <Button
                     size="sm"
@@ -253,10 +372,22 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                     MENTORSHIP LOGIN
                   </Button>
                 </a>
-                <Button size="sm" colorScheme="blue">
-                  FANG ENDLICH AN
-                </Button>
+                <Link href="/checkout">
+                  <Button size="sm"  bg="blue.500" _hover={{ bg: "blue.400" }}>
+                    FANG ENDLICH AN
+                  </Button>
+                </Link>
               </HStack>
+              
+                             {/* Mobile: Nur FANG ENDLICH AN Button + Hamburger */}
+               <HStack gap="2" display={{ base: "flex", md: "none" }}>
+                 <Link href="/checkout">
+                   <Button size="sm"  bg="#1E88E5" _hover={{ bg: "blue.300" }} fontSize="xx-small">
+                     FANG ENDLICH AN
+                   </Button>
+                 </Link>
+                 <MobileNavigation />
+               </HStack>
             </HStack>
           </HStack>
         </Box>

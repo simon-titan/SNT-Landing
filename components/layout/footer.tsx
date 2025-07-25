@@ -6,6 +6,8 @@ import {
   Text,
   Heading,
   type TextProps,
+  Flex,
+  Box,
 } from "@chakra-ui/react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
 import { projectConfig } from "@/config";
@@ -24,6 +26,15 @@ const Copyright = (props: TextProps) => {
 const socialLinks = [
   { href: projectConfig.links.instagram, icon: <SiInstagram /> },
   { href: projectConfig.links.tiktok, icon: <SiTiktok /> },
+];
+
+const legalLinks = [
+  { href: "/legal/impressum", label: "Impressum" },
+  { href: "/legal/terms-and-conditions", label: "AGB" },
+  { href: "/legal/privacy-policy", label: "Datenschutz" },
+  { href: "/legal/eula", label: "EULA" },
+  { href: "/legal/rueckgabe", label: "Rückgabe" },
+  { href: "/legal/cookie-policy", label: "Cookie-Richtlinie" },
 ];
 
 export const Footer = () => (
@@ -49,7 +60,36 @@ export const Footer = () => (
           ))}
         </HStack>
       </Stack>
-      <Copyright />
+      
+      <Box h="1px" bg="border.subtle" />
+      
+      {/* Legal Links Section */}
+      <Flex 
+        direction={{ base: "column", md: "row" }} 
+        justify="space-between" 
+        align={{ base: "start", md: "center" }}
+        gap={{ base: 4, md: 0 }}
+      >
+        <Copyright />
+        <Flex 
+          wrap="wrap" 
+          gap={{ base: 2, md: 4 }} 
+          justify={{ base: "start", md: "end" }}
+          align="center"
+        >
+          {legalLinks.map(({ href, label }, index) => (
+            <Link 
+              key={index} 
+              href={href} 
+              fontSize="sm" 
+              color="fg.muted"
+              _hover={{ color: "fg.default" }}
+            >
+              {label}
+            </Link>
+          ))}
+        </Flex>
+      </Flex>
     </Stack>
   </Container>
 );

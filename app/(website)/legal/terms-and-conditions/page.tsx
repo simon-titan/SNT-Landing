@@ -4,9 +4,9 @@ import { generateMetadata } from "@/utils/metadata";
 import Markdown from "react-markdown";
 
 export const metadata = generateMetadata({
-  title: "Terms and Conditions",
+  title: "Allgemeine Geschäftsbedingungen (AGB)",
   description:
-    "Read our terms of service and legal agreements for using our platform",
+    "Allgemeine Geschäftsbedingungen für die Nutzung des Mentorship-Programms von SEITENNULL - FZCO",
 });
 
 export default function TermsAndConditions() {
@@ -15,84 +15,63 @@ export default function TermsAndConditions() {
       <Prose mx="auto" size="lg" mt="28">
         <Markdown>
           {`
-# Terms and Conditions
+# Allgemeine Geschäftsbedingungen (AGB) - SEITENNULL - FZCO
 
-**Effective Date:** [Insert Date]
+**Gültigkeitsdatum:** ${new Date().toLocaleDateString('de-DE')}
 
-Welcome to [Your Company Name]! These Terms and Conditions govern your use of our website, products, and services. By accessing or using our services, you agree to comply with these Terms and Conditions. If you do not agree, please do not use our services.
+Willkommen bei SEITENNULL - FZCO. Diese Allgemeinen Geschäftsbedingungen ("AGB") regeln die Nutzung unseres Mentorship-Programms. **Durch den Kauf eines Zugangs zu unserem Mentorship-Programm erklärst du dich mit diesen Bedingungen einverstanden.**
 
-## 1. Definitions
+## 1. Zahlungen und Rückerstattungen
 
--  **"Service"** refers to the services provided by [Your Company Name], including but not limited to [list services, e.g., SaaS, membership access, online courses, digital products].
--  **"User"** refers to any individual or entity that accesses or uses our services.
--  **"Content"** refers to any text, images, videos, or other materials provided by [Your Company Name] through the Service.
+- Wir bieten sowohl **monatliche als auch einmalige Zahlungen** für unser Mentorship-Programm an.
+- **Alle Zahlungen sind endgültig und nicht erstattungsfähig. Eine Rückerstattung ist nicht möglich.**
+- Das Mentorship-Abonnement verlängert sich automatisch monatlich, es sei denn, der Teilnehmer kündigt rechtzeitig vor dem nächsten Abrechnungszeitraum.
 
-## 2. Acceptance of Terms
+## 2. Verpflichtungen und Verhalten der Teilnehmer
 
-By using our Service, you confirm that you are at least 18 years old or have parental consent to use our services. You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete.
+- Die Teilnehmer verpflichten sich, sich **respektvoll gegenüber anderen Mitgliedern** und dem Mentorship-Programm zu verhalten.
+- Wir behalten uns das Recht vor, Teilnehmer, die sich unangemessen verhalten, **ohne Vorankündigung aus dem Programm zu entfernen**.
+- Bei Verstoß gegen diese Regeln kann der Zugang **ohne Erstattung dauerhaft gesperrt werden**.
 
-## 3. Account Registration
+## 3. Haftungsausschluss
 
-To access certain features of our Service, you may be required to create an account. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account.
+- **SEITENNULL - FZCO ist nicht verantwortlich für etwaige Verluste oder Fehlinvestitionen**, die durch die Teilnahme am Mentorship-Programm entstehen.
+- Das Programm basiert auf den Erfahrungen des Mentors, und alle Inhalte sind als Anleitung zu verstehen. **Jeder Teilnehmer handelt auf eigenes Risiko.**
 
-## 4. Payment Terms
+## 4. Laufzeit des Programms
 
--  **Subscription Fees:** If you purchase a subscription, you agree to pay all fees associated with your subscription. All payments are non-refundable unless otherwise stated.
--  **Billing:** You authorize us to charge your designated payment method for the subscription fees and any applicable taxes.
+- Es gibt **keine feste Laufzeit** für das Mentorship-Programm. Das Abonnement wird monatlich erneuert, es sei denn, der Teilnehmer kündigt das Abonnement vor Ablauf des aktuellen Monats.
 
-## 5. License to Use Service
+## 5. Rechte an Materialien
 
-Subject to your compliance with these Terms, [Your Company Name] grants you a limited, non-exclusive, non-transferable license to access and use the Service for your personal or internal business purposes.
+- Alle Materialien, einschließlich Videos, PDFs und Kursinhalte, sind **ausschließlich für den persönlichen Gebrauch** des Teilnehmers bestimmt.
+- **Es ist untersagt, diese Materialien zu speichern, weiterzugeben oder zu verbreiten.**
+- Jeder Verstoß führt zur **sofortigen Sperrung des Zugangs ohne Rückerstattungsanspruch** und kann rechtliche Konsequenzen nach sich ziehen.
 
-## 6. User Conduct
+## 6. Kündigungsbedingungen
 
-You agree not to:
--  Use the Service for any unlawful purpose.
--  Impersonate any person or entity.
--  Transmit any harmful or malicious code.
--  Disrupt or interfere with the security, integrity, or performance of the Service.
+- Teilnehmer müssen ihr Abonnement **rechtzeitig vor dem Ende des Abrechnungsmonats kündigen**, um eine automatische Verlängerung und erneute Abrechnung zu vermeiden.
+- Eine Kündigung muss **mindestens 24 Stunden vor dem nächsten Abrechnungsdatum** erfolgen.
 
-## 7. Intellectual Property
+## 7. Recht auf Verweigerung der Teilnahme
 
-All Content provided through the Service is the property of [Your Company Name] or its licensors and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission.
+- SEITENNULL - FZCO behält sich das Recht vor, Teilnehmern **den Zugang zum Programm zu verweigern**, wenn diese sich respektlos oder unangemessen verhalten.
 
-## 8. Termination
+## 8. Gerichtsstand
 
-We may terminate or suspend your access to the Service at any time, without prior notice or liability, for any reason, including if you breach these Terms. Upon termination, your right to use the Service will immediately cease.
+- **Gerichtsstand für alle Streitigkeiten aus dem Vertragsverhältnis ist Dubai, Vereinigte Arabische Emirate**, sofern gesetzlich zulässig.
 
-## 9. Disclaimer of Warranties
+## Datenschutz und weitere rechtliche Hinweise
 
-The Service is provided on an "as is" and "as available" basis. [Your Company Name] makes no warranties, express or implied, regarding the Service, including but not limited to its availability, reliability, or fitness for a particular purpose.
+Weitere Details zum Datenschutz und zur Verarbeitung personenbezogener Daten findest du in unserer [Datenschutzerklärung](/legal/privacy-policy). Bitte lies diese aufmerksam durch.
 
-## 10. Limitation of Liability
+## Kontakt
 
-To the fullest extent permitted by law, [Your Company Name] shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the Service.
-
-## 11. Indemnification
-
-You agree to indemnify and hold harmless [Your Company Name], its affiliates, and their respective officers, directors, employees, and agents from any claims, losses, liabilities, damages, costs, or expenses arising out of your use of the Service or your violation of these Terms.
-
-## 12. Changes to Terms
-
-We reserve the right to modify these Terms at any time. We will notify you of any changes by posting the new Terms on our website. Your continued use of the Service after any changes constitutes your acceptance of the new Terms.
-
-## 13. Governing Law
-
-These Terms shall be governed by and construed in accordance with the laws of [Your State/Country], without regard to its conflict of law principles.
-
-## 14. Contact Information
-
-If you have any questions about these Terms, please contact us at:
-
-[Your Company Name]  
-[Your Address]  
-[Your Email Address]  
-[Your Phone Number]  
+Bei Fragen zu diesen AGB kontaktiere uns unter: **seitennulltrades@gmail.com**
 
 ---
 
-**Last Updated:** [Insert Date]
-
+**Zuletzt aktualisiert:** ${new Date().toLocaleDateString('de-DE')}
           `}
         </Markdown>
       </Prose>

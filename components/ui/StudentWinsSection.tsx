@@ -49,9 +49,9 @@ export const StudentWinsSection = () => {
   const imageBlocks = chunkArray(resultsImages, 4);
 
   return (
-    <Box as="section" py={{ base: 10, md: 20 }} w="full" bg="white">
+    <Box as="section" py={{ base: 10, md: 20 }} px={{ base: 6, md: 12 }} w="full" bg="white">
       <VStack gap={4} align="center" mb={8} w="full">
-        <Text color="#fb7185" fontWeight="bold" fontSize="sm" textTransform="uppercase">
+        <Text color="#fbbf24" fontWeight="bold" fontSize="sm" textTransform="uppercase">
         Erfolge unserer Teilnehmer
         </Text>
         <Text as="h2" fontWeight="bold" fontSize={{ base: "2xl", md: "4xl" }} textAlign="center">
@@ -62,98 +62,150 @@ export const StudentWinsSection = () => {
         <Box w="100%" maxW="1100px" maxH="900px" overflowY="auto" pb={6}>
           <VStack gap={8} w="full" align="stretch">
             {imageBlocks.map((block, idx) => (
-              <Box key={idx} as="section" display={{ base: "block", md: "flex" }} gap={6} alignItems="start" justifyContent="center">
-                {idx % 2 === 0 ? (
-                  <>
-                    <Box flexShrink={0} mb={{ base: 6, md: 0 }}>
-                      {demoVideos[idx] && (
-                        <CustomVerticalVideoPlayer src={demoVideos[idx].src} title={demoVideos[idx].title} />
-                      )}
+              <Box key={idx} as="section">
+                {/* Mobile Layout: Always video first, then images below */}
+                <VStack gap={6} display={{ base: "flex", md: "none" }} align="center">
+                  {demoVideos[idx] && (
+                    <Box flexShrink={0}>
+                      <CustomVerticalVideoPlayer src={demoVideos[idx].src} title={demoVideos[idx].title} />
                     </Box>
-                    <SimpleGrid columns={2} gap={4} minW="340px" maxW="580px">
-                      {block.map((img, i) => (
-                        <Box
-                          key={img}
-                          bg="white"
-                          borderRadius="lg"
-                          boxShadow="sm"
-                          border="2px solid #e5e7eb"
-                          minW="160px"
-                          maxW="260px"
-                          overflow="hidden"
-                          p={0}
-                          cursor="pointer"
-                          transition="box-shadow 0.2s"
-                          _hover={{ boxShadow: "lg" }}
-                          onClick={() => handleImgClick(img)}
-                        >
-                          <Box w="full" h="120px" bg="#f1f5f9" position="relative">
-                            <Image src={`/RESULTS/${img}`} alt={img} w="full" h="120px" objectFit="cover" />
-                          </Box>
-                          <Text fontWeight="normal" fontSize="md" p={3} textAlign="center">
-                            {img.replace(/\.[^/.]+$/, "")}
-                          </Text>
+                  )}
+                  <SimpleGrid columns={2} gap={4} minW="340px" maxW="580px">
+                    {block.map((img, i) => (
+                      <Box
+                        key={img}
+                        bg="white"
+                        borderRadius="lg"
+                        boxShadow="sm"
+                        border="2px solid #e5e7eb"
+                        minW="160px"
+                        maxW="260px"
+                        overflow="hidden"
+                        p={0}
+                        cursor="pointer"
+                        transition="box-shadow 0.2s"
+                        _hover={{ boxShadow: "lg" }}
+                        onClick={() => handleImgClick(img)}
+                      >
+                        <Box w="full" h="120px" bg="#f1f5f9" position="relative">
+                          <Image src={`/RESULTS/${img}`} alt={img} w="full" h="120px" objectFit="cover" />
                         </Box>
-                      ))}
-                    </SimpleGrid>
-                  </>
-                ) : (
-                  <>
-                    <SimpleGrid columns={2} gap={4} minW="340px" maxW="580px">
-                      {block.map((img, i) => (
-                        <Box
-                          key={img}
-                          bg="white"
-                          borderRadius="lg"
-                          boxShadow="sm"
-                          border="2px solid #e5e7eb"
-                          minW="160px"
-                          maxW="260px"
-                          overflow="hidden"
-                          p={0}
-                          cursor="pointer"
-                          transition="box-shadow 0.2s"
-                          _hover={{ boxShadow: "lg" }}
-                          onClick={() => handleImgClick(img)}
-                        >
-                          <Box w="full" h="120px" bg="#f1f5f9" position="relative">
-                            <Image src={`/RESULTS/${img}`} alt={img} w="full" h="120px" objectFit="cover" />
+                        <Text fontWeight="normal" fontSize="md" p={3} textAlign="center">
+                          {img.replace(/\.[^/.]+$/, "")}
+                        </Text>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </VStack>
+
+                {/* Desktop Layout: Alternating left/right video position */}
+                <Box display={{ base: "none", md: "flex" }} gap={6} alignItems="start" justifyContent="center">
+                  {idx % 2 === 0 ? (
+                    <>
+                      <Box flexShrink={0}>
+                        {demoVideos[idx] && (
+                          <CustomVerticalVideoPlayer src={demoVideos[idx].src} title={demoVideos[idx].title} />
+                        )}
+                      </Box>
+                      <SimpleGrid columns={2} gap={4} minW="340px" maxW="580px">
+                        {block.map((img, i) => (
+                          <Box
+                            key={img}
+                            bg="white"
+                            borderRadius="lg"
+                            boxShadow="sm"
+                            border="2px solid #e5e7eb"
+                            minW="160px"
+                            maxW="260px"
+                            overflow="hidden"
+                            p={0}
+                            cursor="pointer"
+                            transition="box-shadow 0.2s"
+                            _hover={{ boxShadow: "lg" }}
+                            onClick={() => handleImgClick(img)}
+                          >
+                            <Box w="full" h="120px" bg="#f1f5f9" position="relative">
+                              <Image src={`/RESULTS/${img}`} alt={img} w="full" h="120px" objectFit="cover" />
+                            </Box>
+                            <Text fontWeight="normal" fontSize="md" p={3} textAlign="center">
+                              {img.replace(/\.[^/.]+$/, "")}
+                            </Text>
                           </Box>
-                          <Text fontWeight="normal" fontSize="md" p={3} textAlign="center">
-                            {img.replace(/\.[^/.]+$/, "")}
-                          </Text>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                    <Box flexShrink={0} mb={{ base: 6, md: 0 }}>
-                      {demoVideos[idx] && (
-                        <CustomVerticalVideoPlayer src={demoVideos[idx].src} title={demoVideos[idx].title} />
-                      )}
-                    </Box>
-                  </>
-                )}
+                        ))}
+                      </SimpleGrid>
+                    </>
+                  ) : (
+                    <>
+                      <SimpleGrid columns={2} gap={4} minW="340px" maxW="580px">
+                        {block.map((img, i) => (
+                          <Box
+                            key={img}
+                            bg="white"
+                            borderRadius="lg"
+                            boxShadow="sm"
+                            border="2px solid #e5e7eb"
+                            minW="160px"
+                            maxW="260px"
+                            overflow="hidden"
+                            p={0}
+                            cursor="pointer"
+                            transition="box-shadow 0.2s"
+                            _hover={{ boxShadow: "lg" }}
+                            onClick={() => handleImgClick(img)}
+                          >
+                            <Box w="full" h="120px" bg="#f1f5f9" position="relative">
+                              <Image src={`/RESULTS/${img}`} alt={img} w="full" h="120px" objectFit="cover" />
+                            </Box>
+                            <Text fontWeight="normal" fontSize="md" p={3} textAlign="center">
+                              {img.replace(/\.[^/.]+$/, "")}
+                            </Text>
+                          </Box>
+                        ))}
+                      </SimpleGrid>
+                      <Box flexShrink={0}>
+                        {demoVideos[idx] && (
+                          <CustomVerticalVideoPlayer src={demoVideos[idx].src} title={demoVideos[idx].title} />
+                        )}
+                      </Box>
+                    </>
+                  )}
+                </Box>
               </Box>
             ))}
           </VStack>
         </Box>
       </Box>
-      <DialogRoot open={isOpen} onOpenChange={open => { if (!open) handleClose(); }}>
+      <DialogRoot open={isOpen} onOpenChange={(details) => { if (!details.open) handleClose(); }}>
         <DialogContent>
-          <DialogCloseTrigger>
-            <Button position="absolute" top={2} right={2} zIndex={10} colorScheme="gray" size="sm">Schließen</Button>
+          <DialogCloseTrigger asChild>
+            <Button 
+              position="absolute" 
+              top={4} 
+              right={4} 
+              zIndex={1000} 
+              colorScheme="gray" 
+              size="sm"
+              onClick={handleClose}
+            >
+              Schließen
+            </Button>
           </DialogCloseTrigger>
           <DialogBody style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 0 }}>
             {selectedImg && (
-              <Image src={`/RESULTS/${selectedImg}`} alt={selectedImg} maxH="80vh" maxW="100%" m="auto" />
+              <Image 
+                src={`/RESULTS/${selectedImg}`} 
+                alt={selectedImg} 
+                maxH="80vh" 
+                maxW="100%" 
+                m="auto"
+                onClick={handleClose}
+                cursor="pointer"
+              />
             )}
           </DialogBody>
         </DialogContent>
       </DialogRoot>
-      <Box display="flex" justifyContent="center" mt={6}>
-        <Button colorScheme="blue" size="lg" fontWeight="bold">
-          Alle Studentenerfolge ansehen
-        </Button>
-      </Box>
+      
     </Box>
   );
 };

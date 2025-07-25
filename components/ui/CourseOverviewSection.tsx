@@ -1,25 +1,85 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Text, VStack, HStack, SimpleGrid, Stack } from "@chakra-ui/react";
 
 const stats = [
   {
     label: "JAHRE ERFAHRUNG ALS VOLLZEIT-TRADER",
     value: "6+",
+    numericValue: 6,
+    suffix: "+",
   },
   {
     label: "UMGESETZTES KAPITAL",
     value: "€400K+",
+    numericValue: 400,
+    suffix: "K+",
+    prefix: "€",
   },
   {
     label: "FOLLOWS AUF SOCIAL MEDIA",
     value: "10k+",
+    numericValue: 10,
+    suffix: "k+",
   },
   {
     label: "AUSGEBILDETE MITGLIEDER",
     value: "1000+",
+    numericValue: 1000,
+    suffix: "+",
   },
 ];
+
+// Hook für Count-up Animation
+const useCountUp = (end: number, duration: number = 2000, startAnimation: boolean = false) => {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    if (!startAnimation) return;
+    
+    let startTime: number;
+    
+    const animateCount = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      
+      setCount(Math.floor(progress * end));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateCount);
+      }
+    };
+    
+    requestAnimationFrame(animateCount);
+  }, [end, duration, startAnimation]);
+  
+  return count;
+};
+
+// Hook für Intersection Observer
+const useIntersectionObserver = (threshold: number = 0.1) => {
+  const [isInView, setIsInView] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold }
+    );
+    
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [threshold]);
+  
+  return { ref, isInView };
+};
 
 const courses = [
   {
@@ -57,64 +117,77 @@ const courses = [
   },
 ];
 
-export const CourseOverviewSection = () => (
-  <Box as="section" py={{ base: 10, md: 20 }} w="full" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-    <SimpleGrid columns={{ base: 2, md: 4 }} gap={{ base: 6, md: 10 }} mb={12} w="full" maxW="5xl">
-      {stats.map((stat, i) => (
-        <VStack key={i} gap={1} align="center" justify="center">
-          <Text fontSize={{ base: "sm", md: "md" }} color="#0a2540" fontWeight="semibold" textAlign="center" textTransform="uppercase" letterSpacing="0.02em">
-            {stat.label}
-          </Text>
-          <Text fontSize={{ base: "3xl", md: "5xl" }} fontWeight="bold" color="#2563eb" mt={2}>
-            {stat.value}
-          </Text>
-        </VStack>
-      ))}
-    </SimpleGrid>
-    <Text as="h2" fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold" textAlign="center" mb={10}>
-      Unsere Ausbildung eignet sich besonders für …
-    </Text>
-    <SimpleGrid columns={{ base: 1, md: 3 }} gap={8} w="full" maxW="6xl">
-      {courses.map((course, i) => (
-        <Box
-          key={i}
-          bg={course.bg}
-          borderRadius="16px"
-          boxShadow="md"
-          p={{ base: 6, md: 8 }}
-          color={course.color}
-          display="flex"
-          flexDirection="column"
-          minH="340px"
-        >
-          <Box mb={4}>{course.icon}</Box>
-          <Text fontWeight="bold" fontSize={{ base: "xl", md: "2xl" }} mb={2}>
-            {course.title}
-          </Text>
-          <Text fontSize="md" mb={6} color={i === 2 ? "#dbeafe" : course.color}>
-            {course.desc}
-          </Text>
-          <Box mt="auto">
-            <a
-              href="#"
-              style={{
-                fontWeight: 600,
-                color: course.linkColor,
-                borderBottom: `2px solid ${course.linkColor}`,
-                textDecoration: 'none',
-                transition: 'opacity 0.2s',
-                display: 'inline-block',
-              }}
-              onMouseOver={e => (e.currentTarget.style.opacity = '0.8')}
-              onMouseOut={e => (e.currentTarget.style.opacity = '1')}
-            >
-              {course.link} <span style={{ fontSize: 18, verticalAlign: 'middle' }}>›</span>
-            </a>
+// Komponente für animierte Statistik
+const AnimatedStat = ({ stat, isInView }: { stat: typeof stats[0], isInView: boolean }) => {
+  const count = useCountUp(stat.numericValue, 2000, isInView);
+  
+  return (
+    <VStack gap={0} align="center" justify="center">
+      <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="bold" color="#2563eb">
+        {stat.prefix}{count}{stat.suffix}
+      </Text>
+      <Text fontSize={{ base: "sm", md: "md" }} color="#0a2540" fontWeight="semibold" textAlign="center" textTransform="uppercase" letterSpacing="0.02em">
+        {stat.label}
+      </Text>
+    </VStack>
+  );
+};
+
+export const CourseOverviewSection = () => {
+  const { ref, isInView } = useIntersectionObserver(0.3);
+  
+  return (
+    <Box as="section" py={{ base: 6, md: 12 }} px={{ base: 4, md: 8 }} w="full" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+      <SimpleGrid ref={ref} columns={{ base: 1, md: 4 }} gap={{ base: 4, md: 6 }} mb={12} w="full" maxW="5xl">
+        {stats.map((stat, i) => (
+          <AnimatedStat key={i} stat={stat} isInView={isInView} />
+        ))}
+      </SimpleGrid>
+      <Text as="h2" fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold" textAlign="center" mb={6}>
+        Unsere Ausbildung eignet sich besonders für …
+      </Text>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} w="full" maxW="6xl">
+        {courses.map((course, i) => (
+          <Box
+            key={i}
+            bg={course.bg}
+            borderRadius="16px"
+            boxShadow="md"
+            p={{ base: 6, md: 8 }}
+            color={course.color}
+            display="flex"
+            flexDirection="column"
+            minH="340px"
+          >
+            <Box mb={4}>{course.icon}</Box>
+            <Text fontWeight="bold" fontSize={{ base: "xl", md: "2xl" }} mb={2}>
+              {course.title}
+            </Text>
+            <Text fontSize="md" mb={6} color={i === 2 ? "#dbeafe" : course.color}>
+              {course.desc}
+            </Text>
+            <Box mt="auto">
+              <a
+                href="/Produkte/SNTTRADES-AUSBILDUNG"
+                style={{
+                  fontWeight: 600,
+                  color: course.linkColor,
+                  borderBottom: `2px solid ${course.linkColor}`,
+                  textDecoration: 'none',
+                  transition: 'opacity 0.2s',
+                  display: 'inline-block',
+                }}
+                onMouseOver={e => (e.currentTarget.style.opacity = '0.8')}
+                onMouseOut={e => (e.currentTarget.style.opacity = '1')}
+              >
+                {course.link} <span style={{ fontSize: 18, verticalAlign: 'middle' }}>›</span>
+              </a>
+            </Box>
           </Box>
-        </Box>
-      ))}
-    </SimpleGrid>
-  </Box>
-);
+        ))}
+      </SimpleGrid>
+    </Box>
+  );
+};
 
 export default CourseOverviewSection; 

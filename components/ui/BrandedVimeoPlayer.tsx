@@ -69,10 +69,21 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
       onMouseLeave={() => setIsHovered(false)}
     >
       <iframe
-        src={`https://player.vimeo.com/video/${videoId}?controls=0&background=1&autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0`}
+        src={`https://player.vimeo.com/video/${videoId}?controls=0&background=1&autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0&transparent=0`}
         width="100%"
         height="100%"
-        style={{ border: 0, display: "block" }}
+        style={{ 
+          border: 0, 
+          display: "block",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: "100%",
+          height: "120%",
+          transform: "translate(-50%, -50%)",
+          minWidth: "100%",
+          minHeight: "100%"
+        }}
         allow="autoplay; fullscreen; picture-in-picture"
         allowFullScreen
         title="Vimeo Video"
