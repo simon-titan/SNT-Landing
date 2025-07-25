@@ -61,7 +61,7 @@ export default function RessourcenBibliothekPage() {
         body: data,
       });
       if (res.ok) {
-        window.location.href = "/Produkte/SNT-Ressourcen-Bibliothek/thank-you-2";
+        window.location.href = "/thank-you";
       } else {
         alert("Fehler beim Absenden.");
       }
@@ -441,10 +441,7 @@ export default function RessourcenBibliothekPage() {
                         <Box w="2" h="2" bg="green.500" borderRadius="full" />
                         <Text>Wie du Teil unserer Community wirst</Text>
                       </Box>
-                      <Box display="flex" alignItems="center" gap="2">
-                        <Box w="2" h="2" bg="green.500" borderRadius="full" />
-                        <Text>Exklusive Community-Events und Live-Sessions</Text>
-                      </Box>
+                      
                     </VStack>
                   </Box>
                 </Box>

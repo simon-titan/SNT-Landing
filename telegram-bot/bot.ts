@@ -110,13 +110,13 @@ Perfekte Wahl für den flexiblen Einstieg!`, {
             [
               {
                 text: 'PayPal',
-                url: 'https://snttrades.de/checkout?plan=monthly'
+                url: 'https://snttrades.de/checkout/monthly'
               }
             ],
             [
               {
                 text: 'Kredit-/EC-Karte',
-                url: 'https://snttrades.de/checkout?plan=monthly'
+                url: 'https://snttrades.de/checkout/monthly'
               }
             ]
           ]
@@ -136,13 +136,13 @@ Die beste Investition in deine Trading-Zukunft!`, {
             [
               {
                 text: 'PayPal',
-                url: 'https://snttrades.de/checkout?plan=lifetime'
+                url: 'https://snttrades.de/checkout/lifetime'
               }
             ],
             [
               {
                 text: 'Kredit-/EC-Karte',
-                url: 'https://snttrades.de/checkout?plan=lifetime'
+                url: 'https://snttrades.de/checkout/lifetime'
               }
             ]
           ]

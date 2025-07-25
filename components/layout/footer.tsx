@@ -35,6 +35,7 @@ const legalLinks = [
   { href: "/legal/eula", label: "EULA" },
   { href: "/legal/rueckgabe", label: "Rückgabe" },
   { href: "/legal/cookie-policy", label: "Cookie-Richtlinie" },
+  { href: "/legal/disclaimer", label: "Disclaimer" },
 ];
 
 export const Footer = () => (

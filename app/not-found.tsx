@@ -29,18 +29,17 @@ export default function NotFound() {
               textStyle={{ base: "3xl", md: "4xl" }}
               lineHeight="tight"
             >
-              Page not found
+              Nichtmal Nuhadt findet diese Seite ?!
             </Heading>
             <Text
               color="fg.muted"
               textStyle={{ base: "md", md: "lg" }}
               maxW="md"
             >
-              Sorry, we couldn't find the page you're looking for. Please check
-              the URL or navigate back to the homepage.
+              Kein Plan wo du hin wolltest aber hier gibt es nichts zu sehen ?!
             </Text>
             <Text color="fg.muted" maxW="sm">
-              Need some help? Shoot us a note at{" "}
+              Brauchst du Hilfe:{" "}
               <Link
                 variant="underline"
                 href={`mailto:${projectConfig.general.support.email}`}
@@ -48,14 +47,14 @@ export default function NotFound() {
               >
                 {projectConfig.general.support.email}
               </Link>
-              . We're here to help!
+              . Wir geben uns Mühe dir zu helfen!
             </Text>
           </VStack>
           <Box pt="4">
             <Link href="/">
               <Button variant="outline" size="sm">
                 <ArrowLeft />
-                Back to home
+                Zurück zur Startseite
               </Button>
             </Link>
           </Box>

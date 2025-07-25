@@ -2,6 +2,13 @@
 
 import React, { useEffect } from "react";
 import { Flex, Heading, Box, Text } from "@chakra-ui/react";
+import "../../../../styles/paypal.css";
+
+declare global {
+    interface Window {
+        paypal?: any;
+    }
+}
 
 export default function LifetimeCheckoutPage() {
     useEffect(() => {
@@ -103,9 +110,38 @@ export default function LifetimeCheckoutPage() {
         // Setup aller Success Handler
         setTimeout(setupOutsetaSuccessHandler, 1000);
         setTimeout(setupPayPalLifetimeHandler, 1000);
+
+        // PayPal Hosted Button Script dynamisch einfügen
+        const scriptId = "paypal-sdk-hosted-buttons";
+        if (!document.getElementById(scriptId)) {
+            const script = document.createElement("script");
+            script.src = "https://www.paypal.com/sdk/js?client-id=BAA-0m5pkSxHufms7Bz99yWR1lzshrXB63L2g-cvYFfUsI1-ul1VcqCAsVudEICk3cLUAXx2VAsCFuuTHY&components=hosted-buttons&disable-funding=venmo&currency=EUR";
+            script.crossOrigin = "anonymous";
+            script.async = true;
+            script.id = scriptId;
+            script.onload = () => {
+                if (window.paypal && window.paypal.HostedButtons) {
+                    window.paypal.HostedButtons({
+                        hostedButtonId: "BDZ3WHCYCPK9C"
+                    }).render("#paypal-container-BDZ3WHCYCPK9C");
+                }
+            };
+            document.body.appendChild(script);
+        } else {
+            // Falls Script schon geladen, direkt rendern
+            if (window.paypal && window.paypal.HostedButtons) {
+                window.paypal.HostedButtons({
+                    hostedButtonId: "BDZ3WHCYCPK9C"
+                }).render("#paypal-container-BDZ3WHCYCPK9C");
+            }
+        
+        }
     }, []);
 
     return (
+            
+
+
         <Box minH="100vh" bg="#f7f7f7" display="flex" flexDirection="column" pb="32">
             {/* Header */}
             <Box as="header" w="full"
@@ -174,7 +210,7 @@ export default function LifetimeCheckoutPage() {
                     
                     {/* PayPal Express Registrierung */}
                     <div id="paypal-express-section" style={{ marginBottom: "2rem" }}>
-                        {/* PayPal Lifetime Button */}
+                        {/* Neuer PayPal Hosted Button */}
                         <div id="lifetime-paypal-section" style={{ textAlign: "center" }}>
                             <div style={{
                                 background: "linear-gradient(135deg, #0070ba 0%, #005ea6 100%)",
@@ -189,57 +225,9 @@ export default function LifetimeCheckoutPage() {
                             }}>
                                 🚀 PAYPAL-EXPRESS-REGISTRIERUNG
                             </div>
-                            <form
-                              action="https://www.paypal.com/ncp/payment/NULRVQG5GN8PE"
-                              method="post"
-                              target="_blank"
-                              style={{
-                                display: "inline-grid",
-                                justifyItems: "center",
-                                alignContent: "start",
-                                gap: "0.5rem",
-                                width: "100%"
-                              }}
-                            >
-                              {/* Hidden field für bessere Webhook-Identifizierung */}
-                              <input type="hidden" name="custom" value="SNTTRADES_LIFETIME_PLAN" />
-                              <input type="hidden" name="item_name" value="SNTTRADES Mentorship - Lifetime Access" />
-                              <input type="hidden" name="item_number" value="NULRVQG5GN8PE" />
-                              
-                              <input
-                                className="pp-NULRVQG5GN8PE"
-                                type="submit"
-                                value="Jetzt mit PayPal registrieren"
-                                style={{
-                                  textAlign: "center",
-                                  border: "none",
-                                  borderRadius: "6px",
-                                  width: "100%",
-                                  maxWidth: "400px",
-                                  padding: "16px 24px",
-                                  height: "56px",
-                                  fontWeight: "bold",
-                                  backgroundColor: "#FFD140",
-                                  color: "#000000",
-                                  fontFamily: '"Helvetica Neue",Arial,sans-serif',
-                                  fontSize: "16px",
-                                  lineHeight: "1.25rem",
-                                  cursor: "pointer",
-                                  transition: "all 0.3s ease",
-                                  boxShadow: "0 4px 12px rgba(255, 209, 64, 0.3)"
-                                }}
-                              />
-                              <section style={{ fontSize: "12px", color: "#666", marginTop: "8px", textAlign: "center" }}>
-                                <img
-                                  src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg"
-                                  alt="paypal"
-                                  style={{ height: "14px", verticalAlign: "middle", marginRight: "4px" }}
-                                />
-                                Express-Checkout • Sicher & Schnell
-                              </section>
-                            </form>
+                            {/* PayPal Hosted Button Container */}
+                            <div id="paypal-container-BDZ3WHCYCPK9C"></div>
                         </div>
-
                         {/* Trennlinie */}
                         <div style={{ 
                             margin: "24px 0",
