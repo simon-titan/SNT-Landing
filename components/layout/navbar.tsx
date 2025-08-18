@@ -199,6 +199,13 @@ const DesktopNavigation = () => {
         </MenuContent>
       </MenuRoot>
       
+      {/* Support Link */}
+      <Link href="/support">
+        <Button variant="ghost" colorPalette="gray">
+          Support
+        </Button>
+      </Link>
+      
     </HStack>
   );
 };
@@ -284,7 +291,15 @@ const MobileNavigation = () => {
                 </Button>
               </VStack>
               
-              
+              {/* Support Link für Mobile */}
+              <Button
+                variant="ghost"
+                w="full"
+                justifyContent="flex-start"
+                onClick={() => handleNavigate(() => router.push('/support'))}
+              >
+                Support
+              </Button>
               
               {/* Mentorship Login für Mobile */}
               <Box pt="4" borderTop="1px solid" borderColor="gray.200">
