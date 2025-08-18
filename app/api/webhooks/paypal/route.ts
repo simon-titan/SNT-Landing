@@ -373,15 +373,28 @@ function extractCustomerData(event: PayPalWebhookEvent): {
         debugLog('Verarbeite PAYMENT.CAPTURE.COMPLETED oder PAYMENT.SALE.COMPLETED');
         // Einmalige Zahlung (Lifetime)
         customerData = event.resource?.payer || event.resource?.payee;
-        // Plan basierend auf der Zahlungs-ID bestimmen
-        if (event.resource?.invoice_id?.includes('NULRVQG5GN8PE')) {
+        
+        // Erweiterte Lifetime-Plan-Erkennung
+        if (event.resource?.invoice_id?.includes('NULRVQG5GN8PE') ||
+            event.resource?.custom === 'LIFETIME' ||
+            event.resource?.custom_id === 'LIFETIME' ||
+            event.resource?.item_name?.includes('Lifetime') ||
+            event.resource?.product_id === 'NULRVQG5GN8PE') {
           planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
           debugLog('Lifetime Plan erkannt', { planUid });
         }
+        
         // Plan basierend auf custom field bestimmen
         if (event.resource?.custom === 'SNTTRADES_MONTHLY_PLAN') {
           planUid = PLAN_MAPPING['P-59C23375XF491315BNCBCDVQ'];
           debugLog('Monthly Plan aus custom field erkannt', { planUid });
+        }
+        
+        // Fallback: Wenn kein Plan erkannt wurde, Standard-Lifetime-Plan verwenden
+        // (da es sich um eine Einmalzahlung handelt)
+        if (!planUid) {
+          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+          debugLog('Lifetime Plan als Fallback gesetzt (Einmalzahlung)', { planUid });
         }
         break;
         
@@ -410,6 +423,23 @@ function extractCustomerData(event: PayPalWebhookEvent): {
         debugLog('Verarbeite Checkout Order Event');
         // Checkout Order
         customerData = event.resource?.payer;
+        
+        // Lifetime-Plan-Erkennung für Checkout Orders
+        if (event.resource?.invoice_id?.includes('NULRVQG5GN8PE') ||
+            event.resource?.custom === 'LIFETIME' ||
+            event.resource?.custom_id === 'LIFETIME' ||
+            event.resource?.item_name?.includes('Lifetime') ||
+            event.resource?.product_id === 'NULRVQG5GN8PE') {
+          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+          debugLog('Lifetime Plan in Checkout Order erkannt', { planUid });
+        }
+        
+        // Fallback: Wenn kein Plan erkannt wurde, Standard-Lifetime-Plan verwenden
+        // (da es sich um eine Einmalzahlung handelt)
+        if (!planUid) {
+          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+          debugLog('Lifetime Plan als Fallback in Checkout Order gesetzt', { planUid });
+        }
         break;
         
       default:
