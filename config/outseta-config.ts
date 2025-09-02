@@ -8,7 +8,7 @@ export const outsetaConfig = {
     /** URL to redirect after successful registration */
     postLoginUrl:
       process.env.NODE_ENV === "production"
-        ? "https://www.snttrades.de/app"
+        ? "https://www.snttrades.de/thank-you-2"
         : "http://localhost:3000/app",
     postRegistrationUrl:
       process.env.NODE_ENV === "production"

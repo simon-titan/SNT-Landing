@@ -39,58 +39,77 @@ const legalLinks = [
 ];
 
 export const Footer = () => (
-  <Container as="footer" py={{ base: "10", md: "12" }}>
-    <Stack gap="6">
-      <Stack direction="row" justify="space-between" align="center">
-        <Heading
-          as="h1"
-          fontSize={{ base: "xl", md: "2xl" }}
-          fontWeight="700"
-          lineHeight="0.9"
-          bg="linear-gradient(0deg, #000000 0%, #6b7280 100%)"
-          bgClip="text"
-          filter="drop-shadow(0 0 10px rgba(156, 163, 175, 0.3))"
-        >
-          SNT-TRADES™ 
-        </Heading>
-        <HStack gap="4">
-          {socialLinks.map(({ href, icon }, index) => (
-            <Link key={index} href={href} colorPalette="gray">
-              <Icon size="md">{icon}</Icon>
-            </Link>
-          ))}
-        </HStack>
-      </Stack>
-      
-      <Box h="1px" bg="border.subtle" />
-      
-      {/* Legal Links Section */}
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
-        justify="space-between" 
-        align={{ base: "start", md: "center" }}
-        gap={{ base: 4, md: 0 }}
-      >
-        <Copyright />
+  <>
+    {/* Grüner Glow-Trenner (vollbreit) oben im Footer */}
+    <Box w="100%" position="relative">
+      <Box h={{ base: 10, md: 12 }} position="relative" overflow="hidden">
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="radial-gradient(55% 60% at 50% 0%, rgba(16,185,129,0.35) 0%, rgba(16,185,129,0.16) 35%, rgba(16,185,129,0.06) 60%, rgba(0,0,0,0) 70%)"
+          filter="blur(14px)"
+        />
+        <Box h="1px" w="100%" bg="linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent)" />
+      </Box>
+    </Box>
+
+    <Container as="footer" py={{ base: "10", md: "12" }}>
+      <Stack gap="6">
+        <Stack direction="row" justify="space-between" align="center">
+          <Heading
+            as="h1"
+            fontSize={{ base: "xl", md: "2xl" }}
+            fontWeight="800"
+            lineHeight="0.9"
+            fontFamily="'Horizon', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+            color="#34D399"
+            textShadow="0 0 18px rgba(16,185,129,0.55), 0 0 36px rgba(16,185,129,0.28)"
+            letterSpacing="tight"
+          >
+            SNTTRADES
+          </Heading>
+          <HStack gap="4">
+            {socialLinks.map(({ href, icon }, index) => (
+              <Link key={index} href={href} colorPalette="gray">
+                <Icon size="md">{icon}</Icon>
+              </Link>
+            ))}
+          </HStack>
+        </Stack>
+        
+        <Box h="1px" bg="border.subtle" />
+        
+        {/* Legal Links Section */}
         <Flex 
-          wrap="wrap" 
-          gap={{ base: 2, md: 4 }} 
-          justify={{ base: "start", md: "end" }}
-          align="center"
+          direction={{ base: "column", md: "row" }} 
+          justify="space-between" 
+          align={{ base: "start", md: "center" }}
+          gap={{ base: 4, md: 0 }}
         >
-          {legalLinks.map(({ href, label }, index) => (
-            <Link 
-              key={index} 
-              href={href} 
-              fontSize="sm" 
-              color="fg.muted"
-              _hover={{ color: "fg.default" }}
-            >
-              {label}
-            </Link>
-          ))}
+          <Copyright />
+          <Flex 
+            wrap="wrap" 
+            gap={{ base: 2, md: 4 }} 
+            justify={{ base: "start", md: "end" }}
+            align="center"
+          >
+            {legalLinks.map(({ href, label }, index) => (
+              <Link 
+                key={index} 
+                href={href} 
+                fontSize="sm" 
+                color="fg.muted"
+                _hover={{ color: "fg.default" }}
+              >
+                {label}
+              </Link>
+            ))}
+          </Flex>
         </Flex>
-      </Flex>
-    </Stack>
-  </Container>
+      </Stack>
+    </Container>
+  </>
 );

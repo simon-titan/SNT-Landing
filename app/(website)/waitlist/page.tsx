@@ -13,7 +13,7 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
-import SntHero from "@/components/hero/snt-hero";
+import SntHeroWaitlist from "@/components/hero/snt-hero-waitlist";
 import { CheckCircle, ShieldCheck, Lightning, EnvelopeSimple, BookOpen, Wrench, ChatsCircle } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 
@@ -91,12 +91,12 @@ export default function RegisterPage() {
           zIndex: 0,
         }}
       >
-      {/* Neuer Hero nach Vorlage (SNT, schwarzer Raum, grüner Glow) */}
-      <SntHero />
+      {/* Neuer Hero für Waitlist (dupliziert) */}
+      <SntHeroWaitlist />
 
         {/* Lokales Override: entferne Padding der generierten Klasse */}
-        <style jsx>{`
-          #register-page :global(.css-qnbf9j) {
+        <style>{`
+         .css-qnbf9j {
             padding: 0 !important;
           }
         `}</style>
@@ -121,56 +121,10 @@ export default function RegisterPage() {
       <Section size="lg" bg="transparent" pt={0} pb={{ base: 6, md: 12 }}>
         <VStack gap={8} maxW="4xl" mx="auto">
 
-          {/* Feature Sektion (3 Cards) */}
+          {/* Feature Sektion (2 Cards für Warteliste) */}
           <VStack gap={6} align="stretch" maxW="4xl" mx="auto" mt={{ base: 4, md: 6 }}>
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 4, md: 6 }}>
-              {/* Card 1 - Kurs */}
-              <Box
-                bg="rgba(6, 12, 10, 0.55)"
-                borderRadius="xl"
-                border="1px solid"
-                borderColor="rgba(16,185,129,0.35)"
-                boxShadow="0 0 0 1px rgba(16,185,129,0.22), 0 20px 60px rgba(16,185,129,0.20)"
-                p={{ base: 4, md: 5 }}
-                backdropFilter="saturate(160%) blur(10px)"
-                transition="all 0.25s ease"
-                _hover={{ transform: "translateY(-4px)", boxShadow: "0 0 0 1px rgba(16,185,129,0.35), 0 30px 90px rgba(16,185,129,0.28)" }}
-              >
-                <HStack gap={3} align="start">
-                  <Box bg="rgba(34,197,94,0.18)" color="#34D399" borderRadius="lg" p={3}>
-                    <BookOpen size={22} weight="fill" />
-                  </Box>
-                  <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Kostenloser Trading-Kurs</Text>
-                    <Text fontSize="sm" color="gray.300">Von den Grundlagen bis zur Umsetzung – verständlich und praxisnah.</Text>
-                  </Box>
-                </HStack>
-              </Box>
-
-              {/* Card 2 - Tools */}
-              <Box
-                bg="rgba(6, 12, 10, 0.55)"
-                borderRadius="xl"
-                border="1px solid"
-                borderColor="rgba(16,185,129,0.35)"
-                boxShadow="0 0 0 1px rgba(16,185,129,0.22), 0 20px 60px rgba(16,185,129,0.20)"
-                p={{ base: 4, md: 5 }}
-                backdropFilter="saturate(160%) blur(10px)"
-                transition="all 0.25s ease"
-                _hover={{ transform: "translateY(-4px)", boxShadow: "0 0 0 1px rgba(16,185,129,0.35), 0 30px 90px rgba(16,185,129,0.28)" }}
-              >
-                <HStack gap={3} align="start">
-                  <Box bg="rgba(34,197,94,0.18)" color="#34D399" borderRadius="lg" p={3}>
-                    <Wrench size={22} weight="fill" />
-                  </Box>
-                  <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Tools & Software</Text>
-                    <Text fontSize="sm" color="gray.300">Praktische Tools, Tracker und Setups – direkt einsetzbar.</Text>
-                  </Box>
-                </HStack>
-              </Box>
-
-              {/* Card 3 - Community */}
+            <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 4, md: 6 }}>
+              {/* Card 1 - Warteliste Mentorship */}
               <Box
                 bg="rgba(6, 12, 10, 0.55)"
                 borderRadius="xl"
@@ -187,8 +141,31 @@ export default function RegisterPage() {
                     <ChatsCircle size={22} weight="fill" />
                   </Box>
                   <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Community</Text>
-                    <Text fontSize="sm" color="gray.300">Tritt unserer aktiven Community bei und lerne mit anderen.</Text>
+                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Warteliste für das Mentorship</Text>
+                    <Text fontSize="sm" color="gray.300">Trag dich ein und sichere dir einen Platz in der nächsten Runde. Wir nehmen nur begrenzte Teilnehmer auf.</Text>
+                  </Box>
+                </HStack>
+              </Box>
+
+              {/* Card 2 - E-Mail Benachrichtigung */}
+              <Box
+                bg="rgba(6, 12, 10, 0.55)"
+                borderRadius="xl"
+                border="1px solid"
+                borderColor="rgba(16,185,129,0.35)"
+                boxShadow="0 0 0 1px rgba(16,185,129,0.22), 0 20px 60px rgba(16,185,129,0.20)"
+                p={{ base: 4, md: 5 }}
+                backdropFilter="saturate(160%) blur(10px)"
+                transition="all 0.25s ease"
+                _hover={{ transform: "translateY(-4px)", boxShadow: "0 0 0 1px rgba(16,185,129,0.35), 0 30px 90px rgba(16,185,129,0.28)" }}
+              >
+                <HStack gap={3} align="start">
+                  <Box bg="rgba(34,197,94,0.18)" color="#34D399" borderRadius="lg" p={3}>
+                    <EnvelopeSimple size={22} weight="fill" />
+                  </Box>
+                  <Box>
+                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Benachrichtigung per E‑Mail</Text>
+                    <Text fontSize="sm" color="gray.300">Wir informieren dich, sobald das Mentorship wieder startet – inklusive allen nächsten Schritten.</Text>
                   </Box>
                 </HStack>
               </Box>
@@ -197,7 +174,7 @@ export default function RegisterPage() {
 
           {/* Hinweis-Text unterhalb der Karten */}
           <Text color="gray.300" fontSize="lg" maxW="600px" textAlign="center" mx="auto">
-            Fülle das Formular aus und erhalte sofortigen Zugang zu unserem kostenlosen Trading-Kurs.
+            Trage dich ein – wir benachrichtigen dich per E‑Mail, sobald es wieder los geht.
           </Text>
 
           {/* Outseta Widget Container */}
@@ -226,10 +203,10 @@ export default function RegisterPage() {
               
               <VStack gap={2}>
                 <Heading as="h3" fontSize="xl" color="white">
-                  Kostenlose Registrierung
+                  Kostenlose Eintragung
                 </Heading>
                 <Text color="gray.300" fontSize="sm">
-                  Keine Kreditkarte erforderlich • 100% kostenlos
+                •  Keine Kreditkarte erforderlich • 100% kostenlos • Sofortige Nachricht
                 </Text>
               </VStack>
             </VStack>
@@ -242,12 +219,33 @@ export default function RegisterPage() {
               alignItems="center"
               justifyContent="center"
             >
-             <div data-o-auth="1"
-     data-widget-mode="register"
-     data-plan-uid="wmjBBxmV"
-     data-plan-payment-term="month"
-     data-skip-plan-options="true"
-     data-mode="embed">
+             <div data-o-email-list="1" 
+    data-mode="embed" 
+    data-email-list-uid="E9LwOvQw"
+    data-registration-field-configuration='[
+  {
+    "defaultValue": "",
+    "definition": {
+      "SystemName": "Email"
+    },
+    "hidden": false,
+    "required": true
+  },
+  {
+    "definition": {
+      "SystemName": "FirstName"
+    },
+    "hidden": false,
+    "required": true
+  },
+  {
+    "definition": {
+      "SystemName": "LastName"
+    },
+    "hidden": false,
+    "required": true
+  }
+]'>
 </div>
         
             </Box>
