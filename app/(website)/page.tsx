@@ -43,70 +43,54 @@ export default async function Page() {
       <Section
         header
         size="lg"
-        bg="bg.subtle"
+        bg="black"
         borderBottom="1px solid"
-        borderColor="border"
+        borderColor="rgba(34, 197, 94, 0.25)"
         w="100vw"
         mx="unset"
         pb={{ base: "60px", md: "80px" }}
-        background="radial-gradient(at 0% 100%,rgba(13, 112, 182, 0.4) 0px, transparent 50%),
-        radial-gradient(at 100% 100%,rgba(148, 39, 238, 0.5) 0px, transparent 50%)"
+        background="radial-gradient(at 0% 100%, rgba(34, 197, 94, 0.28) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.22) 0px, transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(10,12,10,1) 100%)"
 
       >
         <VStack gap="4" maxW="900px" mx="auto">
           <Stack gap="2" textAlign="center" mx="auto">
             {/* INEVITRADE Trading Academy Badge */}
-            <Box 
-              display="flex" 
-              alignItems="center" 
-              justifyContent="center" 
-              gap="2" 
-              mx="auto"
-              mb="1"
-            >
-              <CheckCircle size={20} color="#1E88E5" weight="fill" />
-              <Heading
-                    as="h1"
-                    fontSize={{ base: "md", md: "2xl" }}
-                    fontWeight="700"
-                    lineHeight="0.9"
-                    bg="linear-gradient(0deg,rgb(0, 0, 0) 0%,rgb(126, 126, 126) 100%)"
-                    bgClip="text"
-                    filter="drop-shadow(0 0 10px rgba(156, 163, 175, 0.3))"
-                >
-                    SNTTRADES™
-                </Heading>
-            </Box>
+            
             <Heading
               as="h1"
               textStyle={{ base: "4xl", md: "5xl" }}
               mx="auto"
-              color="black"
+              color="white"
               lineHeight="tighter"
               fontWeight="bold"
               maxW="800px"
             >
               DEIN WEG ZUM{' '}
               <Box as="span" 
-                background="linear-gradient(90deg,rgb(246, 236, 92), transparent 95%)" 
-                color="black" 
+                background="linear-gradient(90deg, rgba(34,197,94,0.28), transparent 95%)" 
+                color="white" 
                 px={2} 
                 py={1} 
                 borderRadius="md" 
                 fontWeight="bold" 
                 display="inline-block"
+                border="1px solid rgba(34, 197, 94, 0.35)"
+                boxShadow="0 0 0 1px rgba(34, 197, 94, 0.25) inset, 0 0 24px rgba(34, 197, 94, 0.25)"
+                backdropFilter="blur(6px)"
               >
                 PRO TRADER.
               </Box>
             </Heading>
-            <Text color="black" textStyle="sm" mx="auto" maxW="700px">
-              Wir haben über <Text as="span" color="#1E88E5" fontWeight="bold">6+ Jahre Erfahrung</Text>, um dir in einem klar aufgebauten, selbstbestimmten Kurs genau das zu zeigen, was im Trading wirklich zählt.<br />
+            <Text color="gray.300" textStyle="sm" mx="auto" maxW="700px">
+              Wir haben über <Text as="span" color="#22c55e" fontWeight="bold">6+ Jahre Erfahrung</Text>, um dir in einem klar aufgebauten, selbstbestimmten Kurs genau das zu zeigen, was im Trading wirklich zählt.<br />
               
             </Text>
           </Stack>
                     <Stack align="center" direction={{ base: "column", md: "row" }} gap="3">
             <Link href="/Produkte/SNTTRADES-AUSBILDUNG">
-              <Button size="xl" fontWeight="bold" colorScheme="blue" bg="#1E88E5" _hover={{ bg: "#1565C0" }} borderRadius="md" px="8">
+              <Button size="xl" fontWeight="bold" colorScheme="green" bg="#22c55e" _hover={{ bg: "#16a34a" }} borderRadius="md" px="8" boxShadow="0 0 24px rgba(34,197,94,0.35)" border="1px solid rgba(34,197,94,0.45)">
                ⚡ JETZT STARTEN
               </Button>
             </Link>
@@ -135,12 +119,12 @@ export default async function Page() {
             w={{ base: '100%', md: '800px', lg: '1200px', xl: '1400px' }} 
             maxW="100%" 
             mx="auto" 
-            bg="linear-gradient(135deg, rgba(13, 112, 182, 0.8), rgba(148, 39, 238, 0.8))"
+            bg="linear-gradient(135deg, rgba(34, 197, 94, 0.35), rgba(16, 185, 129, 0.35))"
             borderRadius="xl" 
             p="7px"
             position="relative"
             zIndex={3}
-            boxShadow="2xl"
+            boxShadow="0 0 40px rgba(34,197,94,0.2)"
           >
             <VStack gap="2">
               {/* Video Player */}
@@ -159,19 +143,19 @@ export default async function Page() {
               <Box 
                 p="2" 
                 w="100%" 
-                bg="rgba(255, 255, 255, 0.45)"
-                backdropFilter="blur(10px)"
+                bg="rgba(10, 14, 10, 0.6)"
+                backdropFilter="blur(12px)"
                 borderRadius="lg"
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
+                border="1px solid rgba(34, 197, 94, 0.25)"
+                boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.20)"
               >
                 <Stack direction="row" align="center" gap="2" justify="center">
                   <Stack direction="row" gap="-2">
-                                         <Box 
+                    <Box 
                        w="6" 
                        h="6" 
                        borderRadius="full" 
-                       border="2px solid rgba(0, 0, 0, 0.8)" 
+                       border="2px solid rgba(34, 197, 94, 0.45)" 
                        overflow="hidden"
                        bg="gray.200"
                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
@@ -186,7 +170,7 @@ export default async function Page() {
                        w="6" 
                        h="6" 
                        borderRadius="full" 
-                       border="2px solid rgba(0, 0, 0, 0.8)" 
+                       border="2px solid rgba(34, 197, 94, 0.45)" 
                        overflow="hidden"
                        bg="gray.200"
                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
@@ -201,7 +185,7 @@ export default async function Page() {
                        w="6" 
                        h="6" 
                        borderRadius="full" 
-                       border=" 2px solid rgba(0, 0, 0, 0.8)" 
+                       border=" 2px solid rgba(34, 197, 94, 0.45)" 
                        overflow="hidden"
                        bg="gray.200"
                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
@@ -213,7 +197,7 @@ export default async function Page() {
                        />
                      </Box>
                   </Stack>
-                  <Text fontSize="xs" color="black" fontWeight="medium" textShadow="0 1px 2px rgba(0,0,0,0.1)">
+                  <Text fontSize="xs" color="gray.200" fontWeight="medium" textShadow="0 1px 2px rgba(0,0,0,0.3)">
                    ...Bereits über <Text as="span" fontWeight="bold">1000+ Trader</Text> auf ihrem Weg begleitet und ausgebildet.
                   </Text>
                 </Stack>

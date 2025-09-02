@@ -1,6 +1,7 @@
 "use client";
 
 import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import Provider from "@/components/provider/provider";
 import Head from "next/head";
 import { projectConfig } from "@/config";
@@ -16,6 +17,12 @@ import Script from "next/script";
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
+});
+
+const horizon = localFont({
+  src: [{ path: "../public/assets/horizon.otf", weight: "700", style: "normal" }],
+  display: "swap",
+  variable: "--font-horizon",
 });
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -39,7 +46,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <meta httpEquiv="refresh" content="0; url=/javascript" />
         </noscript>
       </Head>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${horizon.variable}`}>
         <Script
           id="outseta-config"
           strategy="beforeInteractive"

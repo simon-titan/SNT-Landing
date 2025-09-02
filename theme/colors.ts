@@ -120,17 +120,17 @@ export const colorPalettes = {
     950: { value: "#281304" },
   },
   green: {
-    50: { value: "#f0fdf4" },
-    100: { value: "#dcfce7" },
-    200: { value: "#bbf7d0" },
-    300: { value: "#86efac" },
-    400: { value: "#4ade80" },
-    500: { value: "#22c55e" },
-    600: { value: "#16a34a" },
-    700: { value: "#116932" },
-    800: { value: "#124a28" },
-    900: { value: "#042713" },
-    950: { value: "#03190c" },
+    50:  { value: "#EDFCF6" }, // sehr hell
+    100: { value: "#D2F9E6" },
+    200: { value: "#A8F1D1" },
+    300: { value: "#7FEABA" },
+    400: { value: "#5BECA8" },
+    500: { value: "#49E79C" }, // deine Hauptfarbe
+    600: { value: "#34C484" },
+    700: { value: "#299968" },
+    800: { value: "#1F6F4D" },
+    900: { value: "#144933" },
+    950: { value: "#0C2A1D" }, // fast schwarz-grün
   },
   teal: {
     50: { value: "#f0fdfa" },
