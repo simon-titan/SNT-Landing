@@ -58,6 +58,7 @@ export default async function Page() {
 
       >
  <style>{`
+         html { scroll-behavior: smooth; }
          .css-1q38vmp {
             padding-top: 75px !important;
           }
@@ -98,7 +99,7 @@ export default async function Page() {
             </Text>
           </Stack>
                     <Stack align="center" direction={{ base: "column", md: "row" }} gap="3">
-            <Link href="/checkout/lifetime">
+            <Link href="#project30-pricing">
               <Button size="xl" fontWeight="bold" colorScheme="green" bg="#22c55e" _hover={{ bg: "#16a34a" }} borderRadius="md" px="8" boxShadow="0 0 24px rgba(34,197,94,0.35)" border="1px solid rgba(34,197,94,0.45)">
                ⚡ JETZT STARTEN
               </Button>
@@ -228,7 +229,9 @@ export default async function Page() {
       />
       
       {/* Project 30 Pricing Section - Direkt unter Community Stats */}
+      <Box id="project30-pricing">
       <Project30PricingSection />
+      </Box>
       
       {/* Glow Trenner */}
       <Box
