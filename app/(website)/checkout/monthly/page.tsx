@@ -117,25 +117,318 @@ export default function MonthlyCheckoutPage() {
 
         // Setup aller Success Handler
         setTimeout(setupOutsetaSuccessHandler, 1000);
+
+        // Force Outseta Light Mode und Green Theme
+        const forceOutsetaLightMode = () => {
+            const outsetaWidget = document.querySelector('[data-o-auth="1"]');
+            if (outsetaWidget) {
+                // Setze data-theme Attribute für Light Mode und Green Primary
+                outsetaWidget.setAttribute('data-theme', 'light');
+                outsetaWidget.setAttribute('data-color-mode', 'light');
+                outsetaWidget.setAttribute('data-primary-color', '#22c55e');
+                outsetaWidget.setAttribute('data-color-palette', 'green');
+                
+                // Finde alle Input-Felder und style sie spezifisch
+                const inputs = outsetaWidget.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    const inputElement = input as HTMLElement;
+                    inputElement.style.background = 'white';
+                    inputElement.style.color = 'black';
+                    inputElement.style.border = '1px solid #d1d5db';
+                    inputElement.style.borderRadius = '6px';
+                    inputElement.style.padding = '8px 12px';
+                    inputElement.style.fontSize = '14px';
+                    inputElement.style.transform = 'none';
+                    inputElement.style.scale = '1';
+                    inputElement.style.boxShadow = 'none';
+                    inputElement.style.outline = 'none';
+                    
+                    // Focus Event Listener für grüne Borders
+                    inputElement.addEventListener('focus', () => {
+                        inputElement.style.borderColor = '#22c55e';
+                        inputElement.style.boxShadow = '0 0 0 2px rgba(34, 197, 94, 0.2)';
+                        inputElement.style.transform = 'none';
+                        inputElement.style.scale = '1';
+                    });
+                    
+                    inputElement.addEventListener('blur', () => {
+                        inputElement.style.borderColor = '#d1d5db';
+                        inputElement.style.boxShadow = 'none';
+                    });
+                });
+
+                // Style Primary Buttons (Submit, Register, etc.)
+                const buttons = outsetaWidget.querySelectorAll('button');
+                buttons.forEach(button => {
+                    const buttonText = button.textContent?.toLowerCase() || '';
+                    if (!button.classList.contains('close') && 
+                        !buttonText.includes('×') && 
+                        !buttonText.includes('cancel') &&
+                        !buttonText.includes('back')) {
+                        (button as HTMLElement).style.background = '#22c55e';
+                        (button as HTMLElement).style.color = 'white';
+                        (button as HTMLElement).style.border = 'none';
+                        (button as HTMLElement).style.borderRadius = '8px';
+                        (button as HTMLElement).style.fontWeight = 'bold';
+                        // Hover-Effekt
+                        button.addEventListener('mouseenter', () => {
+                            (button as HTMLElement).style.background = '#16a34a';
+                        });
+                        button.addEventListener('mouseleave', () => {
+                            (button as HTMLElement).style.background = '#22c55e';
+                        });
+                    }
+                });
+
+                // Style Links und Akzente
+                const links = outsetaWidget.querySelectorAll('a');
+                links.forEach(link => {
+                    (link as HTMLElement).style.color = '#22c55e';
+                });
+
+                // Style Checkboxes und Radio Buttons
+                const checkboxes = outsetaWidget.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+                checkboxes.forEach(checkbox => {
+                    (checkbox as HTMLElement).style.accentColor = '#22c55e';
+                });
+
+                // Fix für spezifische Payment Method Klasse
+                const paymentMethodDiv = document.querySelector('.o--Register--paymentMethod');
+                if (paymentMethodDiv) {
+                    const paymentElement = paymentMethodDiv as HTMLElement;
+                    paymentElement.style.transform = 'none';
+                    paymentElement.style.scale = '1';
+                    paymentElement.style.width = '100%';
+                    paymentElement.style.maxWidth = 'none';
+                    paymentElement.style.fontSize = '14px';
+                    
+                    // Alle Child-Elemente auch fixen
+                    const childElements = paymentMethodDiv.querySelectorAll('*');
+                    childElements.forEach(child => {
+                        const childElement = child as HTMLElement;
+                        childElement.style.transform = 'none';
+                        childElement.style.scale = '1';
+                        childElement.style.fontSize = '14px';
+                    });
+                }
+            }
+        };
+
+        // Überwache DOM für Outseta Widget
+        const observer = new MutationObserver(() => {
+            forceOutsetaLightMode();
+        });
+
+        const targetNode = document.body;
+        observer.observe(targetNode, {
+            childList: true,
+            subtree: true
+        });
+
+        // Initial check
+        setTimeout(forceOutsetaLightMode, 2000);
     }, []);
 
     return (
-        <Box minH="100vh" bg="#f7f7f7" display="flex" flexDirection="column" pb="32">
+        <>
+            <style>{`
+                /* Force Light Mode für Outseta Widget */
+                [data-o-auth="1"] {
+                    color-scheme: light !important;
+                }
+                [data-o-auth="1"] * {
+                    color-scheme: light !important;
+                }
+                /* Outseta spezifische Light Mode Styles */
+                .outseta-auth-widget {
+                    background: white !important;
+                    color: black !important;
+                }
+                .outseta-auth-widget input {
+                    background: white !important;
+                    color: black !important;
+                    border: 1px solid #e5e7eb !important;
+                }
+                .outseta-auth-widget button {
+                    background: #22c55e !important;
+                    color: white !important;
+                }
+                .outseta-auth-widget .form-control {
+                    background: white !important;
+                    color: black !important;
+                }
+                /* Zusätzliche Outseta Selektoren */
+                .o-auth-container {
+                    background: white !important;
+                    color: black !important;
+                }
+                .o-auth-container input, 
+                .o-auth-container select, 
+                .o-auth-container textarea {
+                    background: white !important;
+                    color: black !important;
+                    border: 1px solid #d1d5db !important;
+                }
+                /* Outseta iFrame Styles */
+                iframe[src*="outseta"] {
+                    background: white !important;
+                }
+                /* Spezifische Outseta Button Styles */
+                [data-o-auth="1"] button[type="submit"],
+                [data-o-auth="1"] .btn-primary,
+                [data-o-auth="1"] .primary-button {
+                    background: #22c55e !important;
+                    border-color: #22c55e !important;
+                    color: white !important;
+                }
+                [data-o-auth="1"] button[type="submit"]:hover,
+                [data-o-auth="1"] .btn-primary:hover,
+                [data-o-auth="1"] .primary-button:hover {
+                    background: #16a34a !important;
+                    border-color: #16a34a !important;
+                }
+                /* Outseta Links */
+                [data-o-auth="1"] a {
+                    color: #22c55e !important;
+                }
+                /* Outseta Focus States */
+                [data-o-auth="1"] input:focus,
+                [data-o-auth="1"] select:focus,
+                [data-o-auth="1"] textarea:focus {
+                    border-color: #22c55e !important;
+                    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+                    transform: none !important;
+                    scale: 1 !important;
+                }
+                /* Fix für Zahlungsmethoden Input-Felder */
+                [data-o-auth="1"] .payment-method-input,
+                [data-o-auth="1"] input[type="text"],
+                [data-o-auth="1"] input[type="email"],
+                [data-o-auth="1"] input[type="password"],
+                [data-o-auth="1"] input[name*="card"],
+                [data-o-auth="1"] input[name*="payment"] {
+                    background: white !important;
+                    color: black !important;
+                    border: 1px solid #d1d5db !important;
+                    border-radius: 6px !important;
+                    padding: 8px 12px !important;
+                    font-size: 14px !important;
+                    transform: none !important;
+                    scale: 1 !important;
+                    box-shadow: none !important;
+                }
+                [data-o-auth="1"] .payment-method-input:focus,
+                [data-o-auth="1"] input[type="text"]:focus,
+                [data-o-auth="1"] input[type="email"]:focus,
+                [data-o-auth="1"] input[type="password"]:focus,
+                [data-o-auth="1"] input[name*="card"]:focus,
+                [data-o-auth="1"] input[name*="payment"]:focus {
+                    border-color: #22c55e !important;
+                    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+                    transform: none !important;
+                    scale: 1 !important;
+                }
+                /* Override für alle möglichen blauen Borders */
+                [data-o-auth="1"] *:focus {
+                    outline: none !important;
+                    border-color: #22c55e !important;
+                    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+                }
+                /* Entferne blaue Standard-Browser-Outlines */
+                [data-o-auth="1"] input,
+                [data-o-auth="1"] select,
+                [data-o-auth="1"] textarea,
+                [data-o-auth="1"] button {
+                    outline: none !important;
+                }
+                /* Fix für spezifische Outseta Payment Method Klasse */
+                .o--Register--paymentMethod {
+                    transform: none !important;
+                    scale: 1 !important;
+                    width: 100% !important;
+                    max-width: none !important;
+                    font-size: 14px !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                }
+                .o--Register--paymentMethod * {
+                    transform: none !important;
+                    scale: 1 !important;
+                    font-size: 14px !important;
+                }
+                .o--Register--paymentMethod input {
+                    background: white !important;
+                    color: black !important;
+                    border: 1px solid #d1d5db !important;
+                    border-radius: 6px !important;
+                    padding: 8px 12px !important;
+                    font-size: 14px !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    transform: none !important;
+                    scale: 1 !important;
+                    box-shadow: none !important;
+                }
+                .o--Register--paymentMethod input:focus {
+                    border-color: #22c55e !important;
+                    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+                    transform: none !important;
+                    scale: 1 !important;
+                }
+            `}</style>
+            <Box 
+                minH="100vh" 
+                bg="white" 
+                display="flex" 
+                flexDirection="column" 
+                pb="32"
+                className="light"
+                data-theme="light"
+            >
             {/* Header */}
-            <Box as="header" w="full"
-                py={4} display="flex" justifyContent="center" alignItems="center"
-                style={{ background: 'linear-gradient(90deg, #000000 0%,rgb(11, 29, 68) 100%)' }}>
-                <Heading
-                    as="h1"
-                    fontSize={{ base: "xl", md: "2xl" }}
-                    fontWeight="700"
-                    lineHeight="0.9"
-                    bg="linear-gradient(0deg,rgb(255, 255, 255) 0%,rgb(126, 126, 126) 100%)"
-                    bgClip="text"
-                    filter="drop-shadow(0 0 10px rgba(156, 163, 175, 0.3))"
-                >
-                    SNTTRADES™ - MONTHLY
-                </Heading>
+            <Box 
+                as="header" 
+                w="full"
+                py={6} 
+                display="flex" 
+                justifyContent="center" 
+                alignItems="center"
+                bg="linear-gradient(135deg, rgba(10, 14, 10, 0.95), rgba(0, 0, 0, 0.98))"
+                borderBottom="1px solid rgba(34, 197, 94, 0.25)"
+                boxShadow="0 4px 20px rgba(34, 197, 94, 0.1)"
+                position="relative"
+                _before={{
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: "radial-gradient(at 50% 0%, rgba(34, 197, 94, 0.1) 0px, transparent 50%)",
+                    pointerEvents: "none"
+                }}
+            >
+                <Box position="relative" zIndex={1}>
+                    <Heading
+                        as="h1"
+                        fontSize={{ base: "xl", md: "3xl" }}
+                        fontWeight="bold"
+                        color="#22c55e"
+                        textShadow="0 0 20px rgba(34, 197, 94, 0.6)"
+                        textAlign="center"
+                    >
+                        SNTTRADES™ MENTORSHIP
+                    </Heading>
+                    <Text 
+                        textAlign="center" 
+                        color="gray.300" 
+                        fontSize="sm" 
+                        fontWeight="medium"
+                        mt={2}
+                    >
+                        Monatlicher Zugang • Jederzeit kündbar
+                    </Text>
+                </Box>
             </Box>
             
             {/* Mobile: Preisbox ÜBER dem Checkout */}
@@ -170,12 +463,12 @@ export default function MonthlyCheckoutPage() {
                         position="relative"
                         flexDirection="column"
                     >
-                        <Text fontSize="4xl" fontWeight="extrabold" color="#9333ea" mb={2}>59,99€</Text>
+                        <Text fontSize="4xl" fontWeight="extrabold" color="#22c55e" mb={2}>59€</Text>
                         <Text fontSize="lg" fontWeight="bold" color="white" letterSpacing="0.5px" mb={1}>PRO MONAT</Text>
                         <Text fontSize="sm" color="gray.300">Jederzeit kündbar</Text>
                         
                         {/* Flexibilität Label */}
-                        <Box position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg="#9333ea" color="white" fontWeight={700} fontSize="xs" borderRadius={6} px={4} py={2} boxShadow="0 4px 12px #0002" zIndex={10}>
+                        <Box position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg="#22c55e" color="white" fontWeight={700} fontSize="xs" borderRadius={6} px={4} py={2} boxShadow="0 4px 12px rgba(34, 197, 94, 0.3)" zIndex={10}>
                             FLEXIBEL KÜNDBAR
                         </Box>
                     </Flex>
@@ -312,7 +605,7 @@ export default function MonthlyCheckoutPage() {
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#9333ea"/>
+                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
@@ -323,7 +616,7 @@ export default function MonthlyCheckoutPage() {
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#9333ea"/>
+                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
@@ -334,7 +627,7 @@ export default function MonthlyCheckoutPage() {
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#9333ea"/>
+                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
@@ -343,7 +636,7 @@ export default function MonthlyCheckoutPage() {
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#9333ea"/>
+                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
@@ -352,7 +645,7 @@ export default function MonthlyCheckoutPage() {
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#9333ea"/>
+                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
@@ -364,6 +657,7 @@ export default function MonthlyCheckoutPage() {
                     </Box>
                 </Box>
             </Flex>
-        </Box>
+            </Box>
+        </>
     );
 } 

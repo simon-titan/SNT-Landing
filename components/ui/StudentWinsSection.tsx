@@ -49,17 +49,61 @@ export const StudentWinsSection = () => {
   const imageBlocks = chunkArray(resultsImages, 4);
 
   return (
-    <Box as="section" py={{ base: 10, md: 20 }} px={{ base: 6, md: 12 }} w="full" bg="white">
-      <VStack gap={4} align="center" mb={8} w="full">
-        <Text color="#fbbf24" fontWeight="bold" fontSize="sm" textTransform="uppercase">
-        Erfolge unserer Teilnehmer
+    <Box 
+      as="section" 
+      py={{ base: 12, md: 24 }} 
+      px={{ base: 6, md: 12 }} 
+      w="full" 
+      bg="linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(10, 14, 10, 0.98))"
+      position="relative"
+      _before={{
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "radial-gradient(at 50% 0%, rgba(34, 197, 94, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%)",
+        pointerEvents: "none"
+      }}
+    >
+      <VStack gap={6} align="center" mb={12} w="full" position="relative" zIndex={1}>
+        <Text 
+          color="#22c55e" 
+          fontWeight="bold" 
+          fontSize="sm" 
+          textTransform="uppercase"
+          letterSpacing="wider"
+          textShadow="0 0 10px rgba(34, 197, 94, 0.5)"
+        >
+          Erfolge unserer Teilnehmer
         </Text>
-        <Text as="h2" fontWeight="bold" fontSize={{ base: "2xl", md: "4xl" }} textAlign="center">
+        <Text 
+          as="h2" 
+          fontWeight="bold" 
+          fontSize={{ base: "2xl", md: "4xl" }} 
+          textAlign="center"
+          color="white"
+          textShadow="0 2px 4px rgba(0,0,0,0.3)"
+          lineHeight="tight"
+        >
           Sieh dein zukünftiges Potenzial als Trader
         </Text>
       </VStack>
-      <Box w="full" display="flex" justifyContent="center">
-        <Box w="100%" maxW="1100px" maxH="900px" overflowY="auto" pb={6}>
+      <Box w="full" display="flex" justifyContent="center" position="relative" zIndex={1}>
+        <Box 
+          w="100%" 
+          maxW="1200px" 
+          maxH="900px" 
+          overflowY="auto" 
+          pb={6}
+          bg="rgba(10, 14, 10, 0.4)"
+          backdropFilter="blur(12px)"
+          borderRadius="2xl"
+          border="1px solid rgba(34, 197, 94, 0.2)"
+          boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.15)"
+          p={6}
+        >
           <VStack gap={8} w="full" align="stretch">
             {imageBlocks.map((block, idx) => (
               <Box key={idx} as="section">

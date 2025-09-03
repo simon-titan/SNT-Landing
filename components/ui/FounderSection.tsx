@@ -12,11 +12,28 @@ export interface FounderSectionProps {
   reverse?: boolean;
 }
 
-// Blaues Haken-Icon als SVG
-const BlueCheckIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-    <path d="M5 10.5L9 14.5L15 7.5" stroke="#1E88E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
+// Grünes Haken-Icon als SVG mit Glow Effekt
+const GreenCheckIcon = () => (
+  <Box position="relative">
+    <svg 
+      width="20" 
+      height="20" 
+      viewBox="0 0 20 20" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg" 
+      style={{ display: 'inline-block', verticalAlign: 'middle' }}
+    >
+      <circle cx="10" cy="10" r="9" fill="rgba(34, 197, 94, 0.2)" stroke="rgba(34, 197, 94, 0.4)" strokeWidth="1"/>
+      <path 
+        d="M6 10.5L8.5 13L14 7.5" 
+        stroke="#22c55e" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        filter="drop-shadow(0 0 4px rgba(34, 197, 94, 0.6))"
+      />
+    </svg>
+  </Box>
 );
 
 export const FounderSection: React.FC<FounderSectionProps> = ({
@@ -29,17 +46,42 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
   reverse = false,
 }) => {
   return (
-    <Box as="section" py={{ base: 16, md: 32 }} px={{ base: 4, md: 8 }} w="full" display="flex" justifyContent="center" alignItems="center">
+    <Box 
+      as="section" 
+      py={{ base: 16, md: 32 }} 
+      px={{ base: 4, md: 8 }} 
+      w="full" 
+      display="flex" 
+      justifyContent="center" 
+      alignItems="center"
+      bg="linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(10, 14, 10, 0.98))"
+      position="relative"
+      _before={{
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "radial-gradient(at 30% 40%, rgba(34, 197, 94, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%)",
+        pointerEvents: "none"
+      }}
+    >
       <Box 
-        bg="white" 
+        bg="rgba(10, 14, 10, 0.7)" 
+        backdropFilter="blur(20px)"
         borderRadius="2xl" 
-        boxShadow="xl" 
-        border="1px solid"
-        borderColor="gray.200"
+        boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(34, 197, 94, 0.1)" 
+        border="1px solid rgba(34, 197, 94, 0.25)"
         w="full" 
         maxW="5xl" 
         px={{ base: 4, md: 10 }} 
         py={{ base: 8, md: 12 }}
+        position="relative"
+        _hover={{
+          boxShadow: "0 25px 80px 0 rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+        }}
+        transition="all 0.3s ease"
       >
         <Stack
           direction={{ base: "column", md: reverse ? "row-reverse" : "row" }}
@@ -48,23 +90,40 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
           w="full"
           justify="center"
         >
-          {/* Profilbild mit Medien-Logos */}
-          <VStack flexShrink={0} gap={4}>
+          {/* Profilbild mit Glow Effekt */}
+          <VStack flexShrink={0} gap={4} position="relative">
             <Box
-              w="240px"
-              h="320px"
+              w="280px"
+              h="380px"
               position="relative"
               borderRadius="2xl"
               overflow="hidden"
-              background="linear-gradient(135deg, rgba(13, 112, 182, 0.8), rgba(148, 39, 238, 0.8))"
-              p="7px"
-              boxShadow="lg"
+              background="linear-gradient(135deg, rgba(34, 197, 94, 0.4), rgba(16, 185, 129, 0.3))"
+              p="4px"
+              boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.4), 0 0 0 1px rgba(34, 197, 94, 0.2) inset"
+              _hover={{
+                transform: "translateY(-4px) scale(1.02)",
+                boxShadow: "0 30px 80px 0 rgba(34, 197, 94, 0.5), 0 0 0 1px rgba(34, 197, 94, 0.3) inset"
+              }}
+              transition="all 0.4s ease"
             >
               <Box
                 w="full"
                 h="full"
                 borderRadius="xl"
                 overflow="hidden"
+                position="relative"
+                _before={{
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: "linear-gradient(45deg, rgba(34, 197, 94, 0.1), transparent 50%)",
+                  zIndex: 1,
+                  pointerEvents: "none"
+                }}
               >
                 <Image
                   src={image}
@@ -76,28 +135,84 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
               </Box>
             </Box>
             
-            
+            {/* Glow Effekt unter dem Bild */}
+            <Box
+              position="absolute"
+              bottom="-20px"
+              left="50%"
+              transform="translateX(-50%)"
+              w="200px"
+              h="40px"
+              bg="rgba(34, 197, 94, 0.3)"
+              filter="blur(20px)"
+              borderRadius="full"
+              zIndex={-1}
+            />
           </VStack>
 
-          <VStack align="start" gap={4} maxW="lg" w="full">
-            <Text color="#EAB308" fontWeight="semibold" fontSize="sm" textTransform="uppercase">
-              {subtitle}
-            </Text>
-            <Text as="h2" fontWeight="bold" fontSize={{ base: "2xl", md: "3xl" }} color="black">
+          <VStack align="start" gap={6} maxW="lg" w="full">
+            <Box>
+              <Text 
+                color="#22c55e" 
+                fontWeight="bold" 
+                fontSize="sm" 
+                textTransform="uppercase" 
+                letterSpacing="wider"
+                textShadow="0 0 10px rgba(34, 197, 94, 0.5)"
+              >
+                {subtitle}
+              </Text>
+            </Box>
+            
+            <Text 
+              as="h2" 
+              fontWeight="bold" 
+              fontSize={{ base: "2xl", md: "4xl" }} 
+              color="white"
+              lineHeight="tight"
+              textShadow="0 2px 4px rgba(0,0,0,0.3)"
+            >
               {name}
             </Text>
             
-            <Box fontSize="md" color="gray.700">
+            <Box 
+              fontSize="md" 
+              color="white" 
+              lineHeight="1.7"
+              bg="rgba(34, 197, 94, 0.08)"
+              p={6}
+              borderRadius="xl"
+              border="1px solid rgba(34, 197, 94, 0.2)"
+              backdropFilter="blur(10px)"
+              boxShadow="0 4px 16px rgba(34, 197, 94, 0.1)"
+            >
               {description}
             </Box>
             
-            <VStack align="start" gap={2} mt={4}>
+            <VStack align="start" gap={3} mt={6} w="full">
+              <Text 
+                fontSize="lg" 
+                fontWeight="bold" 
+                color="#22c55e" 
+                mb={2}
+                textShadow="0 0 10px rgba(34, 197, 94, 0.3)"
+              >
+                Expertise & Erfolge:
+              </Text>
               {checklist.map((item, idx) => (
-                <HStack key={idx} gap={3} fontSize="md" align="start">
-                  <Box mt={1}>
-                    <BlueCheckIcon />
+                <HStack key={idx} gap={3} fontSize="md" align="start" w="full">
+                  <Box mt={1} flexShrink={0}>
+                    <GreenCheckIcon />
                   </Box>
-                  <Text color="gray.700" lineHeight="1.5">{item}</Text>
+                  <Text 
+                    color="gray.100" 
+                    lineHeight="1.6"
+                    _hover={{ color: "white" }}
+                    transition="color 0.2s ease"
+                    fontSize="md"
+                  >
+                    {item}
+                  </Text>
                 </HStack>
               ))}
             </VStack>
