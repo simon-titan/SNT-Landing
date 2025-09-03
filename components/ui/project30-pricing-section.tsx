@@ -122,7 +122,7 @@ export const Project30PricingSection = () => {
                 letterSpacing="wider"
                 textShadow="0 0 10px rgba(34, 197, 94, 0.5)"
               >
-                Premium Mentorship
+                WANN WENN NICHT JETZT?
               </Text>
             </Box>
             <Heading
@@ -133,7 +133,7 @@ export const Project30PricingSection = () => {
               lineHeight="tight"
               textShadow="0 2px 4px rgba(0,0,0,0.3)"
             >
-              Werde Teil unseres{" "}
+              Werde Teil des{" "}
               <Box
                 as="span"
                 background="linear-gradient(90deg, rgba(34,197,94,0.3), transparent 95%)"
@@ -147,7 +147,7 @@ export const Project30PricingSection = () => {
                 boxShadow="0 0 20px rgba(34, 197, 94, 0.3)"
                 textShadow="0 0 15px rgba(34, 197, 94, 0.6)"
               >
-                MENTORSHIPS
+                SNT-PREMIUM
               </Box>
             </Heading>
           </VStack>
@@ -184,7 +184,7 @@ export const Project30PricingSection = () => {
               whiteSpace="nowrap"
               minW="fit-content"
             >
-              {pricingMode === "lifetime" ? "🔥 SONDERANGEBOT" : "MENTORSHIP"}
+              {pricingMode === "lifetime" ? "🔥 SONDERANGEBOT" : "SNT-PREMIUM"}
             </Box>
           </Box>
 
@@ -217,7 +217,7 @@ export const Project30PricingSection = () => {
               {/* Plan Title */}
               <VStack gap={2} textAlign="center">
                 <Heading as="h3" fontSize="2xl" color="white" fontWeight="bold">
-                  SNTTRADES Ausbildung
+                  SNTTRADES PREMIUM
                 </Heading>
                 <Text color="rgba(34, 197, 94, 0.8)" fontSize="sm" fontWeight="medium">
                   {pricingMode === "lifetime" 

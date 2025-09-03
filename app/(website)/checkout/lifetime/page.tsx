@@ -432,7 +432,7 @@ export default function LifetimeCheckoutPage() {
                         textShadow="0 0 20px rgba(34, 197, 94, 0.6)"
                         textAlign="center"
                     >
-                        SNTTRADES™ MENTORSHIP
+                        SNTTRADES™ ELITE
                     </Heading>
                     <Text 
                         textAlign="center" 

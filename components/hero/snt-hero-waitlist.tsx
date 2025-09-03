@@ -215,7 +215,7 @@ export default function SntHeroWaitlist() {
             borderRadius="xs"
             bg="linear-gradient(90deg, rgba(73,231,156,0.6), rgba(73,231,156,0.22) 85%, rgba(73,231,156,0) 100%)"
           >
-            MENTORSHIP PLATZ
+            SNT-ELITE PLATZ
           </Box>
           
         </Heading>
