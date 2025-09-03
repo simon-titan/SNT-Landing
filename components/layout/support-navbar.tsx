@@ -43,7 +43,7 @@ export const SupportNavbar = () => {
                   _hover={{ bg: "rgba(73,231,156,0.16)", boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" }}
                   _active={{ bg: "rgba(73,231,156,0.22)", boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" }}
                 >
-                  MENTORSHIP LOGIN
+                  PLATFORM LOGIN
                 </Button>
               </a>
             </HStack>

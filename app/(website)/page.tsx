@@ -253,7 +253,7 @@ export default async function Page() {
       
       <FounderSection
         image="/personal/emre.jpg"
-        name="Hi, Ich bin Emre Kopal 👋"
+        name="Hi, Ich bin Emre 👋"
         subtitle="MEET THE FOUNDER"
         description={
           <Box fontSize="md" color="white">

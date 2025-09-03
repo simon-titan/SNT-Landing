@@ -141,7 +141,7 @@ export default function RegisterPage() {
                     <ChatsCircle size={22} weight="fill" />
                   </Box>
                   <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Warteliste für das Mentorship</Text>
+                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Warteliste für die SNT-ELITE</Text>
                     <Text fontSize="sm" color="gray.300">Trag dich ein und sichere dir einen Platz in der nächsten Runde. Wir nehmen nur begrenzte Teilnehmer auf.</Text>
                   </Box>
                 </HStack>
@@ -165,7 +165,7 @@ export default function RegisterPage() {
                   </Box>
                   <Box>
                     <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Benachrichtigung per E‑Mail</Text>
-                    <Text fontSize="sm" color="gray.300">Wir informieren dich, sobald das Mentorship wieder startet – inklusive allen nächsten Schritten.</Text>
+                    <Text fontSize="sm" color="gray.300">Wir informieren dich, sobald die SNT-ELITE wieder startet – inklusive allen nächsten Schritten.</Text>
                   </Box>
                 </HStack>
               </Box>

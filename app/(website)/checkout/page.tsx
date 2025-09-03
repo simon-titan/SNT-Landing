@@ -113,7 +113,7 @@ export default function CheckoutLandingPage() {
                         </Heading>
 
                         <Text color="white" textStyle="sm" mx="auto" maxW="700px" textShadow="1px 1px 2px rgba(0,0,0,0.8)">
-                            Starte deine Trading-Reise mit unserem bewährten Mentorship-Programm
+                            Starte deine Trading-Reise mit unserem bewährten ELITE-Programm
                         </Text>
                     </Stack>
                 </VStack>

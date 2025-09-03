@@ -292,7 +292,7 @@ const MobileNavigation = () => {
                   }}
                   onClick={() => setIsOpen(false)}
                 >
-                  MENTORSHIP LOGIN
+                  PLATTFORM LOGIN
                 </Button>
               </a>
             </VStack>
@@ -422,7 +422,7 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   }}
                   whiteSpace="nowrap"
                 >
-                  MENTORSHIP LOGIN
+                  PLATTFORM LOGIN
                 </Button>
               </a>
             </Box>

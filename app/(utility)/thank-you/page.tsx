@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 export const metadata = generateMetadata({
   title: "Vielen Dank",
   description:
-    "Vielen Dank für deine Anmeldung zur SNT-Mentorship Trading-Plattform. Bitte prüfe deine E-Mails, um deine Registrierung abzuschließen.",
+    "Vielen Dank für deine Anmeldung zur SNT-ELITE Trading-Plattform. Bitte prüfe deine E-Mails, um deine Registrierung abzuschließen.",
   noIndex: true,
 });
 
