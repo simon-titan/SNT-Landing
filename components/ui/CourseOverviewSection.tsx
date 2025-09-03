@@ -84,7 +84,10 @@ const useIntersectionObserver = (threshold: number = 0.1) => {
 const courses = [
   {
     icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M10 30L30 10M10 10h20v20" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="16" stroke="#22c55e" strokeWidth="3" fill="rgba(34, 197, 94, 0.1)"/>
+        <circle cx="20" cy="20" r="6" fill="#22c55e"/>
+      </svg>
     ),
     title: "Trading-Einsteiger ohne Vorkenntnisse",
     desc: "Wir begleiten dich vom absoluten Anfänger bis hin zum profitablen Vollzeit-Trader – Schritt für Schritt, praxisnah und verständlich.",
@@ -95,7 +98,10 @@ const courses = [
   },
   {
     icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M20 8v24M8 20h24" stroke="#fb7185" strokeWidth="3" strokeLinecap="round"/></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <rect x="6" y="6" width="28" height="28" rx="4" stroke="#22c55e" strokeWidth="3" fill="rgba(34, 197, 94, 0.1)"/>
+        <rect x="14" y="14" width="12" height="12" rx="2" fill="#22c55e"/>
+      </svg>
     ),
     title: "Fortgeschrittene Trader, die den nächsten Schritt machen wollen",
     desc: "Du hast bereits erste Erfahrungen im Trading gesammelt – wir helfen dir dabei, deine Strategie zu verfeinern, konstanter profitabel zu werden und den Schritt zum Vollzeit-Trader zu gehen.",
@@ -106,7 +112,10 @@ const courses = [
   },
   {
     icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M20 8l8 8-8 8-8-8 8-8zm0 8v8m0 0v8" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/><rect x="2" y="2" width="36" height="36" rx="8" fill="url(#a)"/><defs><radialGradient id="a" cx="0.5" cy="0.5" r="0.7"><stop stopColor="#2563eb"/><stop offset="1" stopColor="#000"/></radialGradient></defs></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <polygon points="20,6 32,32 8,32" stroke="#22c55e" strokeWidth="3" fill="rgba(34, 197, 94, 0.1)"/>
+        <polygon points="20,14 26,24 14,24" fill="#22c55e"/>
+      </svg>
     ),
     title: "Erfahrene Trader, die unsere Strategien erlernen möchten",
     desc: "Auch erfahrene Trader stoßen irgendwann an Grenzen. Wir geben dir tiefere Einblicke in unsere erprobten Strategien, die dir helfen, effizienter, zielgerichteter und profitabler zu traden. Denn: Wir begleiten Trader von null Erfahrung bis hin zum profitablen Vollzeit-Trader – und geben auch Profis den letzten Schliff.",
@@ -122,11 +131,40 @@ const AnimatedStat = ({ stat, isInView }: { stat: typeof stats[0], isInView: boo
   const count = useCountUp(stat.numericValue, 2000, isInView);
   
   return (
-    <VStack gap={0} align="center" justify="center">
-      <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="bold" color="#2563eb">
+    <VStack 
+      gap={2} 
+      align="center" 
+      justify="center"
+      bg="rgba(10, 14, 10, 0.6)"
+      backdropFilter="blur(16px)"
+      borderRadius="xl"
+      p={6}
+      border="1px solid rgba(34, 197, 94, 0.2)"
+      boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.15)"
+      _hover={{
+        transform: "translateY(-4px)",
+        boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
+        borderColor: "rgba(34, 197, 94, 0.3)"
+      }}
+      transition="all 0.3s ease"
+    >
+      <Text 
+        fontSize={{ base: "3xl", md: "5xl" }} 
+        fontWeight="bold" 
+        color="#22c55e"
+        textShadow="0 0 20px rgba(34, 197, 94, 0.6)"
+      >
         {stat.prefix}{count}{stat.suffix}
       </Text>
-      <Text fontSize={{ base: "sm", md: "md" }} color="#0a2540" fontWeight="semibold" textAlign="center" textTransform="uppercase" letterSpacing="0.02em">
+      <Text 
+        fontSize={{ base: "xs", md: "sm" }} 
+        color="gray.300" 
+        fontWeight="semibold" 
+        textAlign="center" 
+        textTransform="uppercase" 
+        letterSpacing="0.1em"
+        lineHeight="1.3"
+      >
         {stat.label}
       </Text>
     </VStack>
@@ -137,48 +175,143 @@ export const CourseOverviewSection = () => {
   const { ref, isInView } = useIntersectionObserver(0.3);
   
   return (
-    <Box as="section" py={{ base: 6, md: 12 }} px={{ base: 4, md: 8 }} w="full" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-      <SimpleGrid ref={ref} columns={{ base: 1, md: 4 }} gap={{ base: 4, md: 6 }} mb={12} w="full" maxW="5xl">
+    <Box 
+      as="section" 
+      py={{ base: 12, md: 20 }} 
+      px={{ base: 4, md: 8 }} 
+      w="full" 
+      display="flex" 
+      flexDirection="column" 
+      alignItems="center" 
+      justifyContent="center"
+      bg="linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(10, 14, 10, 0.95))"
+      position="relative"
+      _before={{
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "radial-gradient(at 20% 80%, rgba(34, 197, 94, 0.1) 0px, transparent 50%), radial-gradient(at 80% 20%, rgba(16, 185, 129, 0.08) 0px, transparent 50%)",
+        pointerEvents: "none"
+      }}
+    >
+      <SimpleGrid 
+        ref={ref} 
+        columns={{ base: 1, md: 4 }} 
+        gap={{ base: 6, md: 8 }} 
+        mb={16} 
+        w="full" 
+        maxW="6xl"
+        position="relative"
+        zIndex={1}
+      >
         {stats.map((stat, i) => (
           <AnimatedStat key={i} stat={stat} isInView={isInView} />
         ))}
       </SimpleGrid>
-      <Text as="h2" fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold" textAlign="center" mb={6}>
+      <Text 
+        as="h2" 
+        fontSize={{ base: "2xl", md: "4xl" }} 
+        fontWeight="bold" 
+        textAlign="center" 
+        mb={12}
+        color="white"
+        textShadow="0 2px 4px rgba(0,0,0,0.3)"
+        position="relative"
+        zIndex={1}
+      >
         Unsere Ausbildung eignet sich besonders für …
       </Text>
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} w="full" maxW="6xl">
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap={8} w="full" maxW="6xl" position="relative" zIndex={1}>
         {courses.map((course, i) => (
           <Box
             key={i}
-            bg={course.bg}
-            borderRadius="16px"
-            boxShadow="md"
+            bg="rgba(10, 14, 10, 0.7)"
+            backdropFilter="blur(20px)"
+            borderRadius="2xl"
+            boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.2)"
+            border="1px solid rgba(34, 197, 94, 0.25)"
             p={{ base: 6, md: 8 }}
-            color={course.color}
+            color="white"
             display="flex"
             flexDirection="column"
-            minH="340px"
+            minH="400px"
+            position="relative"
+            overflow="hidden"
+            _hover={{
+              transform: "translateY(-6px)",
+              boxShadow: "0 25px 80px 0 rgba(34, 197, 94, 0.3)",
+              borderColor: "rgba(34, 197, 94, 0.4)"
+            }}
+            transition="all 0.4s ease"
+            _before={{
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `linear-gradient(135deg, rgba(34, 197, 94, ${0.05 + i * 0.02}) 0%, transparent 70%)`,
+              pointerEvents: "none"
+            }}
           >
-            <Box mb={4}>{course.icon}</Box>
-            <Text fontWeight="bold" fontSize={{ base: "xl", md: "2xl" }} mb={2}>
+            <Box mb={4} position="relative" zIndex={1}>
+              <Box
+                p={3}
+                borderRadius="xl"
+                bg="rgba(34, 197, 94, 0.15)"
+                border="1px solid rgba(34, 197, 94, 0.3)"
+                display="inline-block"
+                boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+              >
+                {course.icon}
+              </Box>
+            </Box>
+            <Text 
+              fontWeight="bold" 
+              fontSize={{ base: "xl", md: "2xl" }} 
+              mb={4}
+              color="white"
+              lineHeight="tight"
+              position="relative"
+              zIndex={1}
+            >
               {course.title}
             </Text>
-            <Text fontSize="md" mb={6} color={i === 2 ? "#dbeafe" : course.color}>
+            <Text 
+              fontSize="md" 
+              mb={6} 
+              color="gray.200"
+              lineHeight="1.6"
+              position="relative"
+              zIndex={1}
+            >
               {course.desc}
             </Text>
-            <Box mt="auto">
+            <Box mt="auto" position="relative" zIndex={1}>
               <a
-                href="/Produkte/SNTTRADES-AUSBILDUNG"
+                href="/checkout/lifetime"
                 style={{
                   fontWeight: 600,
-                  color: course.linkColor,
-                  borderBottom: `2px solid ${course.linkColor}`,
+                  color: '#22c55e',
+                  borderBottom: `2px solid #22c55e`,
                   textDecoration: 'none',
-                  transition: 'opacity 0.2s',
+                  transition: 'all 0.3s ease',
                   display: 'inline-block',
+                  textShadow: '0 0 10px rgba(34, 197, 94, 0.4)'
                 }}
-                onMouseOver={e => (e.currentTarget.style.opacity = '0.8')}
-                onMouseOut={e => (e.currentTarget.style.opacity = '1')}
+                onMouseOver={e => {
+                  e.currentTarget.style.color = '#16a34a';
+                  e.currentTarget.style.borderBottomColor = '#16a34a';
+                  e.currentTarget.style.textShadow = '0 0 15px rgba(34, 197, 94, 0.6)';
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.color = '#22c55e';
+                  e.currentTarget.style.borderBottomColor = '#22c55e';
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(34, 197, 94, 0.4)';
+                }}
               >
                 {course.link} <span style={{ fontSize: 18, verticalAlign: 'middle' }}>›</span>
               </a>

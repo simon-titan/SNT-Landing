@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Box, Text, HStack, VStack } from "@chakra-ui/react";
-// Ersetze den Import von StarIcon
-// import { StarIcon } from "@chakra-ui/icons";
+import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogCloseTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const StarIcon = ({ filled = false }) => (
   <svg
@@ -138,50 +138,162 @@ const reviews = [
 const MAX_TEXT_LENGTH = 260;
 
 const ReviewCard = ({ text, name, date, rating }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isLong = text.length > MAX_TEXT_LENGTH;
-  const displayText = expanded || !isLong ? text : text.slice(0, MAX_TEXT_LENGTH) + "...";
+  const displayText = isLong ? text.slice(0, MAX_TEXT_LENGTH) + "..." : text;
 
   return (
-    <Box
-      minW={{ base: "260px", md: "320px" }}
-      maxW={{ base: "260px", md: "320px" }}
-      minH={{ base: "320px", md: "340px" }}
-      maxH={{ base: "320px", md: "340px" }}
-      bg="rgba(255, 255, 255, 0.1)"
-      backdropFilter="blur(10px)"
-      borderRadius="lg"
-      boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
-      border="1px solid rgba(255, 255, 255, 0.18)"
-      p={4}
-      mx={2}
-      flexShrink={0}
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      pb={6}
-      color="white"
-    >
-      <HStack gap={1} mb={2} justify="flex-start">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <span key={i}><StarIcon filled={i < rating} /></span>
-        ))}
-      </HStack>
-      <Box flexGrow={1} mb={2}>
-        <Text fontSize="sm" color="grey.400">
-          "{displayText}"
-          {isLong && !expanded && (
-            <Box as="span" color="black" ml={1} cursor="pointer" onClick={() => setExpanded(true)}>
-              Mehr lesen
-            </Box>
-          )}
-        </Text>
+    <>
+      <Box
+        minW={{ base: "260px", md: "320px" }}
+        maxW={{ base: "260px", md: "320px" }}
+        minH={{ base: "320px", md: "340px" }}
+        maxH={{ base: "320px", md: "340px" }}
+        bg="rgba(10, 14, 10, 0.85)"
+        backdropFilter="blur(16px)"
+        borderRadius="xl"
+        boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+        border="1px solid rgba(34, 197, 94, 0.3)"
+        p={4}
+        mx={2}
+        flexShrink={0}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        pb={6}
+        color="white"
+        position="relative"
+        _hover={{
+          transform: "translateY(-2px)",
+          boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+        }}
+        transition="all 0.3s ease"
+      >
+        <HStack gap={1} mb={2} justify="flex-start">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span key={i}><StarIcon filled={i < rating} /></span>
+          ))}
+        </HStack>
+        <Box flexGrow={1} mb={2}>
+          <Text fontSize="sm" color="gray.200" lineHeight="1.5">
+            "{displayText}"
+            {isLong && (
+              <Box 
+                as="span" 
+                color="#22c55e" 
+                ml={2} 
+                cursor="pointer" 
+                onClick={() => setIsDialogOpen(true)}
+                fontWeight="semibold"
+                _hover={{ color: "#16a34a" }}
+                transition="color 0.2s ease"
+              >
+                Mehr lesen
+              </Box>
+            )}
+          </Text>
+        </Box>
+        <Box>
+          <Text fontSize="xs" fontWeight="medium" color="white">von {name}</Text>
+          <Text fontSize="xs" color="gray.400">{date}</Text>
+        </Box>
       </Box>
-      <Box>
-        <Text fontSize="xs">von {name}</Text>
-        <Text fontSize="xs" color="black">{date}</Text>
-      </Box>
-    </Box>
+
+      {/* Pop-Up Dialog */}
+      <DialogRoot open={isDialogOpen} onOpenChange={(details) => setIsDialogOpen(details.open)}>
+        <DialogContent
+          bg="rgba(5, 10, 5, 0.98)"
+          backdropFilter="blur(24px)"
+          border="2px solid rgba(34, 197, 94, 0.4)"
+          borderRadius="2xl"
+          boxShadow="0 25px 80px 0 rgba(34, 197, 94, 0.4), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+          maxW="xl"
+          w={{ base: "90%", md: "600px" }}
+          color="white"
+          position="relative"
+          overflow="hidden"
+          _before={{
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "radial-gradient(at 30% 30%, rgba(34, 197, 94, 0.1) 0px, transparent 70%)",
+            pointerEvents: "none"
+          }}
+        >
+          {/* Close Button - Verbessert */}
+          <Box
+            position="absolute"
+            top={3}
+            right={3}
+            zIndex={1000}
+            cursor="pointer"
+            onClick={() => setIsDialogOpen(false)}
+            w={10}
+            h={10}
+            bg="rgba(239, 68, 68, 0.15)"
+            _hover={{
+              bg: "rgba(239, 68, 68, 0.25)",
+              transform: "scale(1.1)"
+            }}
+            borderRadius="full"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            border="1px solid rgba(239, 68, 68, 0.3)"
+            boxShadow="0 4px 12px rgba(239, 68, 68, 0.2)"
+            transition="all 0.2s ease"
+          >
+            <Text color="red.300" fontSize="lg" fontWeight="bold">✕</Text>
+          </Box>
+
+          <DialogHeader position="relative" zIndex={1}>
+            <DialogTitle 
+              color="#22c55e" 
+              fontSize="2xl" 
+              fontWeight="bold"
+              textShadow="0 0 15px rgba(34, 197, 94, 0.5)"
+              mb={2}
+            >
+              Bewertung von {name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <DialogBody position="relative" zIndex={1} pt={2}>
+            <VStack align="start" gap={6}>
+              <HStack gap={2} mb={3}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Box key={i} transform="scale(1.2)">
+                    <StarIcon filled={i < rating} />
+                  </Box>
+                ))}
+                <Text ml={3} color="gray.300" fontSize="sm" fontWeight="medium">
+                  {date}
+                </Text>
+              </HStack>
+              <Box
+                bg="rgba(34, 197, 94, 0.05)"
+                p={6}
+                borderRadius="xl"
+                border="1px solid rgba(34, 197, 94, 0.15)"
+                w="full"
+              >
+                <Text 
+                  fontSize="lg" 
+                  color="white" 
+                  lineHeight="1.7"
+                  fontWeight="400"
+                >
+                  "{text}"
+                </Text>
+              </Box>
+            </VStack>
+          </DialogBody>
+        </DialogContent>
+      </DialogRoot>
+    </>
   );
 };
 
@@ -194,7 +306,7 @@ export const ReviewMarquee = () => {
       overflow="hidden"
       position="relative"
       py={{ base: 8, md: 12 }}
-      bg="linear-gradient(135deg, rgba(13, 112, 182, 0.8), rgba(35, 0, 63, 0.8))"
+      bg="linear-gradient(135deg, rgba(10, 14, 10, 0.95), rgba(0, 0, 0, 0.98))"
       _hover={{ cursor: "pointer" }}
     >
       <style>{`

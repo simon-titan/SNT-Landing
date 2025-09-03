@@ -39,7 +39,7 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { useRouter, usePathname } from "next/navigation";
-import { List } from "@phosphor-icons/react/dist/ssr";
+import { List, Question } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 
 export const MenuLink = (props) => {
@@ -229,7 +229,11 @@ const MobileNavigation = () => {
             aria-label="Menü öffnen"
             variant="ghost"
             size="sm"
-            colorPalette="gray"
+            color="#49E79C"
+            _hover={{ 
+              bg: "rgba(73,231,156,0.1)",
+              color: "#49E79C"
+            }}
           >
             <Icon>
               <List />
@@ -239,80 +243,58 @@ const MobileNavigation = () => {
         <DrawerBackdrop />
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Navigation</DrawerTitle>
+            <DrawerTitle></DrawerTitle>
             <DrawerCloseTrigger />
           </DrawerHeader>
           <DrawerBody>
-            <VStack gap="4" align="stretch">
+            <VStack gap="6" align="stretch" py="4">
+              {/* Support Link für Mobile - im gleichen Stil wie Mentorship Login */}
               <Button
-                variant="ghost"
                 w="full"
-                justifyContent="flex-start"
-                onClick={() => handleNavigate(() => {
-                  if (pathname === "/") {
-                    const el = document.getElementById('winnings');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    router.push('/#winnings');
-                  }
-                })}
-              >
-                Wie es funktioniert
-              </Button>
-              
-              <VStack gap="2" align="stretch">
-                <Heading size="sm" color="gray.600" px="3">Produkte</Heading>
-                <Button
-                  variant="ghost"
-                  w="full"
-                  justifyContent="flex-start"
-                  pl="6"
-                  onClick={() => handleNavigate(() => router.push('/Produkte'))}
-                >
-                  Übersicht
-                </Button>
-                <Button
-                  variant="ghost"
-                  w="full"
-                  justifyContent="flex-start"
-                  pl="6"
-                  onClick={() => handleNavigate(() => router.push('/Produkte/SNT-Ressourcen-Bibliothek'))}
-                >
-                  Ressourcen Bibliothek (Kostenlos)
-                </Button>
-                <Button
-                  variant="ghost"
-                  w="full"
-                  justifyContent="flex-start"
-                  pl="6"
-                  onClick={() => handleNavigate(() => router.push('/Produkte/SNTTRADES-AUSBILDUNG'))}
-                >
-                  Mentorship (Paid-Kurs)
-                </Button>
-              </VStack>
-              
-              {/* Support Link für Mobile */}
-              <Button
-                variant="ghost"
-                w="full"
-                justifyContent="flex-start"
+                height="48px"
+                fontSize="lg"
+                bg="rgba(73,231,156,0.08)"
+                color="#49E79C"
+                border="1px solid rgba(73,231,156,0.45)"
+                backdropFilter="blur(10px) saturate(160%)"
+                boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
+                _hover={{ 
+                  bg: "rgba(73,231,156,0.16)", 
+                  boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" 
+                }}
+                _active={{ 
+                  bg: "rgba(73,231,156,0.22)", 
+                  boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" 
+                }}
                 onClick={() => handleNavigate(() => router.push('/support'))}
               >
-                Support
+                SUPPORT
               </Button>
               
               {/* Mentorship Login für Mobile */}
-              <Box pt="4" borderTop="1px solid" borderColor="gray.200">
-                <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
-                  <Button
-                    w="full"
-                    variant="outline"
-                    colorPalette="gray"
-                  >
-                    MENTORSHIP LOGIN
-                  </Button>
-                </a>
-              </Box>
+              <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
+                <Button
+                  w="full"
+                  height="48px"
+                  fontSize="lg"
+                  bg="rgba(73,231,156,0.08)"
+                  color="#49E79C"
+                  border="1px solid rgba(73,231,156,0.45)"
+                  backdropFilter="blur(10px) saturate(160%)"
+                  boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
+                  _hover={{ 
+                    bg: "rgba(73,231,156,0.16)", 
+                    boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" 
+                  }}
+                  _active={{ 
+                    bg: "rgba(73,231,156,0.22)", 
+                    boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" 
+                  }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  MENTORSHIP LOGIN
+                </Button>
+              </a>
             </VStack>
           </DrawerBody>
         </DrawerContent>
@@ -324,87 +306,138 @@ const MobileNavigation = () => {
 export const Navbar = ({ type }: { type: "website" | "app" }) => {
   return (
     <Box px="0" py="0" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="docked">
-      {/* Blauer Infobalken */}
+      {/* Grüner Infobalken mit schwarzem Text */}
       <Box
         w="100vw"
-        bg="#1296f6"
-        color="white"
+        bg="#22c55e"
+        color="black"
         fontSize="xs"
         px="4"
         py="2"
         textAlign="center"
+        fontWeight="medium"
       >
         Nicht sicher, wann du starten sollst?{' '}
         <Link
-          href="/checkout"
-          color="white"
+          href="/checkout/lifetime"
+          color="black"
           textDecoration="underline"
           fontWeight="bold"
+          _hover={{ color: "gray.800" }}
         >
           DANN FANG JETZT AN &gt;
         </Link>
       </Box>
 
-             {/* Navbar */}
-       <Box
-         as="header"
-         w="100vw"
-         background="white"
-         px="0"
-         py="1"
-         boxShadow="0 2px 8px rgba(0,0,0,0.06)"
-         borderBottom="1px solid #e2e8f0"
-       >
-         <Box w={{ base: "100%", md: "80%" }} mx="auto" px="4" py="2">
-          <HStack justify="space-between" w="full">
-            {/* Logo ganz links */}
-            <Link href="/">
-              <Heading
-                as="h1"
-                fontSize={{ base: "lg", md: "2xl" }}
-                fontWeight="700"
-                lineHeight="0.9"
-                bg="linear-gradient(0deg, #000000 0%, #6b7280 100%)"
-                bgClip="text"
-              >
-                SNT-TRADES™
-              </Heading>
-            </Link>
+      {/* Navbar */}
+      <Box
+        as="header"
+        w="100vw"
+        background="#000000"
+        px="0"
+        py="0"
+        boxShadow="0 14px 40px -14px rgba(73,231,156,0.55)"
+        borderBottom="1px solid rgba(73,231,156,0.25)"
+      >
+        <Box w="100%" mx="auto" px="4" py="2">
+          <Box position="relative" w="full" h="44px" display="flex" alignItems="center">
+            {/* Help Icon links - absolut positioniert */}
+            <Box 
+              position="absolute" 
+              left="4" 
+              top="50%"
+              transform="translateY(-50%)"
+              display={{ base: "none", md: "block" }}
+            >
+              <Link href="/support">
+                <IconButton
+                  aria-label="Support"
+                  variant="ghost"
+                  size="md"
+                  color="#49E79C"
+                  _hover={{ 
+                    bg: "rgba(73,231,156,0.1)",
+                    color: "#49E79C"
+                  }}
+                >
+                  <Icon>
+                    <Question size={20} />
+                  </Icon>
+                </IconButton>
+              </Link>
+            </Box>
+
+            {/* SNTTRADES Logo exakt mittig */}
+            <Box
+              position="absolute"
+              left="50%"
+              top="50%"
+              transform="translate(-50%, -50%)"
+            >
+              <Link href="/" _hover={{ textDecoration: "none" }}>
+                <Heading
+                  as="h1"
+                  fontSize={{ base: "md", md: "lg" }}
+                  fontWeight="800"
+                  fontFamily="var(--font-horizon), Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                  lineHeight="0.9"
+                  color="#49E79C"
+                  textShadow="0 0 10px rgba(73,231,156,0.75), 0 0 22px rgba(73,231,156,0.35)"
+                  _hover={{
+                    textShadow: "0 0 14px rgba(73,231,156,0.85), 0 0 28px rgba(73,231,156,0.45)"
+                  }}
+                  transition="all 0.3s ease"
+                  whiteSpace="nowrap"
+                >
+                  SNTTRADES
+                </Heading>
+              </Link>
+            </Box>
             
-            {/* Rechte Seite mit Navigation und Buttons */}
-            <HStack gap="4">
-              {/* Desktop Navigation */}
-              <DesktopNavigation />
-              
-              {/* Desktop Buttons */}
-              <HStack gap="1" display={{ base: "none", md: "flex" }}>
-                <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    colorPalette="gray"
-                  >
-                    MENTORSHIP LOGIN
-                  </Button>
-                </a>
-                <Link href="/checkout">
-                  <Button size="sm"  bg="blue.500" _hover={{ bg: "blue.400" }}>
-                    FANG ENDLICH AN
-                  </Button>
-                </Link>
-              </HStack>
-              
-                             {/* Mobile: Nur FANG ENDLICH AN Button + Hamburger */}
-               <HStack gap="2" display={{ base: "flex", md: "none" }}>
-                 <Link href="/checkout">
-                   <Button size="sm"  bg="#1E88E5" _hover={{ bg: "blue.300" }} fontSize="xx-small">
-                     FANG ENDLICH AN
-                   </Button>
-                 </Link>
-                 <MobileNavigation />
-               </HStack>
-            </HStack>
-          </HStack>
+            {/* Mentorship Login Button rechts - absolut positioniert */}
+            <Box 
+              position="absolute" 
+              right="4" 
+              top="50%"
+              transform="translateY(-50%)"
+              display={{ base: "none", md: "block" }}
+            >
+              <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
+                <Button
+                  size="xs"
+                  height="28px"
+                  fontSize="xs"
+                  bg="rgba(73,231,156,0.08)"
+                  color="#49E79C"
+                  border="1px solid rgba(73,231,156,0.45)"
+                  backdropFilter="blur(10px) saturate(160%)"
+                  boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
+                  _hover={{ 
+                    bg: "rgba(73,231,156,0.16)", 
+                    boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" 
+                  }}
+                  _active={{ 
+                    bg: "rgba(73,231,156,0.22)", 
+                    boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" 
+                  }}
+                  whiteSpace="nowrap"
+                >
+                  MENTORSHIP LOGIN
+                </Button>
+              </a>
+            </Box>
+
+            {/* Mobile: Nur Hamburger Menu - absolut positioniert */}
+            <Box 
+              position="absolute" 
+              right="4" 
+              top="50%"
+              transform="translateY(-50%)"
+              display={{ base: "block", md: "none" }}
+            >
+              <MobileNavigation />
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box>
