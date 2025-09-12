@@ -6,9 +6,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc",
-    "bot": "node start-telegram-bot.js",
-    "bot:dev": "npx ts-node telegram-bot/bot.ts"
+    "type-check": "tsc"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.2.2",

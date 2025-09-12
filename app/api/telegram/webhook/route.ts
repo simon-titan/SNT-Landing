@@ -35,7 +35,11 @@ Das Ziel ist es die größte *Trading FAMILIE Deutschlands* zu werden.
 const paymentMessage = `Fast geschafft! 😮‍💨
 Als neues Mitglied hast du direkt Zugang zu unserer Trading Strategie, Community und der exklusiven Lern-Plattform`;
 
-const successMessage = `Vielen Dank für dein Vertrauen! Jetzt geht´s richtig los!!! 🏆`;
+const successMessage = `Herzlich willkommen bei SNT-ELITE! 🏆
+
+Deine Zugangsdaten hast du per E-Mail erhalten.
+
+Die Plattform findest du unter: snt-elite-platform.de`;
 
 // Hilfsfunktionen werden aus lib/telegram.ts importiert
 
@@ -95,8 +99,7 @@ export async function POST(request: NextRequest) {
 Perfekte Wahl für den flexiblen Einstieg!`, {
           reply_markup: {
             inline_keyboard: [
-              [{ text: 'PayPal', url: 'https://snttrades.de/checkout?plan=monthly' }],
-              [{ text: 'Kredit-/EC-Karte', url: 'https://snttrades.de/checkout?plan=monthly' }]
+              [{ text: 'Jetzt kaufen', url: 'https://www.snttrades.de/checkout/monthly' }]
             ]
           },
           parse_mode: 'Markdown'
@@ -110,26 +113,13 @@ Perfekte Wahl für den flexiblen Einstieg!`, {
 Die beste Investition in deine Trading-Zukunft!`, {
           reply_markup: {
             inline_keyboard: [
-              [{ text: 'PayPal', url: 'https://snttrades.de/checkout?plan=lifetime' }],
-              [{ text: 'Kredit-/EC-Karte', url: 'https://snttrades.de/checkout?plan=lifetime' }]
+              [{ text: 'Jetzt kaufen', url: 'https://www.snttrades.de/checkout/lifetime' }]
             ]
           },
           parse_mode: 'Markdown'
         });
         setUserSession(userId, { stage: 'payment' });
 
-      } else if (data === 'dashboard') {
-        await sendMessage(chatId, 'Weiterleitung zum Dashboard...', {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: 'SNTTRADES Dashboard öffnen', url: 'https://www.snt-mentorship-platform.de' }]
-            ]
-          }
-        });
-
-      } else if (data === 'cancel_subscription') {
-        await sendMessage(chatId, 'Diese Funktion steht aktuell nicht zur Verfügung. Bitte schreibe eine Mail an: info@snttrades.de');
-      }
     }
 
     return NextResponse.json({ success: true });

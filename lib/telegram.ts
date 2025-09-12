@@ -28,7 +28,11 @@ export function setUserSession(userId: number, session: { stage: 'start' | 'sele
 
 // Funktion zum Senden der Erfolgs-Nachricht
 export async function sendSuccessMessage(userId: number) {
-  const successMessage = `Vielen Dank für dein Vertrauen! Jetzt geht´s richtig los!!! 🏆`;
+  const successMessage = `Herzlich willkommen bei SNT-ELITE! 🏆
+
+Deine Zugangsdaten hast du per E-Mail erhalten.
+
+Die Plattform findest du unter: snt-elite-platform.de`;
   
   try {
     const session = getUserSession(userId);
@@ -36,14 +40,7 @@ export async function sendSuccessMessage(userId: number) {
       return;
     }
 
-    await sendMessage(userId, successMessage, {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: 'SNTTRADES Dashboard', callback_data: 'dashboard' }],
-          [{ text: 'Abo kündigen', callback_data: 'cancel_subscription' }]
-        ]
-      }
-    });
+    await sendMessage(userId, successMessage);
 
     setUserSession(userId, { stage: 'completed' });
   } catch (error) {
