@@ -119,7 +119,7 @@ Die beste Investition in deine Trading-Zukunft!`, {
           parse_mode: 'Markdown'
         });
         setUserSession(userId, { stage: 'payment' });
-
+      }
     }
 
     return NextResponse.json({ success: true });
