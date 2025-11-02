@@ -208,7 +208,7 @@ export default function RegisterPage() {
                   bg="black"
                   borderRadius="lg"
                 >
-                  <BrandedVimeoPlayer videoId="1132912358" />
+                  <BrandedVimeoPlayer videoId="1132919065" />
                 </Box>
                 
                 {/* Community Stats Element */}
