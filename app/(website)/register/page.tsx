@@ -16,6 +16,8 @@ import { Section } from "@/components/layout/section";
 import SntHero from "@/components/hero/snt-hero";
 import { CheckCircle, ShieldCheck, Lightning, EnvelopeSimple, BookOpen, Wrench, ChatsCircle } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
+import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
+import { ResultsMarquee } from "@/components/ui/ResultsMarquee";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +52,68 @@ export default function RegisterPage() {
     };
     document.head.appendChild(script);
 
+    // Success Handler für Registrierung
+    const handleOutsetaSuccess = async (event: MessageEvent) => {
+      if (event.data && event.data.type === 'outseta_success') {
+        handleSuccess();
+      }
+    };
+
+    window.addEventListener('message', handleOutsetaSuccess);
+
+    // E-Mail-Extraktion für E-Mail-Liste
+    const extractEmailOnSubmit = () => {
+      const widgetContainer = document.getElementById('outseta-widget-container');
+      if (!widgetContainer) return;
+
+      const checkWidget = setInterval(() => {
+        const inputs = widgetContainer.querySelectorAll('input');
+        const buttons = widgetContainer.querySelectorAll('button, input[type="submit"]');
+        
+        if (inputs.length > 0 && buttons.length > 0) {
+          clearInterval(checkWidget);
+          
+          buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+              setTimeout(() => {
+                const emailInputs = widgetContainer.querySelectorAll('input[type="email"], input[name*="email"], input[id*="email"]');
+                const allInputs = widgetContainer.querySelectorAll('input');
+                
+                let foundEmail = '';
+                
+                emailInputs.forEach((input: any) => {
+                  if (input.value && input.value.includes('@')) {
+                    foundEmail = input.value;
+                  }
+                });
+                
+                if (!foundEmail) {
+                  allInputs.forEach((input: any) => {
+                    if (input.value && input.value.includes('@')) {
+                      foundEmail = input.value;
+                    }
+                  });
+                }
+                
+                if (foundEmail) {
+                  localStorage.setItem('pendingEmailSubscription', foundEmail);
+                }
+              }, 100);
+            });
+          });
+        }
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(checkWidget);
+      }, 30000);
+    };
+
+    setTimeout(extractEmailOnSubmit, 2000);
+
     return () => {
       document.head.removeChild(script);
+      window.removeEventListener('message', handleOutsetaSuccess);
     };
   }, []);
 
@@ -117,6 +179,191 @@ export default function RegisterPage() {
           </Box>
         </Box>
 
+        {/* Vimeo Player Section */}
+        <Section 
+          size="lg" 
+          bg="transparent"
+          pt={{ base: 0, md: 12 }}
+          pb={{ base: 8, md: 12 }}
+          position="relative"
+          zIndex={1}
+        >
+          <VStack gap={8} maxW="none" mx="auto">
+            <Box 
+              w={{ base: '100%', md: '800px', lg: '1200px', xl: '1400px' }} 
+              maxW="100%" 
+              mx="auto" 
+              bg="linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(34, 197, 94, 0.35))"
+              borderRadius="xl" 
+              p="7px"
+              position="relative"
+              boxShadow="0 0 40px rgba(16,185,129,0.2), 0 0 0 1px rgba(16,185,129,0.25)"
+            >
+              <VStack gap={3}>
+                <Box 
+                  w="100%" 
+                  aspectRatio={16/9} 
+                  position="relative"
+                  overflow="hidden"
+                  bg="black"
+                  borderRadius="lg"
+                >
+                  <BrandedVimeoPlayer videoId="1132912358" />
+                </Box>
+                
+                {/* Community Stats Element */}
+                <Box 
+                  p={{ base: 3.5, md: 4 }}
+                  w="100%"
+                  borderRadius="lg"
+                  bg="rgba(0, 0, 0, 0.4)"
+                  backdropFilter="blur(12px) saturate(180%)"
+                  border="1px solid rgba(16, 185, 129, 0.15)"
+                >
+                  <Stack 
+                    direction="row" 
+                    align="center" 
+                    gap={{ base: 2, md: 3 }} 
+                    justify="flex-start"
+                    flexWrap="nowrap"
+                  >
+                    <Stack direction="row" gap={-2} flexShrink={0}>
+                      <Box 
+                        w={{ base: 5, md: 6 }} 
+                        h={{ base: 5, md: 6 }} 
+                        borderRadius="full" 
+                        border="2px solid rgba(16, 185, 129, 0.45)" 
+                        overflow="hidden"
+                        bg="gray.200"
+                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
+                      >
+                        <img 
+                          src="/assets/community-stats/user_6819319_6ec853ff-5777-4398-8fcc-06e2621cbcf8.avif" 
+                          alt="Community member"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </Box>
+                      <Box 
+                        w={{ base: 5, md: 6 }} 
+                        h={{ base: 5, md: 6 }}
+                        borderRadius="full" 
+                        border="2px solid rgba(16, 185, 129, 0.45)" 
+                        overflow="hidden"
+                        bg="gray.200"
+                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
+                      >
+                        <img 
+                          src="/assets/community-stats/4208db19763848b131989eadba9899aa.avif" 
+                          alt="Community member"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </Box>
+                      <Box 
+                        w={{ base: 5, md: 6 }} 
+                        h={{ base: 5, md: 6 }}
+                        borderRadius="full" 
+                        border="2px solid rgba(16, 185, 129, 0.45)" 
+                        overflow="hidden"
+                        bg="gray.200"
+                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
+                      >
+                        <img 
+                          src="/assets/community-stats/393d1b15978eed96285cf196b2f51eda.avif" 
+                          alt="Community member"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </Box>
+                    </Stack>
+                    <Text 
+                      fontSize={{ base: "2xs", md: "xs" }} 
+                      color="white" 
+                      textShadow="0 1px 2px rgba(0,0,0,0.3)"
+                      textAlign="left"
+                      lineHeight="tight"
+                      flex="1"
+                      minW={0}
+                    >
+                      ...Bereits über <Text as="span" fontWeight="bold">1000+ Trader</Text> auf ihrem Weg begleitet und ausgebildet.
+                    </Text>
+                  </Stack>
+                </Box>
+              </VStack>
+            </Box>
+
+            {/* Outseta Widget Container */}
+            <Box 
+              w="100%" 
+              maxW="480px" 
+              mx="auto"
+              bg="rgba(6, 12, 10, 0.55)"
+              borderRadius="2xl"
+              boxShadow="0 0 0 1px rgba(16,185,129,0.35), 0 0 60px rgba(16,185,129,0.25), 0 40px 120px rgba(16,185,129,0.28)"
+              p={{ base: 5, md: 6 }}
+              border="1px solid"
+              borderColor="rgba(16,185,129,0.45)"
+              backdropFilter="saturate(180%) blur(14px)"
+            >
+              {/* Widget Header */}
+              <VStack gap={4} mb={6} textAlign="center">
+                <Box 
+                  bg="linear-gradient(135deg, #10B981, #22C55E)"
+                  borderRadius="full"
+                  p={4}
+                  color="white"
+                >
+                  <CheckCircle size={28} weight="fill" />
+                </Box>
+                
+                <VStack gap={2}>
+                  <Heading as="h3" fontSize="xl" color="white">
+                    Kostenlose Registrierung
+                  </Heading>
+                  <Text color="gray.300" fontSize="sm">
+                    Keine Kreditkarte erforderlich • 100% kostenlos
+                  </Text>
+                </VStack>
+              </VStack>
+
+              {/* Outseta Widget */}
+              <Box 
+                id="outseta-widget-container"
+                minH="360px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <div data-o-auth="1"
+       data-widget-mode="register"
+       data-plan-uid="wmjBBxmV"
+       data-plan-payment-term="month"
+       data-skip-plan-options="true"
+       data-mode="embed">
+</div>
+          
+              </Box>
+
+              {/* Zusätzliche Info */}
+              <VStack gap={3} mt={6} pt={6} borderTop="1px solid" borderColor="rgba(16,185,129,0.28)">
+                <HStack justify="center" color="#34D399" gap={3}>
+                  <ShieldCheck size={18} weight="fill" />
+                  <Text fontSize="sm" color="gray.200">Deine Daten sind sicher und werden niemals weitergegeben</Text>
+                </HStack>
+                <HStack justify="center" color="#34D399" gap={3}>
+                  <Lightning size={18} weight="fill" />
+                  <Text fontSize="sm" color="gray.200">Sofortiger Zugang nach der Registrierung</Text>
+                </HStack>
+                <HStack justify="center" color="#34D399" gap={3}>
+                  <EnvelopeSimple size={18} weight="fill" />
+                  <Text fontSize="sm" color="gray.200">Prüfe auch deinen Spam-Ordner für die Bestätigung</Text>
+                </HStack>
+              </VStack>
+            </Box>
+          </VStack>
+        </Section>
+
+ {/* Results Marquee Banner */}
+ <ResultsMarquee />
+
       {/* Registrierungsformular Section */}
       <Section size="lg" bg="transparent" pt={0} pb={{ base: 6, md: 12 }}>
         <VStack gap={8} maxW="4xl" mx="auto">
@@ -141,7 +388,7 @@ export default function RegisterPage() {
                     <BookOpen size={22} weight="fill" />
                   </Box>
                   <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Kostenloser Trading-Kurs</Text>
+                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Kostenloses Trading-Bootcamp</Text>
                     <Text fontSize="sm" color="gray.300">Von den Grundlagen bis zur Umsetzung – verständlich und praxisnah.</Text>
                   </Box>
                 </HStack>
@@ -187,7 +434,7 @@ export default function RegisterPage() {
                     <ChatsCircle size={22} weight="fill" />
                   </Box>
                   <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Community</Text>
+                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Free Discord</Text>
                     <Text fontSize="sm" color="gray.300">Tritt unserer aktiven Community bei und lerne mit anderen.</Text>
                   </Box>
                 </HStack>
@@ -195,83 +442,11 @@ export default function RegisterPage() {
             </SimpleGrid>
           </VStack>
 
-          {/* Hinweis-Text unterhalb der Karten */}
-          <Text color="gray.300" fontSize="lg" maxW="600px" textAlign="center" mx="auto">
-            Fülle das Formular aus und erhalte sofortigen Zugang zu unserem kostenlosen Trading-Kurs.
-          </Text>
-
-          {/* Outseta Widget Container */}
-          <Box 
-            w="100%" 
-            maxW="480px" 
-            mx="auto"
-            bg="rgba(6, 12, 10, 0.55)"
-            borderRadius="2xl"
-            boxShadow="0 0 0 1px rgba(16,185,129,0.35), 0 0 60px rgba(16,185,129,0.25), 0 40px 120px rgba(16,185,129,0.28)"
-            p={{ base: 5, md: 6 }}
-            border="1px solid"
-            borderColor="rgba(16,185,129,0.45)"
-            backdropFilter="saturate(180%) blur(14px)"
-          >
-            {/* Widget Header */}
-            <VStack gap={4} mb={6} textAlign="center">
-              <Box 
-                bg="linear-gradient(135deg, #10B981, #22C55E)"
-                borderRadius="full"
-                p={4}
-                color="white"
-              >
-                <CheckCircle size={28} weight="fill" />
-              </Box>
-              
-              <VStack gap={2}>
-                <Heading as="h3" fontSize="xl" color="white">
-                  Kostenlose Registrierung
-                </Heading>
-                <Text color="gray.300" fontSize="sm">
-                  Keine Kreditkarte erforderlich • 100% kostenlos
-                </Text>
-              </VStack>
-            </VStack>
-
-            {/* Outseta Widget */}
-            <Box 
-              id="outseta-widget-container"
-              minH="360px"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-             <div data-o-auth="1"
-     data-widget-mode="register"
-     data-plan-uid="wmjBBxmV"
-     data-plan-payment-term="month"
-     data-skip-plan-options="true"
-     data-mode="embed">
-</div>
-        
-            </Box>
-
-            {/* Zusätzliche Info */}
-            <VStack gap={3} mt={6} pt={6} borderTop="1px solid" borderColor="rgba(16,185,129,0.28)">
-              <HStack justify="center" color="#34D399" gap={3}>
-                <ShieldCheck size={18} weight="fill" />
-                <Text fontSize="sm" color="gray.200">Deine Daten sind sicher und werden niemals weitergegeben</Text>
-              </HStack>
-              <HStack justify="center" color="#34D399" gap={3}>
-                <Lightning size={18} weight="fill" />
-                <Text fontSize="sm" color="gray.200">Sofortiger Zugang nach der Registrierung</Text>
-              </HStack>
-              <HStack justify="center" color="#34D399" gap={3}>
-                <EnvelopeSimple size={18} weight="fill" />
-                <Text fontSize="sm" color="gray.200">Prüfe auch deinen Spam-Ordner für die Bestätigung</Text>
-              </HStack>
-            </VStack>
-          </Box>
-
           
         </VStack>
       </Section>
+
+     
 
       </Box>
     </>
