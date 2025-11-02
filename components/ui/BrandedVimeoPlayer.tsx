@@ -61,6 +61,7 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
     <Box
       width="100%"
       height="100%"
+      spaceY={0}
       position="relative"
       p={0}
       m={0}

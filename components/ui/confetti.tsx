@@ -10,6 +10,14 @@ export default function Confetti({
     return (
       <Fireworks
         autorun={{ speed: 3, duration: 1000, delay: 500 }}
+        globalOptions={{
+          resize: true,
+          useWorker: true,
+        }}
+        decorateOptions={(options) => ({
+          ...options,
+          colors: ["#10B981", "#22C55E", "#34D399"],
+        })}
         style={{
           position: "fixed",
           pointerEvents: "none",
