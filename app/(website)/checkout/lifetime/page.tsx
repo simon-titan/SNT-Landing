@@ -478,7 +478,7 @@ export default function LifetimeCheckoutPage() {
                         position="relative"
                         flexDirection="column"
                     >
-                        <Text fontSize="4xl" fontWeight="extrabold" color="#22c55e" mb={2}>367€</Text>
+                        <Text fontSize="4xl" fontWeight="extrabold" color="#22c55e" mb={2}>247€</Text>
                         <Text fontSize="lg" fontWeight="bold" color="white" letterSpacing="0.5px" mb={1}>EINMALIG</Text>
                         <Text fontSize="sm" color="gray.300">Lebenslanger Zugang</Text>
                         
