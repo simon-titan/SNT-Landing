@@ -463,7 +463,7 @@ export default function MonthlyCheckoutPage() {
                         position="relative"
                         flexDirection="column"
                     >
-                        <Text fontSize="4xl" fontWeight="extrabold" color="#22c55e" mb={2}>59€</Text>
+                        <Text fontSize="4xl" fontWeight="extrabold" color="#22c55e" mb={2}>44.90€</Text>
                         <Text fontSize="lg" fontWeight="bold" color="white" letterSpacing="0.5px" mb={1}>PRO MONAT</Text>
                         <Text fontSize="sm" color="gray.300">Jederzeit kündbar</Text>
                         

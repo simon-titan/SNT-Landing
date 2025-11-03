@@ -83,10 +83,10 @@ export const Project30PricingSection = () => {
     { title: "Lebenslanger Zugang (bei Lifetime)", icon: CheckCircle },
   ];
 
-  const currentPrice = pricingMode === "monthly" ? "59€" : "367€";
+  const currentPrice = pricingMode === "monthly" ? "44.90€" : "247€";
   const originalPrice = pricingMode === "lifetime" ? "567€" : null;
   const currentPeriod = pricingMode === "monthly" ? "/Monat" : "";
-  const savingsText = pricingMode === "lifetime" ? "200€ gespart!" : null;
+  const savingsText = pricingMode === "lifetime" ? "230€ gespart!" : null;
   const currentPlanUid = pricingMode === "monthly" 
     ? authConfig.plans.monatlich.uid 
     : authConfig.plans.lifetime.uid;
