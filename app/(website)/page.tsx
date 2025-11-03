@@ -50,6 +50,7 @@ export default async function Page() {
       <ResultsMarquee />
       
       {/* Glow Trenner */}
+      
       <Box
         w="100%"
         h="2px"
