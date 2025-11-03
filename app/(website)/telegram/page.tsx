@@ -1,3 +1,5 @@
+"use client";
+
 import { Heading, Stack, VStack, HStack, Text, Box } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
