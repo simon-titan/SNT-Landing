@@ -233,7 +233,7 @@ export default function CheckoutLandingPage() {
                                             567€
                                         </Text>
                                         <Text fontSize="6xl" fontWeight="bold" color="gray.900" lineHeight="1" mt="-2">
-                                            367€
+                                            247€
                                         </Text>
                                     </Box>
                                     <Text color="gray.600" fontSize="lg">
@@ -250,7 +250,7 @@ export default function CheckoutLandingPage() {
                                         mt={2}
                                         display="inline-block"
                                     >
-                                        200€ GESPART
+                                        320€ GESPART
                                     </Box>
                                 </Box>
 
@@ -360,7 +360,7 @@ export default function CheckoutLandingPage() {
                                 {/* Price */}
                                 <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
                                     <Text fontSize="5xl" fontWeight="bold" color="gray.900" lineHeight="1">
-                                        59,99€
+                                        44,90€
                                     </Text>
                                     <Text color="gray.600" fontSize="lg">
                                         pro Monat
