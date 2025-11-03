@@ -75,8 +75,8 @@ export async function POST(request: NextRequest) {
         await sendMessage(chatId, 'Wähle dein Abo-Modell:', {
           reply_markup: {
             inline_keyboard: [
-              [{ text: '📅 Monatlich - 59.99€', callback_data: 'subscription_monthly' }],
-              [{ text: '💎 Lifetime - 367€', callback_data: 'subscription_lifetime' }]
+              [{ text: '📅 Monatlich - 44.90€', callback_data: 'subscription_monthly' }],
+              [{ text: '💎 Lifetime - 247€', callback_data: 'subscription_lifetime' }]
             ]
           }
         });
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       if (data === 'subscription_monthly') {
         await sendMessage(chatId, `${paymentMessage}
 
-💰 **Monatliches Abo gewählt - 59.99€**
+💰 **Monatliches Abo gewählt - 44.90€**
 Perfekte Wahl für den flexiblen Einstieg!`, {
           reply_markup: {
             inline_keyboard: [
@@ -109,7 +109,7 @@ Perfekte Wahl für den flexiblen Einstieg!`, {
       } else if (data === 'subscription_lifetime') {
         await sendMessage(chatId, `${paymentMessage}
 
-🏆 **Lifetime Abo gewählt - 367€**
+🏆 **Lifetime Abo gewählt - 247€**
 Die beste Investition in deine Trading-Zukunft!`, {
           reply_markup: {
             inline_keyboard: [

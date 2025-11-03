@@ -93,7 +93,7 @@ export default function ProduktePage() {
                 fontSize="4xl"
                 textShadow="0 0 8px rgba(72, 187, 120, 0.6)"
               >
-                367€
+                247€
               </Text>
             </Stack>
             <Text fontSize="xs" color="gray.400" mb={4}>*Vorübergehendes Sonderangebot</Text>
