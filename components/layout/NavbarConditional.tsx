@@ -6,7 +6,7 @@ import { Box } from "@chakra-ui/react";
 
 export default function NavbarConditional() {
   const pathname = usePathname();
-  if (pathname.startsWith("/checkout") || pathname.startsWith("/choose-platform") || pathname.startsWith("/legal")) return null;
+  if (pathname.startsWith("/checkout") || pathname.startsWith("/choose-platform") || pathname.startsWith("/legal") || pathname.startsWith("/telegram")) return null;
   if (pathname.startsWith("/register") || pathname.startsWith("/waitlist"))
     return (
       <>
