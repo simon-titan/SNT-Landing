@@ -1,10 +1,27 @@
 "use client";
 
+import { useEffect } from "react";
 import { Heading, Stack, VStack, HStack, Text, Box } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
+
+function OpenTelegram() {
+    useEffect(() => {
+        // 1. Versuch: Telegram-App öffnen
+        window.location.href = "tg://resolve?domain=seitennulltrades";
+
+        // 2. Fallback nach 1 Sekunde, falls blockiert
+        const fallbackTimer = setTimeout(() => {
+            window.location.href = "https://t.me/seitennulltrades";
+        }, 1000);
+
+        return () => clearTimeout(fallbackTimer);
+    }, []);
+
+    return null;
+}
 
 function LandingHeroNoVideo() {
     return (
@@ -99,6 +116,7 @@ function LandingHeroNoVideo() {
 export default function TelegramPage() {
     return (
         <>
+            <OpenTelegram />
             <LandingHeroNoVideo />
         </>
     );
