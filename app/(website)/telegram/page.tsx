@@ -1,25 +1,23 @@
 "use client";
 
-import { Heading, Stack, VStack, HStack, Text, Box } from "@chakra-ui/react";
+import { Heading, Stack, VStack, HStack, Text, Box, Flex } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
-import { useRouter } from "next/navigation";
+import { BsArrowUp } from "react-icons/bs";
 
 function LandingHeroNoVideo() {
-    const router = useRouter();
-
     return (
         <>
             <Section
-                header
                 size="lg"
                 bg="black"
                 borderBottom="1px solid"
                 borderColor="rgba(34, 197, 94, 0.25)"
                 w="100vw"
                 mx="unset"
+                pt={{ base: "20px", md: "80px" }}
                 pb={{ base: "60px", md: "80px" }}
                 background="radial-gradient(at 0% 100%, rgba(34, 197, 94, 0.28) 0px, transparent 55%),
         radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.22) 0px, transparent 55%),
@@ -27,12 +25,81 @@ function LandingHeroNoVideo() {
             >
                 <style>{`
          html { scroll-behavior: smooth; }
-         .css-1q38vmp {
-            padding-top: 75px !important;
-          }
+         @keyframes pulse {
+           0%, 100% {
+             opacity: 1;
+             transform: scale(1);
+           }
+           50% {
+             opacity: 0.85;
+             transform: scale(1.03);
+           }
+         }
+         @keyframes pulseArrow {
+           0%, 100% {
+             opacity: 1;
+             transform: translateY(0) scale(1);
+           }
+           50% {
+             opacity: 0.9;
+             transform: translateY(-10px) scale(1.15);
+           }
+         }
+         .pulsing-box {
+           animation: pulse 2s ease-in-out infinite;
+         }
+         .pulsing-arrow {
+           animation: pulseArrow 2s ease-in-out infinite;
+         }
         `}</style>
 
                 <VStack gap="4" maxW="900px" mx="auto">
+                    {/* Info Box - Nur auf Mobile */}
+                    <Flex
+                        display={{ base: "flex", md: "none" }}
+                        w="full"
+                        maxW="600px"
+                        mx="auto"
+                        mb={4}
+                        mt={{ base: "-60px", md: 0 }}
+                        align="flex-start"
+                        gap={3}
+                    >
+                        <Box
+                            flex="1"
+                            className="pulsing-box"
+                            bg="rgba(34, 197, 94, 0.1)"
+                            border="1px solid rgba(34, 197, 94, 0.3)"
+                            borderRadius="md"
+                            p={4}
+                            position="relative"
+                        >
+                            <Text
+                                fontSize="md"
+                                fontWeight="bold"
+                                color="#22c55e"
+                                mb={2}
+                            >
+                                WICHTIG
+                            </Text>
+                            <Text fontSize="sm" color="gray.200" lineHeight="1.6">
+                                <Text as="span" fontWeight="bold" color="#22c55e">1.</Text> Klicke die 3 Punkte in der oberen rechten Ecke<br />
+                                <Text as="span" fontWeight="bold" color="#22c55e">2.</Text> Klicke auf "Im Browser öffnen"<br />
+                                <Text as="span" fontWeight="bold" color="#22c55e">3.</Text> Klicke auf "JETZT BEITRETEN"<br />
+                                <Text as="span" fontWeight="bold" color="#22c55e">4.</Text> Du bist Mitglied in unserem KOSTENLOSEN TELEGRAM Kanal
+                            </Text>
+                        </Box>
+                        <Box
+                            className="pulsing-arrow"
+                            color="#22c55e"
+                            filter="drop-shadow(0 0 12px rgba(34, 197, 94, 1))"
+                            flexShrink={0}
+                            mt={2}
+                            fontSize="48px"
+                        >
+                            <BsArrowUp />
+                        </Box>
+                    </Flex>
                     <Stack gap="2" textAlign="center" mx="auto">
                         <Heading
                             as="h1"
@@ -75,7 +142,7 @@ function LandingHeroNoVideo() {
                             boxShadow="0 0 24px rgba(34,197,94,0.35)"
                             border="1px solid rgba(34,197,94,0.45)"
                             onClick={() => {
-                                router.push("/telegram-join");
+                                window.open("https://t.me/seitennulltrades", "_blank");
                             }}
                         >
                             ⚡ JETZT BEITRETEN
