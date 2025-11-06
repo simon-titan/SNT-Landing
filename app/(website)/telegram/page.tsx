@@ -1,29 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
 import { Heading, Stack, VStack, HStack, Text, Box } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
-
-function OpenTelegram() {
-    useEffect(() => {
-        // 1. Versuch: Telegram-App öffnen
-        window.location.href = "tg://resolve?domain=seitennulltrades";
-
-        // 2. Fallback nach 1 Sekunde, falls blockiert
-        const fallbackTimer = setTimeout(() => {
-            window.location.href = "https://t.me/seitennulltrades";
-        }, 1000);
-
-        return () => clearTimeout(fallbackTimer);
-    }, []);
-
-    return null;
-}
+import { useRouter } from "next/navigation";
 
 function LandingHeroNoVideo() {
+    const router = useRouter();
+
     return (
         <>
             <Section
@@ -89,13 +75,7 @@ function LandingHeroNoVideo() {
                             boxShadow="0 0 24px rgba(34,197,94,0.35)"
                             border="1px solid rgba(34,197,94,0.45)"
                             onClick={() => {
-                                // Versucht zuerst Telegram direkt zu öffnen
-                                window.location.href = "tg://resolve?domain=seitennulltrades";
-
-                                // Fallback nach 1 Sekunde, wenn Telegram nicht geöffnet wird
-                                setTimeout(() => {
-                                    window.open("https://telegram.me/seitennulltrades", "_blank");
-                                }, 1000);
+                                router.push("/telegram-join");
                             }}
                         >
                             ⚡ JETZT BEITRETEN
@@ -116,7 +96,6 @@ function LandingHeroNoVideo() {
 export default function TelegramPage() {
     return (
         <>
-            <OpenTelegram />
             <LandingHeroNoVideo />
         </>
     );
