@@ -1,11 +1,11 @@
 "use client";
 
-import { Heading, Stack, VStack, HStack, Text, Box, Flex } from "@chakra-ui/react";
+import { Heading, Stack, VStack, HStack, Text, Box, Flex, SimpleGrid } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
-import { BsArrowUp } from "react-icons/bs";
+import { BsArrowUp, BsCheckCircle, BsPlayCircle, BsChatDots, BsGraphUp } from "react-icons/bs";
 
 function LandingHeroNoVideo() {
     return (
@@ -127,9 +127,134 @@ function LandingHeroNoVideo() {
                             </Box>
                         </Heading>
                         <Text color="gray.300" textStyle="sm" mx="auto" maxW="700px">
-                            Wir haben über <Text as="span" color="#22c55e" fontWeight="bold">6+ Jahre Erfahrung</Text>, um dir in einem klar aufgebauten, selbstbestimmten Kurs genau das zu zeigen, was im Trading wirklich zählt.<br />
+                            Wir haben über <Text as="span" color="#22c55e" fontWeight="bold">6+ Jahre Erfahrung</Text>, von Höhen bis Tiefen haben wir alles erlebt und zeigen wir dir was im Trading wirklich zählt.<br />
                         </Text>
                     </Stack>
+                    {/* Feature Cards */}
+                    <SimpleGrid
+                        columns={{ base: 1, md: 2 }}
+                        gap={4}
+                        w="full"
+                        maxW="800px"
+                        mx="auto"
+                        mt={4}
+                    >
+                        {/* Card 1: Kostenloser Zugang */}
+                        <Box
+                            bg="rgba(10, 14, 10, 0.85)"
+                            backdropFilter="blur(16px)"
+                            borderRadius="xl"
+                            p={4}
+                            border="1px solid rgba(34, 197, 94, 0.3)"
+                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+                            _hover={{
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+                            }}
+                            transition="all 0.3s ease"
+                        >
+                            <HStack gap={3} align="center">
+                                <Box
+                                    color="#22c55e"
+                                    fontSize="24px"
+                                    flexShrink={0}
+                                    filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
+                                >
+                                    <BsCheckCircle />
+                                </Box>
+                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                    100 % kostenlosen Zugang
+                                </Text>
+                            </HStack>
+                        </Box>
+
+                        {/* Card 2: Trading-Videokurs */}
+                        <Box
+                            bg="rgba(10, 14, 10, 0.85)"
+                            backdropFilter="blur(16px)"
+                            borderRadius="xl"
+                            p={4}
+                            border="1px solid rgba(34, 197, 94, 0.3)"
+                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+                            _hover={{
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+                            }}
+                            transition="all 0.3s ease"
+                        >
+                            <HStack gap={3} align="center">
+                                <Box
+                                    color="#22c55e"
+                                    fontSize="24px"
+                                    flexShrink={0}
+                                    filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
+                                >
+                                    <BsPlayCircle />
+                                </Box>
+                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                    Einen kostenlosen Trading-Videokurs
+                                </Text>
+                            </HStack>
+                        </Box>
+
+                        {/* Card 3: Discord-Community */}
+                        <Box
+                            bg="rgba(10, 14, 10, 0.85)"
+                            backdropFilter="blur(16px)"
+                            borderRadius="xl"
+                            p={4}
+                            border="1px solid rgba(34, 197, 94, 0.3)"
+                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+                            _hover={{
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+                            }}
+                            transition="all 0.3s ease"
+                        >
+                            <HStack gap={3} align="center">
+                                <Box
+                                    color="#22c55e"
+                                    fontSize="24px"
+                                    flexShrink={0}
+                                    filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
+                                >
+                                    <BsChatDots />
+                                </Box>
+                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                    Zugang zu unserer kostenlosen Discord-Community
+                                </Text>
+                            </HStack>
+                        </Box>
+
+                        {/* Card 4: Trading-Einblicke */}
+                        <Box
+                            bg="rgba(10, 14, 10, 0.85)"
+                            backdropFilter="blur(16px)"
+                            borderRadius="xl"
+                            p={4}
+                            border="1px solid rgba(34, 197, 94, 0.3)"
+                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+                            _hover={{
+                                transform: "translateY(-4px)",
+                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+                            }}
+                            transition="all 0.3s ease"
+                        >
+                            <HStack gap={3} align="center">
+                                <Box
+                                    color="#22c55e"
+                                    fontSize="24px"
+                                    flexShrink={0}
+                                    filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
+                                >
+                                    <BsGraphUp />
+                                </Box>
+                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                    Exklusive Trading-Einblicke und Markt-Insights
+                                </Text>
+                            </HStack>
+                        </Box>
+                    </SimpleGrid>
                     <Stack align="center" direction={{ base: "column", md: "row" }} gap="3">
                         <Button
                             size="xl"
