@@ -131,130 +131,104 @@ function LandingHeroNoVideo() {
                         </Text>
                     </Stack>
                     {/* Feature Cards */}
-                    <SimpleGrid
-                        columns={{ base: 1, md: 2 }}
-                        gap={4}
+                    <Box
                         w="full"
                         maxW="800px"
                         mx="auto"
                         mt={4}
+                        bg="rgba(10, 14, 10, 0.85)"
+                        backdropFilter="blur(16px)"
+                        borderRadius="2xl"
+                        p={6}
+                        border="1px solid rgba(34, 197, 94, 0.3)"
+                        boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
                     >
-                        {/* Card 1: Kostenloser Zugang */}
-                        <Box
-                            bg="rgba(10, 14, 10, 0.85)"
-                            backdropFilter="blur(16px)"
-                            borderRadius="xl"
-                            p={4}
-                            border="1px solid rgba(34, 197, 94, 0.3)"
-                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
-                            _hover={{
-                                transform: "translateY(-4px)",
-                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
-                            }}
-                            transition="all 0.3s ease"
+                        <SimpleGrid
+                            columns={{ base: 1, md: 2 }}
+                            gap={4}
+                            w="full"
                         >
-                            <HStack gap={3} align="center">
+                            {/* Item 1: Kostenloser Zugang */}
+                            <HStack gap={2.5} align="center">
                                 <Box
                                     color="#22c55e"
-                                    fontSize="24px"
+                                    fontSize="20px"
+                                    w="20px"
+                                    h="20px"
                                     flexShrink={0}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
                                     filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
                                 >
                                     <BsCheckCircle />
                                 </Box>
-                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                <Text color="white" fontSize="sm" fontWeight="medium" lineHeight="1.5">
                                     100 % kostenlosen Zugang
                                 </Text>
                             </HStack>
-                        </Box>
 
-                        {/* Card 2: Trading-Videokurs */}
-                        <Box
-                            bg="rgba(10, 14, 10, 0.85)"
-                            backdropFilter="blur(16px)"
-                            borderRadius="xl"
-                            p={4}
-                            border="1px solid rgba(34, 197, 94, 0.3)"
-                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
-                            _hover={{
-                                transform: "translateY(-4px)",
-                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
-                            }}
-                            transition="all 0.3s ease"
-                        >
-                            <HStack gap={3} align="center">
+                            {/* Item 2: Trading-Videokurs */}
+                            <HStack gap={2.5} align="center">
                                 <Box
                                     color="#22c55e"
-                                    fontSize="24px"
+                                    fontSize="20px"
+                                    w="20px"
+                                    h="20px"
                                     flexShrink={0}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
                                     filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
                                 >
                                     <BsPlayCircle />
                                 </Box>
-                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                <Text color="white" fontSize="sm" fontWeight="medium" lineHeight="1.5">
                                     Einen kostenlosen Trading-Videokurs
                                 </Text>
                             </HStack>
-                        </Box>
 
-                        {/* Card 3: Discord-Community */}
-                        <Box
-                            bg="rgba(10, 14, 10, 0.85)"
-                            backdropFilter="blur(16px)"
-                            borderRadius="xl"
-                            p={4}
-                            border="1px solid rgba(34, 197, 94, 0.3)"
-                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
-                            _hover={{
-                                transform: "translateY(-4px)",
-                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
-                            }}
-                            transition="all 0.3s ease"
-                        >
-                            <HStack gap={3} align="center">
+                            {/* Item 3: Discord-Community */}
+                            <HStack gap={2.5} align="center">
                                 <Box
                                     color="#22c55e"
-                                    fontSize="24px"
+                                    fontSize="20px"
+                                    w="20px"
+                                    h="20px"
                                     flexShrink={0}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
                                     filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
                                 >
                                     <BsChatDots />
                                 </Box>
-                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                <Text color="white" fontSize="sm" fontWeight="medium" lineHeight="1.5">
                                     Zugang zu unserer kostenlosen Discord-Community
                                 </Text>
                             </HStack>
-                        </Box>
 
-                        {/* Card 4: Trading-Einblicke */}
-                        <Box
-                            bg="rgba(10, 14, 10, 0.85)"
-                            backdropFilter="blur(16px)"
-                            borderRadius="xl"
-                            p={4}
-                            border="1px solid rgba(34, 197, 94, 0.3)"
-                            boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
-                            _hover={{
-                                transform: "translateY(-4px)",
-                                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
-                            }}
-                            transition="all 0.3s ease"
-                        >
-                            <HStack gap={3} align="center">
+                            {/* Item 4: Trading-Einblicke */}
+                            <HStack gap={2.5} align="center">
                                 <Box
                                     color="#22c55e"
-                                    fontSize="24px"
+                                    fontSize="20px"
+                                    w="20px"
+                                    h="20px"
                                     flexShrink={0}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
                                     filter="drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))"
                                 >
                                     <BsGraphUp />
                                 </Box>
-                                <Text color="white" fontSize="md" fontWeight="medium" lineHeight="1.5">
+                                <Text color="white" fontSize="sm" fontWeight="medium" lineHeight="1.5">
                                     Exklusive Trading-Einblicke und Markt-Insights
                                 </Text>
                             </HStack>
-                        </Box>
-                    </SimpleGrid>
+                        </SimpleGrid>
+                    </Box>
                     <Stack align="center" direction={{ base: "column", md: "row" }} gap="3">
                         <Button
                             size="xl"
