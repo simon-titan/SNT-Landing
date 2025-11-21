@@ -11,17 +11,35 @@ import {
   Stack,
   HStack,
   SimpleGrid,
+  Container,
+  Icon,
 } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import SntHero from "@/components/hero/snt-hero";
-import { CheckCircle, ShieldCheck, Lightning, EnvelopeSimple, BookOpen, Wrench, ChatsCircle } from "@phosphor-icons/react/dist/ssr";
+import {
+  CheckCircle,
+  ShieldCheck,
+  Lightning,
+  EnvelopeSimple,
+  BookOpen,
+  Wrench,
+  ChatsCircle,
+  Timer,
+} from "@phosphor-icons/react/dist/ssr";
+import { FiTrendingDown, FiAlertTriangle, FiBarChart2, FiThumbsUp, FiShield, FiArrowDown, FiVideo, FiFileText, FiMessageSquare, FiTool, FiCheckCircle } from 'react-icons/fi';
 import { useRouter } from "next/navigation";
 import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
 import { ResultsMarquee } from "@/components/ui/ResultsMarquee";
+import { ReviewMarquee } from "@/components/ui/ReviewMarquee";
+import Link from "next/link";
+
+const SNT_BLUE = "#068CEF";
+const SNT_YELLOW = "rgba(251, 191, 36, 1)";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [timeLeft, setTimeLeft] = useState({ minutes: 10, seconds: 0 });
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +55,36 @@ export default function RegisterPage() {
     }, 200);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const getExpiryTimestamp = () => {
+      let expiry = localStorage.getItem("countdownExpiry");
+      if (!expiry) {
+        expiry = (Date.now() + 10 * 60 * 1000).toString();
+        localStorage.setItem("countdownExpiry", expiry);
+      }
+      return parseInt(expiry, 10);
+    };
+
+    const expiryTimestamp = getExpiryTimestamp();
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const distance = expiryTimestamp - now;
+
+      if (distance < 0) {
+        clearInterval(interval);
+        setTimeLeft({ minutes: 0, seconds: 0 });
+        localStorage.removeItem("countdownExpiry");
+      } else {
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        setTimeLeft({ minutes, seconds });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -121,7 +169,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     // Kurze Verzögerung für UX
     setTimeout(() => {
-      router.push("/thank-you");
+      router.push("/thank-you-3");
     }, 1500);
   };
 
@@ -130,7 +178,7 @@ export default function RegisterPage() {
       <Box
         id="register-page"
         position="relative"
-        bg="#050709"
+        bg="white"
         _before={{
           content: '""',
           position: "absolute",
@@ -154,299 +202,316 @@ export default function RegisterPage() {
         }}
       >
       {/* Neuer Hero nach Vorlage (SNT, schwarzer Raum, grüner Glow) */}
-      <SntHero />
+      <SntHero timeLeft={timeLeft} />
 
         {/* Lokales Override: entferne Padding der generierten Klasse */}
         <style jsx>{`
-          #register-page :global(.css-qnbf9j) {
+          .css-qnbf9j {
             padding: 0 !important;
           }
         `}</style>
 
-        {/* Grüner Glow-Trenner (vollbreit) */}
-        <Box w="100%" position="relative" zIndex={1}>
-          <Box h={{ base: 10, md: 12 }} position="relative" overflow="hidden">
-            <Box
-              position="absolute"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              bg="radial-gradient(55% 60% at 50% 0%, rgba(16,185,129,0.35) 0%, rgba(16,185,129,0.16) 35%, rgba(16,185,129,0.06) 60%, rgba(0,0,0,0) 70%)"
-              filter="blur(14px)"
-            />
-            <Box h="1px" w="100%" bg="linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent)" />
-          </Box>
+        {/* Vimeo Player Section - Replaced Section with Box/Container to remove padding */}
+        <Box as="section" w="full" bg="white" py={{ base: 8, md: 12 }} position="relative" zIndex={1}>
+           <Container maxW={{ base: "full", md: "3xl" }}>
+                <VStack gap={8} maxW="none" mx="auto">
+                    <Box
+                      mt={{ base: "-16", md: "-24" }}
+                      w={{ base: '100%', md: '800px', lg: '1200px', xl: '1400px' }} 
+                      maxW="100%" 
+                      mx="auto" 
+                      mb={{ base: 4, md: 6 }}
+                      bg={`linear-gradient(135deg, ${SNT_BLUE}, rgba(6, 140, 239, 0.8))`}
+                      borderRadius="xl" 
+                      p="7px"
+                      position="relative"
+                      boxShadow={`0 0 40px rgba(6, 140, 239, 0.4), 0 0 0 1px rgba(6, 140, 239, 0.5)`}
+                    >
+                      <VStack gap={3}>
+                        <Box 
+                          w="100%" 
+                          aspectRatio={16/9} 
+                          position="relative"
+                          overflow="hidden"
+                          bg="black"
+                          borderRadius="lg"
+                        >
+                          <BrandedVimeoPlayer videoId="1139395784" />
+                        </Box>
+                        
+                        {/* Community Stats Element */}
+                        <Box 
+                          p={{ base: 3.5, md: 4 }}
+                          w="100%"
+                          borderRadius="lg"
+                          bg="rgba(0, 0, 0, 0.4)"
+                          backdropFilter="blur(12px) saturate(180%)"
+                          border={`1px solid rgba(6, 140, 239, 0.3)`}
+                        >
+                          <Stack 
+                            direction="row" 
+                            align="center" 
+                            gap={{ base: 2, md: 3 }} 
+                            justify="flex-start"
+                            flexWrap="nowrap"
+                          >
+                            <Stack direction="row" gap={-2} flexShrink={0}>
+                              <Box 
+                                w={{ base: 5, md: 6 }} 
+                                h={{ base: 5, md: 6 }} 
+                                borderRadius="full" 
+                                border={`2px solid ${SNT_BLUE}`} 
+                                overflow="hidden"
+                                bg="gray.200"
+                                boxShadow="0 4px 8px rgba(0,0,0,0.1)"
+                              >
+                                <img 
+                                  src="/assets/community-stats/user_6819319_6ec853ff-5777-4398-8fcc-06e2621cbcf8.avif" 
+                                  alt="Community member"
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </Box>
+                              <Box 
+                                w={{ base: 5, md: 6 }} 
+                                h={{ base: 5, md: 6 }}
+                                borderRadius="full" 
+                                border={`2px solid ${SNT_BLUE}`} 
+                                overflow="hidden"
+                                bg="gray.200"
+                                boxShadow="0 4px 8px rgba(0,0,0,0.1)"
+                              >
+                                <img 
+                                  src="/assets/community-stats/4208db19763848b131989eadba9899aa.avif" 
+                                  alt="Community member"
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </Box>
+                              <Box 
+                                w={{ base: 5, md: 6 }} 
+                                h={{ base: 5, md: 6 }}
+                                borderRadius="full" 
+                                border={`2px solid ${SNT_BLUE}`} 
+                                overflow="hidden"
+                                bg="gray.200"
+                                boxShadow="0 4px 8px rgba(0,0,0,0.1)"
+                              >
+                                <img 
+                                  src="/assets/community-stats/393d1b15978eed96285cf196b2f51eda.avif" 
+                                  alt="Community member"
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </Box>
+                            </Stack>
+                            <Text 
+                              fontSize={{ base: "2xs", md: "xs" }} 
+                              color="white" 
+                              textShadow="0 1px 2px rgba(0,0,0,0.3)"
+                              textAlign="left"
+                              lineHeight="tight"
+                              flex="1"
+                              minW={0}
+                            >
+                              ...Bereits über <Text as="span" fontWeight="bold">1000+ Trader</Text> auf ihrem Weg begleitet und ausgebildet.
+                            </Text>
+                          </Stack>
+                        </Box>
+                      </VStack>
+                    </Box>
+                </VStack>
+            </Container>
+         </Box>
+
+        {/* Problem/Solution Section */}
+        <Box as="section" w="full" py={{ base: 12, md: 16 }} px={4} bg="linear-gradient(360deg,rgba(6, 140, 239, 0.2) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 0, 0, 0.2) 100%)">
+          <Container maxW="6xl">
+            <VStack gap={{ base: 12, md: 16 }}>
+              {/* Problems */}
+              <VStack gap={4} w="full">
+                <Heading as="h2" size="xl" color="black" textAlign="center">
+                  Kommst du an deine
+                  <Box
+                    as="span"
+                    color="black"
+                    px="1.5"
+                    mx="2"
+                    borderRadius="xs"
+                    bg="linear-gradient(90deg, rgba(239, 68, 68, 0.6), rgba(239, 68, 68, 0.22) 85%, rgba(239, 68, 68, 0) 100%)"
+                  >
+                   Grenzen?
+                  </Box>
+                </Heading>
+                <Text color="gray.600" textAlign="center" maxW="2xl">
+                  Die meisten Trader scheitern an denselben mentalen und strategischen Hürden. Hier sind die häufigsten Fallstricke:
+                </Text>
+              </VStack>
+              <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 6, md: 8 }}>
+                {[
+                  { icon: FiAlertTriangle, title: "Emotionale Trades", text: "Angst und Gier führen zu unüberlegten Entscheidungen und Verlusten." },
+                  { icon: FiTrendingDown, title: "Fehlende Strategie", text: "Ohne klaren Plan ist Trading reines Glücksspiel mit schlechten Quoten." },
+                  { icon: FiBarChart2, title: "Falsches Risk-Management", text: "Ein einziger schlechter Trade kann wochenlange Gewinne ausradieren." },
+                ].map((item, i) => (
+                  <Box 
+                    key={i} 
+                    p={6} 
+                    bg="rgba(255, 255, 255, 0.6)" 
+                    borderRadius="xl" 
+                    border="1px" 
+                    borderColor="rgba(239, 68, 68, 0.4)"
+                    backdropFilter="blur(12px) saturate(180%)"
+                    boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
+                  >
+                    <HStack align="start" gap={4}>
+                      <Box color="red.500" mt={1}><item.icon size={22} /></Box>
+                      <VStack align="start" gap={1}>
+                        <Text fontWeight="bold" color="black">{item.title}</Text>
+                        <Text fontSize="sm" color="gray.700">{item.text}</Text>
+                      </VStack>
+                    </HStack>
+                  </Box>
+                ))}
+              </SimpleGrid>
+
+               {/* Arrow Down */}
+               <Box color="gray.400" className="animation-bounce">
+                 <FiArrowDown size={40} />
+               </Box>
+ 
+               {/* Solutions */}
+               <VStack gap={4} w="full">
+                <Heading as="h2" size="xl" color="black" textAlign="center">
+                  <Box
+                    as="span"
+                    color="black"
+                    px="1.5"
+                    borderRadius="xs"
+                    bg={`linear-gradient(90deg, ${SNT_BLUE} 0%, rgba(6, 140, 239, 0.22) 85%, rgba(6, 140, 239, 0) 100%)`}
+                  >
+                   Was wäre, wenn...
+                  </Box>
+                </Heading>
+                <Text color="gray.600" textAlign="center" maxW="2xl">
+                  ...du ein System hättest, das diese Probleme für dich löst und dir einen klaren Weg zum profitablen Trading aufzeigt?
+                </Text>
+              </VStack>
+              <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={{ base: 5, md: 6 }}>
+                {[
+                  { icon: FiVideo, title: "Video-Lektionen", text: "Umfassende Lektionen, die dir jeden Schritt von A-Z beibringen." },
+                  { icon: FiFileText, title: "Lernmaterialien", text: "Praxisnahe PDFs, Checklisten und Guides zum direkten Anwenden." },
+                  { icon: FiMessageSquare, title: "Discord Community", text: "Tausche dich täglich mit Gleichgesinnten und den SNT-Coaches aus." },
+                  { icon: FiTool, title: "Tools & Setups", text: "Erhalte Zugriff auf die gleichen Tools und Chart-Setups, die wir nutzen." },
+                ].map((item, i) => (
+                  <Box 
+                    key={i} 
+                    p={6} 
+                    bg="rgba(255, 255, 255, 0.6)" 
+                    borderRadius="xl" 
+                    border="1px" 
+                    borderColor="rgba(6, 140, 239, 0.4)"
+                    backdropFilter="blur(12px) saturate(180%)"
+                    boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
+                  >
+                     <HStack align="start" gap={4}>
+                      <Box color={SNT_BLUE} mt={1}><item.icon size={22} /></Box>
+                      <VStack align="start" gap={1}>
+                        <Text fontWeight="bold" color="black">{item.title}</Text>
+                        <Text fontSize="sm" color="gray.700">{item.text}</Text>
+                      </VStack>
+                    </HStack>
+                  </Box>
+                ))}
+              </SimpleGrid>
+
+                 {/* CTA Box */}
+                 <Box 
+                    mt={12} 
+                    p={{ base: 8, md: 10 }} 
+                    bg="rgba(255, 255, 255, 0.6)"
+                    borderRadius="2xl" 
+                    border="1px" 
+                    borderColor="rgba(6, 140, 239, 0.4)" 
+                    w="full" 
+                    maxW="4xl" 
+                    backdropFilter="blur(12px) saturate(180%)"
+                    boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
+                >
+                     <VStack gap={5}>
+                         <VStack gap={2}>
+                            <Heading as="h3" size="lg" color="black" textAlign="center" fontWeight="medium">
+                                Diese Transformation ist möglich – mit dem
+                            </Heading>
+                            <Heading as="h2" size="2xl" textTransform="uppercase" color="black" textAlign="center">
+                                <Box as="span" color="black" px="2.5" py="1" borderRadius="md" bg={`linear-gradient(90deg, ${SNT_YELLOW} 0%, rgba(251, 191, 36,0.22) 85%, rgba(251, 191, 36,0) 100%)`}>
+                                    SNT-Bootcamp
+                                </Box>
+                            </Heading>
+                         </VStack>
+                         <Text color="gray.700" textAlign="center">Starte jetzt und erlebe den Unterschied.</Text>
+ 
+                         <Box
+                             mt={4}
+                             bg="gray.100"
+                             borderRadius="full"
+                             border="1px solid"
+                             borderColor="gray.200"
+                             px={{ base: 4, md: 5 }}
+                             py={{ base: 2, md: 2.5 }}
+                         >
+                             <HStack gap={3}>
+                                <Icon as={Timer} color={SNT_BLUE} boxSize={{ base: 5, md: 6 }} />
+                                <Text fontSize={{ base: "xs", md: "sm" }} color="black" fontWeight="medium">
+                                   Dein Platz ist reserviert für:{" "}
+                                   <Text as="span" color={SNT_BLUE} fontWeight="bold">
+                                      {String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+                                   </Text>
+                                </Text>
+                             </HStack>
+                         </Box>
+
+                         <Stack direction={{ base: "column", md: "row" }} gap={{ base: 2, md: 6 }} justify="center" mt={4} w={{ base: "full", md: "auto" }} align={{ base: "flex-start", md: "center" }}>
+                             <HStack>
+                                 <FiCheckCircle color={SNT_BLUE} />
+                                 <Text fontSize="sm" color="gray.700">Keine Einrichtungsgebühr</Text>
+                             </HStack>
+                             <HStack>
+                                 <FiCheckCircle color={SNT_BLUE} />
+                                 <Text fontSize="sm" color="gray.700">Sofortiger Zugang</Text>
+                             </HStack>
+                             <HStack>
+                                 <FiCheckCircle color={SNT_BLUE} />
+                                 <Text fontSize="sm" color="gray.700">100% kostenlos</Text>
+                             </HStack>
+                         </Stack>
+ 
+                         <Link
+                             href="https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipOptions=true"
+                             data-outseta-modal-class="snt-outseta-modal"
+                         >
+                             <Button
+                                 size="lg"
+                                 mt={4}
+                                 bg={SNT_BLUE}
+                                 color="white"
+                                 border="1px solid transparent"
+                                 _hover={{ 
+                                     bg: "#0572c2", 
+                                 }}
+                                 _active={{ 
+                                     bg: "#0465b8", 
+                                 }}
+                                 transition="all 0.3s ease"
+                             >
+                                 Jetzt kostenlos registrieren
+                             </Button>
+                         </Link>
+                     </VStack>
+                 </Box>
+            </VStack>
+          </Container>
         </Box>
 
-        {/* Vimeo Player Section */}
-        <Section 
-          size="lg" 
-          bg="transparent"
-          pt={{ base: 0, md: 12 }}
-          pb={{ base: 8, md: 12 }}
-          position="relative"
-          zIndex={1}
-        >
-          <VStack gap={8} maxW="none" mx="auto">
-            <Box 
-              w={{ base: '100%', md: '800px', lg: '1200px', xl: '1400px' }} 
-              maxW="100%" 
-              mx="auto" 
-              bg="linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(34, 197, 94, 0.35))"
-              borderRadius="xl" 
-              p="7px"
-              position="relative"
-              boxShadow="0 0 40px rgba(16,185,129,0.2), 0 0 0 1px rgba(16,185,129,0.25)"
-            >
-              <VStack gap={3}>
-                <Box 
-                  w="100%" 
-                  aspectRatio={16/9} 
-                  position="relative"
-                  overflow="hidden"
-                  bg="black"
-                  borderRadius="lg"
-                >
-                  <BrandedVimeoPlayer videoId="1132919065" />
-                </Box>
-                
-                {/* Community Stats Element */}
-                <Box 
-                  p={{ base: 3.5, md: 4 }}
-                  w="100%"
-                  borderRadius="lg"
-                  bg="rgba(0, 0, 0, 0.4)"
-                  backdropFilter="blur(12px) saturate(180%)"
-                  border="1px solid rgba(16, 185, 129, 0.15)"
-                >
-                  <Stack 
-                    direction="row" 
-                    align="center" 
-                    gap={{ base: 2, md: 3 }} 
-                    justify="flex-start"
-                    flexWrap="nowrap"
-                  >
-                    <Stack direction="row" gap={-2} flexShrink={0}>
-                      <Box 
-                        w={{ base: 5, md: 6 }} 
-                        h={{ base: 5, md: 6 }} 
-                        borderRadius="full" 
-                        border="2px solid rgba(16, 185, 129, 0.45)" 
-                        overflow="hidden"
-                        bg="gray.200"
-                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                      >
-                        <img 
-                          src="/assets/community-stats/user_6819319_6ec853ff-5777-4398-8fcc-06e2621cbcf8.avif" 
-                          alt="Community member"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      </Box>
-                      <Box 
-                        w={{ base: 5, md: 6 }} 
-                        h={{ base: 5, md: 6 }}
-                        borderRadius="full" 
-                        border="2px solid rgba(16, 185, 129, 0.45)" 
-                        overflow="hidden"
-                        bg="gray.200"
-                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                      >
-                        <img 
-                          src="/assets/community-stats/4208db19763848b131989eadba9899aa.avif" 
-                          alt="Community member"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      </Box>
-                      <Box 
-                        w={{ base: 5, md: 6 }} 
-                        h={{ base: 5, md: 6 }}
-                        borderRadius="full" 
-                        border="2px solid rgba(16, 185, 129, 0.45)" 
-                        overflow="hidden"
-                        bg="gray.200"
-                        boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                      >
-                        <img 
-                          src="/assets/community-stats/393d1b15978eed96285cf196b2f51eda.avif" 
-                          alt="Community member"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      </Box>
-                    </Stack>
-                    <Text 
-                      fontSize={{ base: "2xs", md: "xs" }} 
-                      color="white" 
-                      textShadow="0 1px 2px rgba(0,0,0,0.3)"
-                      textAlign="left"
-                      lineHeight="tight"
-                      flex="1"
-                      minW={0}
-                    >
-                      ...Bereits über <Text as="span" fontWeight="bold">1000+ Trader</Text> auf ihrem Weg begleitet und ausgebildet.
-                    </Text>
-                  </Stack>
-                </Box>
-              </VStack>
-            </Box>
-
-            {/* Outseta Widget Container */}
-            <Box 
-              w="100%" 
-              maxW="480px" 
-              mx="auto"
-              bg="rgba(6, 12, 10, 0.55)"
-              borderRadius="2xl"
-              boxShadow="0 0 0 1px rgba(16,185,129,0.35), 0 0 60px rgba(16,185,129,0.25), 0 40px 120px rgba(16,185,129,0.28)"
-              p={{ base: 5, md: 6 }}
-              border="1px solid"
-              borderColor="rgba(16,185,129,0.45)"
-              backdropFilter="saturate(180%) blur(14px)"
-            >
-              {/* Widget Header */}
-              <VStack gap={4} mb={6} textAlign="center">
-                <Box 
-                  bg="linear-gradient(135deg, #10B981, #22C55E)"
-                  borderRadius="full"
-                  p={4}
-                  color="white"
-                >
-                  <CheckCircle size={28} weight="fill" />
-                </Box>
-                
-                <VStack gap={2}>
-                  <Heading as="h3" fontSize="xl" color="white">
-                    Kostenlose Registrierung
-                  </Heading>
-                  <Text color="gray.300" fontSize="sm">
-                    Keine Kreditkarte erforderlich • 100% kostenlos
-                  </Text>
-                </VStack>
-              </VStack>
-
-              {/* Outseta Widget */}
-              <Box 
-                id="outseta-widget-container"
-                minH="360px"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <div data-o-auth="1"
-       data-widget-mode="register"
-       data-plan-uid="wmjBBxmV"
-       data-plan-payment-term="month"
-       data-skip-plan-options="true"
-       data-mode="embed">
-</div>
-          
-              </Box>
-
-              {/* Zusätzliche Info */}
-              <VStack gap={3} mt={6} pt={6} borderTop="1px solid" borderColor="rgba(16,185,129,0.28)">
-                <HStack justify="center" color="#34D399" gap={3}>
-                  <ShieldCheck size={18} weight="fill" />
-                  <Text fontSize="sm" color="gray.200">Deine Daten sind sicher und werden niemals weitergegeben</Text>
-                </HStack>
-                <HStack justify="center" color="#34D399" gap={3}>
-                  <Lightning size={18} weight="fill" />
-                  <Text fontSize="sm" color="gray.200">Sofortiger Zugang nach der Registrierung</Text>
-                </HStack>
-                <HStack justify="center" color="#34D399" gap={3}>
-                  <EnvelopeSimple size={18} weight="fill" />
-                  <Text fontSize="sm" color="gray.200">Prüfe auch deinen Spam-Ordner für die Bestätigung</Text>
-                </HStack>
-              </VStack>
-            </Box>
-          </VStack>
-        </Section>
-
- {/* Results Marquee Banner */}
- <ResultsMarquee />
-
-      {/* Registrierungsformular Section */}
-      <Section size="lg" bg="transparent" pt={0} pb={{ base: 6, md: 12 }}>
-        <VStack gap={8} maxW="4xl" mx="auto">
-
-          {/* Feature Sektion (3 Cards) */}
-          <VStack gap={6} align="stretch" maxW="4xl" mx="auto" mt={{ base: 4, md: 6 }}>
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 4, md: 6 }}>
-              {/* Card 1 - Kurs */}
-              <Box
-                bg="rgba(6, 12, 10, 0.55)"
-                borderRadius="xl"
-                border="1px solid"
-                borderColor="rgba(16,185,129,0.35)"
-                boxShadow="0 0 0 1px rgba(16,185,129,0.22), 0 20px 60px rgba(16,185,129,0.20)"
-                p={{ base: 4, md: 5 }}
-                backdropFilter="saturate(160%) blur(10px)"
-                transition="all 0.25s ease"
-                _hover={{ transform: "translateY(-4px)", boxShadow: "0 0 0 1px rgba(16,185,129,0.35), 0 30px 90px rgba(16,185,129,0.28)" }}
-              >
-                <HStack gap={3} align="start">
-                  <Box bg="rgba(34,197,94,0.18)" color="#34D399" borderRadius="lg" p={3}>
-                    <BookOpen size={22} weight="fill" />
-                  </Box>
-                  <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Kostenloses Trading-Bootcamp</Text>
-                    <Text fontSize="sm" color="gray.300">Von den Grundlagen bis zur Umsetzung – verständlich und praxisnah.</Text>
-                  </Box>
-                </HStack>
-              </Box>
-
-              {/* Card 2 - Tools */}
-              <Box
-                bg="rgba(6, 12, 10, 0.55)"
-                borderRadius="xl"
-                border="1px solid"
-                borderColor="rgba(16,185,129,0.35)"
-                boxShadow="0 0 0 1px rgba(16,185,129,0.22), 0 20px 60px rgba(16,185,129,0.20)"
-                p={{ base: 4, md: 5 }}
-                backdropFilter="saturate(160%) blur(10px)"
-                transition="all 0.25s ease"
-                _hover={{ transform: "translateY(-4px)", boxShadow: "0 0 0 1px rgba(16,185,129,0.35), 0 30px 90px rgba(16,185,129,0.28)" }}
-              >
-                <HStack gap={3} align="start">
-                  <Box bg="rgba(34,197,94,0.18)" color="#34D399" borderRadius="lg" p={3}>
-                    <Wrench size={22} weight="fill" />
-                  </Box>
-                  <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Tools & Software</Text>
-                    <Text fontSize="sm" color="gray.300">Praktische Tools, Tracker und Setups – direkt einsetzbar.</Text>
-                  </Box>
-                </HStack>
-              </Box>
-
-              {/* Card 3 - Community */}
-              <Box
-                bg="rgba(6, 12, 10, 0.55)"
-                borderRadius="xl"
-                border="1px solid"
-                borderColor="rgba(16,185,129,0.35)"
-                boxShadow="0 0 0 1px rgba(16,185,129,0.22), 0 20px 60px rgba(16,185,129,0.20)"
-                p={{ base: 4, md: 5 }}
-                backdropFilter="saturate(160%) blur(10px)"
-                transition="all 0.25s ease"
-                _hover={{ transform: "translateY(-4px)", boxShadow: "0 0 0 1px rgba(16,185,129,0.35), 0 30px 90px rgba(16,185,129,0.28)" }}
-              >
-                <HStack gap={3} align="start">
-                  <Box bg="rgba(34,197,94,0.18)" color="#34D399" borderRadius="lg" p={3}>
-                    <ChatsCircle size={22} weight="fill" />
-                  </Box>
-                  <Box>
-                    <Text fontSize="md" fontWeight="bold" color="white" mb={1}>Free Discord</Text>
-                    <Text fontSize="sm" color="gray.300">Tritt unserer aktiven Community bei und lerne mit anderen.</Text>
-                  </Box>
-                </HStack>
-              </Box>
-            </SimpleGrid>
-          </VStack>
-
-          
-        </VStack>
-      </Section>
-
-     
+  {/* Results Marquee Banner */}
+  <ResultsMarquee />
+  <ReviewMarquee />
 
       </Box>
     </>

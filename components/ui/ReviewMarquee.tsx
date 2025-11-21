@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Text, HStack, VStack } from "@chakra-ui/react";
+import { Box, Text, HStack, VStack, Heading } from "@chakra-ui/react";
 import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogCloseTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+
+const SNT_BLUE = "#068CEF";
 
 const StarIcon = ({ filled = false }) => (
   <svg
@@ -149,11 +151,12 @@ const ReviewCard = ({ text, name, date, rating }) => {
         maxW={{ base: "260px", md: "320px" }}
         minH={{ base: "320px", md: "340px" }}
         maxH={{ base: "320px", md: "340px" }}
-        bg="rgba(10, 14, 10, 0.85)"
-        backdropFilter="blur(16px)"
+        bg="rgba(255, 255, 255, 0.6)"
+        backdropFilter="blur(12px) saturate(180%)"
         borderRadius="xl"
-        boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
-        border="1px solid rgba(34, 197, 94, 0.3)"
+        boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
+        border="1px solid"
+        borderColor="rgba(6, 140, 239, 0.4)"
         p={4}
         mx={2}
         flexShrink={0}
@@ -161,11 +164,11 @@ const ReviewCard = ({ text, name, date, rating }) => {
         flexDirection="column"
         justifyContent="space-between"
         pb={6}
-        color="white"
+        color="black"
         position="relative"
         _hover={{
           transform: "translateY(-2px)",
-          boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+          boxShadow: "0 8px 12px rgba(0, 0, 0, 0.15)"
         }}
         transition="all 0.3s ease"
       >
@@ -175,17 +178,17 @@ const ReviewCard = ({ text, name, date, rating }) => {
           ))}
         </HStack>
         <Box flexGrow={1} mb={2}>
-          <Text fontSize="sm" color="gray.200" lineHeight="1.5">
+          <Text fontSize="sm" color="gray.700" lineHeight="1.5">
             "{displayText}"
             {isLong && (
               <Box 
                 as="span" 
-                color="#22c55e" 
+                color={SNT_BLUE}
                 ml={2} 
                 cursor="pointer" 
                 onClick={() => setIsDialogOpen(true)}
                 fontWeight="semibold"
-                _hover={{ color: "#16a34a" }}
+                _hover={{ color: "#0572c2" }}
                 transition="color 0.2s ease"
               >
                 Mehr lesen
@@ -194,36 +197,27 @@ const ReviewCard = ({ text, name, date, rating }) => {
           </Text>
         </Box>
         <Box>
-          <Text fontSize="xs" fontWeight="medium" color="white">von {name}</Text>
-          <Text fontSize="xs" color="gray.400">{date}</Text>
+          <Text fontSize="xs" fontWeight="medium" color="black">von {name}</Text>
+          <Text fontSize="xs" color="gray.500">{date}</Text>
         </Box>
       </Box>
 
       {/* Pop-Up Dialog */}
       <DialogRoot open={isDialogOpen} onOpenChange={(details) => setIsDialogOpen(details.open)}>
         <DialogContent
-          bg="rgba(5, 10, 5, 0.98)"
-          backdropFilter="blur(24px)"
-          border="2px solid rgba(34, 197, 94, 0.4)"
+          bg="rgba(255, 255, 255, 0.9)"
+          backdropFilter="blur(16px)"
+          border="1px solid"
+          borderColor="rgba(6, 140, 239, 0.4)"
           borderRadius="2xl"
-          boxShadow="0 25px 80px 0 rgba(34, 197, 94, 0.4), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+          boxShadow="0 10px 30px rgba(0, 0, 0, 0.1)"
           maxW="xl"
           w={{ base: "90%", md: "600px" }}
-          color="white"
+          color="black"
           position="relative"
           overflow="hidden"
-          _before={{
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "radial-gradient(at 30% 30%, rgba(34, 197, 94, 0.1) 0px, transparent 70%)",
-            pointerEvents: "none"
-          }}
         >
-          {/* Close Button - Verbessert */}
+          {/* Close Button */}
           <Box
             position="absolute"
             top={3}
@@ -231,30 +225,27 @@ const ReviewCard = ({ text, name, date, rating }) => {
             zIndex={1000}
             cursor="pointer"
             onClick={() => setIsDialogOpen(false)}
-            w={10}
-            h={10}
-            bg="rgba(239, 68, 68, 0.15)"
+            w={8}
+            h={8}
+            bg="rgba(0, 0, 0, 0.05)"
             _hover={{
-              bg: "rgba(239, 68, 68, 0.25)",
-              transform: "scale(1.1)"
+              bg: "rgba(0, 0, 0, 0.1)",
             }}
             borderRadius="full"
             display="flex"
             alignItems="center"
             justifyContent="center"
-            border="1px solid rgba(239, 68, 68, 0.3)"
-            boxShadow="0 4px 12px rgba(239, 68, 68, 0.2)"
+            border="1px solid rgba(0, 0, 0, 0.1)"
             transition="all 0.2s ease"
           >
-            <Text color="red.300" fontSize="lg" fontWeight="bold">✕</Text>
+            <Text color="gray.600" fontSize="sm" fontWeight="bold">✕</Text>
           </Box>
 
           <DialogHeader position="relative" zIndex={1}>
             <DialogTitle 
-              color="#22c55e" 
-              fontSize="2xl" 
+              color={SNT_BLUE}
+              fontSize="xl" 
               fontWeight="bold"
-              textShadow="0 0 15px rgba(34, 197, 94, 0.5)"
               mb={2}
             >
               Bewertung von {name}
@@ -269,20 +260,21 @@ const ReviewCard = ({ text, name, date, rating }) => {
                     <StarIcon filled={i < rating} />
                   </Box>
                 ))}
-                <Text ml={3} color="gray.300" fontSize="sm" fontWeight="medium">
+                <Text ml={3} color="gray.600" fontSize="sm" fontWeight="medium">
                   {date}
                 </Text>
               </HStack>
               <Box
-                bg="rgba(34, 197, 94, 0.05)"
+                bg="gray.100"
                 p={6}
                 borderRadius="xl"
-                border="1px solid rgba(34, 197, 94, 0.15)"
+                border="1px solid"
+                borderColor="gray.200"
                 w="full"
               >
                 <Text 
-                  fontSize="lg" 
-                  color="white" 
+                  fontSize="md" 
+                  color="black" 
                   lineHeight="1.7"
                   fontWeight="400"
                 >
@@ -305,11 +297,13 @@ export const ReviewMarquee = () => {
       w="100%"
       overflow="hidden"
       position="relative"
-      py={{ base: 8, md: 12 }}
-      bg="linear-gradient(135deg, rgba(10, 14, 10, 0.95), rgba(0, 0, 0, 0.98))"
+      py={{ base: 6, md: 10 }}
+      pt="5%"
+      pb="5%"
+      bg="transparent"
       _hover={{ cursor: "pointer" }}
     >
-      <style>{`
+      <Box as="style">{`
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
@@ -322,20 +316,19 @@ export const ReviewMarquee = () => {
         .marquee-paused {
           animation-play-state: paused !important;
         }
-      `}</style>
+      `}</Box>
       <VStack gap={4} align="center" w="full">
-        <HStack gap={1} mb={1} justify="center" w="full">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <span key={i}><StarIcon filled={true} /></span>
-          ))}
-          <span><StarIconHalf /></span>
-          <Text fontWeight="semibold" fontSize="md" color="white" ml={2}>4,8 von 5</Text>
-        </HStack>
-        <Text fontWeight="500" color="white" fontSize={{ base: "xl", md: "2xl" }} textAlign="center" w="full">
-          Was unsere Teilnehmer sagen:<span role="img" aria-label="down"></span>
-        </Text>
+        <Heading as="h2" size="xl" color="black" textAlign="center" px={4}>
+            Oder hör einfach, was unsere{" "}
+            <Box as="span" color="black" px="1.5" borderRadius="xs" bg={`linear-gradient(90deg, ${SNT_BLUE} 0%, rgba(6, 140, 239, 0.22) 85%, rgba(6, 140, 239, 0) 100%)`}>
+                Teilnehmer
+            </Box>{" "}
+            zu sagen haben...
+        </Heading>
         <Box
           w="100%"
+          pt="5%"
+          pb="5%"
           minH={{ base: "180px", md: "210px" }}
           overflow="hidden"
           position="relative"

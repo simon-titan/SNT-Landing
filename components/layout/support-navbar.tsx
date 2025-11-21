@@ -2,6 +2,9 @@
 
 import { Box, HStack, Heading } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/components/ui/link";
+
+const SNT_BLUE = "#068CEF";
 
 export const SupportNavbar = () => {
   return (
@@ -9,11 +12,10 @@ export const SupportNavbar = () => {
       <Box
         as="header"
         w="100vw"
-        background="#000000"
+        background="black"
         px="0"
         py="1"
-        boxShadow="0 14px 40px -14px rgba(73,231,156,0.55)"
-        borderBottom="1px solid rgba(73,231,156,0.25)"
+        borderBottom={`1px solid ${SNT_BLUE}`}
       >
         <Box w={{ base: "100%", md: "80%" }} mx="auto" px="4" py="2">
           <HStack justify="space-between" w="full">
@@ -23,29 +25,36 @@ export const SupportNavbar = () => {
               fontWeight="800"
               fontFamily="var(--font-horizon), Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
               lineHeight="0.9"
-              color="#49E79C"
-              textShadow="0 0 10px rgba(73,231,156,0.75), 0 0 22px rgba(73,231,156,0.35)"
+              color="white"
+              textShadow="none"
             >
               SNTTRADES
             </Heading>
 
             <HStack gap="2">
-              <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
+              <Link
+                href="https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipPlanOptions=true"
+                data-outseta-modal-class="snt-outseta-modal"
+                _hover={{ textDecoration: 'none' }}
+              >
                 <Button
                   size="xs"
                   height="28px"
                   fontSize="xs"
-                  bg="rgba(73,231,156,0.08)"
-                  color="#49E79C"
-                  border="1px solid rgba(73,231,156,0.45)"
-                  backdropFilter="blur(10px) saturate(160%)"
-                  boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
-                  _hover={{ bg: "rgba(73,231,156,0.16)", boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" }}
-                  _active={{ bg: "rgba(73,231,156,0.22)", boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" }}
+                  bg={SNT_BLUE}
+                  color="white"
+                  border="1px solid transparent"
+                  _hover={{ 
+                    bg: "#0572c2", 
+                  }}
+                  _active={{ 
+                    bg: "#0465b8", 
+                  }}
+                  transition="all 0.3s ease"
                 >
-                  PLATFORM LOGIN
+                  JETZT STARTEN
                 </Button>
-              </a>
+              </Link>
             </HStack>
           </HStack>
         </Box>

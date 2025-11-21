@@ -1,7 +1,36 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Text, VStack, Image } from "@chakra-ui/react";
+import { Box, Text, VStack, Image, Heading } from "@chakra-ui/react";
 import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogBody } from "@/components/ui/dialog";
+
+const SNT_BLUE = "#068CEF";
+const SNT_YELLOW = "rgba(251, 191, 36, 1)";
+
+const highlightText = (text) => {
+    const regex = /(\d[\d,.]*\$|Profit|besteht|bestanden|Challenge|funded|Funded|TopStep|passed)/gi;
+    const parts = text.split(regex);
+
+    return (
+        <>
+            {parts.map((part, i) => {
+                if (part && part.match(regex)) {
+                    return (
+                        <Box
+                            as="span"
+                            key={i}
+                            px="1"
+                            borderRadius="xs"
+                            bg={`linear-gradient(90deg, ${SNT_YELLOW} 0%, rgba(251, 191, 36,0.4) 85%, rgba(251, 191, 36,0) 100%)`}
+                        >
+                            {part}
+                        </Box>
+                    );
+                }
+                return part;
+            })}
+        </>
+    );
+};
 
 const resultsData = [
   {
@@ -58,37 +87,35 @@ const ResultCard = ({ image, title }) => {
       <Box
         minW={{ base: "280px", md: "320px" }}
         maxW={{ base: "280px", md: "320px" }}
-        minH={{ base: "200px", md: "220px" }}
-        maxH={{ base: "200px", md: "220px" }}
-        bg="rgba(10, 14, 10, 0.85)"
-        backdropFilter="blur(16px)"
+        minH={{ base: "260px", md: "280px" }}
+        maxH={{ base: "260px", md: "280px" }}
+        bg="rgba(255, 255, 255, 0.6)"
+        backdropFilter="blur(12px) saturate(180%)"
         borderRadius="xl"
-        boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.25), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
-        border="1px solid rgba(34, 197, 94, 0.3)"
-        p={3}
+        boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
+        border="1px solid"
+        borderColor="rgba(6, 140, 239, 0.4)"
+        p={4}
         mx={2}
         flexShrink={0}
         display="flex"
         flexDirection="column"
-        justifyContent="space-between"
-        color="white"
+        color="black"
         position="relative"
         cursor="pointer"
         onClick={() => setIsDialogOpen(true)}
         _hover={{
           transform: "translateY(-4px)",
-          boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(34, 197, 94, 0.3)"
+          boxShadow: "0 8px 12px rgba(0, 0, 0, 0.15)"
         }}
         transition="all 0.3s ease"
       >
         {/* Bild Container */}
         <Box 
-          flex={1}
+          h="180px"
           borderRadius="lg"
           overflow="hidden"
-          bg="gray.800"
-          position="relative"
-          mb={3}
+          bg="gray.200"
         >
           <Image
             src={`/RESULTS/${image}`}
@@ -98,56 +125,36 @@ const ResultCard = ({ image, title }) => {
             objectFit="cover"
             loading="lazy"
           />
-          {/* Overlay Gradient */}
-          <Box
-            position="absolute"
-            bottom={0}
-            left={0}
-            right={0}
-            h="50%"
-            background="linear-gradient(to top, rgba(10, 14, 10, 0.8), transparent)"
-            pointerEvents="none"
-          />
         </Box>
         
         {/* Titel */}
-        <Box>
+        <VStack flex={1} justifyContent="center" pt={3}>
           <Text 
             fontSize="sm" 
-            fontWeight="bold" 
-            color="#22c55e"
+            color="black"
+            fontWeight="medium"
             textAlign="center"
             lineHeight="1.3"
-            textShadow="0 0 8px rgba(34, 197, 94, 0.4)"
           >
-            {title}
+            {highlightText(title)}
           </Text>
-        </Box>
+        </VStack>
       </Box>
 
       {/* Pop-Up Dialog */}
       <DialogRoot open={isDialogOpen} onOpenChange={(details) => setIsDialogOpen(details.open)}>
         <DialogContent
-          bg="rgba(5, 10, 5, 0.98)"
-          backdropFilter="blur(24px)"
-          border="2px solid rgba(34, 197, 94, 0.4)"
+          bg="rgba(255, 255, 255, 0.9)"
+          backdropFilter="blur(16px)"
+          border="1px solid"
+          borderColor="rgba(6, 140, 239, 0.4)"
           borderRadius="2xl"
-          boxShadow="0 25px 80px 0 rgba(34, 197, 94, 0.4), inset 0 1px 0 rgba(34, 197, 94, 0.2)"
+          boxShadow="0 10px 30px rgba(0, 0, 0, 0.1)"
           maxW="4xl"
           w={{ base: "95%", md: "800px" }}
-          color="white"
+          color="black"
           position="relative"
           overflow="hidden"
-          _before={{
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "radial-gradient(at 30% 30%, rgba(34, 197, 94, 0.1) 0px, transparent 70%)",
-            pointerEvents: "none"
-          }}
         >
           {/* Close Button */}
           <Box
@@ -157,30 +164,27 @@ const ResultCard = ({ image, title }) => {
             zIndex={1000}
             cursor="pointer"
             onClick={() => setIsDialogOpen(false)}
-            w={10}
-            h={10}
-            bg="rgba(239, 68, 68, 0.15)"
+            w={8}
+            h={8}
+            bg="rgba(0, 0, 0, 0.05)"
             _hover={{
-              bg: "rgba(239, 68, 68, 0.25)",
-              transform: "scale(1.1)"
+              bg: "rgba(0, 0, 0, 0.1)",
             }}
             borderRadius="full"
             display="flex"
             alignItems="center"
             justifyContent="center"
-            border="1px solid rgba(239, 68, 68, 0.3)"
-            boxShadow="0 4px 12px rgba(239, 68, 68, 0.2)"
+            border="1px solid rgba(0, 0, 0, 0.1)"
             transition="all 0.2s ease"
           >
-            <Text color="red.300" fontSize="lg" fontWeight="bold">✕</Text>
+            <Text color="gray.600" fontSize="sm" fontWeight="bold">✕</Text>
           </Box>
 
           <DialogHeader position="relative" zIndex={1}>
             <DialogTitle 
-              color="#22c55e" 
-              fontSize="2xl" 
+              color={SNT_BLUE}
+              fontSize="xl" 
               fontWeight="bold"
-              textShadow="0 0 15px rgba(34, 197, 94, 0.5)"
               mb={4}
               textAlign="center"
             >
@@ -196,8 +200,9 @@ const ResultCard = ({ image, title }) => {
               alignItems="center"
               borderRadius="xl"
               overflow="hidden"
-              bg="rgba(34, 197, 94, 0.05)"
-              border="1px solid rgba(34, 197, 94, 0.15)"
+              bg="gray.100"
+              border="1px solid"
+              borderColor="gray.200"
               p={2}
             >
               <Image
@@ -226,7 +231,8 @@ export const ResultsMarquee = () => {
       overflow="hidden"
       position="relative"
       py={{ base: 8, md: 12 }}
-      bg="linear-gradient(135deg, rgba(10, 14, 10, 0.95), rgba(0, 0, 0, 0.98))"
+      pt="5%"
+      bg="transparent"
     >
       <style>{`
         @keyframes marqueeRight {
@@ -244,17 +250,12 @@ export const ResultsMarquee = () => {
       `}</style>
       
       <VStack gap={4} align="center" w="full">
-        <Text 
-          fontWeight="bold" 
-          color="#22c55e" 
-          fontSize={{ base: "xl", md: "2xl" }} 
-          textAlign="center" 
-          w="full"
-          textShadow="0 0 15px rgba(34, 197, 94, 0.5)"
-          mb={2}
-        >
-          🏆 Erfolge unserer Community
-        </Text>
+        <Heading as="h2" size="xl" color="black" textAlign="center" px={4}>
+          Erziele Erfolge wie unsere{" "}
+          <Box as="span" color="black" px="1.5" borderRadius="xs" bg={`linear-gradient(90deg, ${SNT_BLUE} 0%, rgba(6, 140, 239, 0.22) 85%, rgba(6, 140, 239, 0) 100%)`}>
+            Teilnehmer...
+          </Box>
+        </Heading>
         
         <Box
           w="100%"
