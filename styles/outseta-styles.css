@@ -54,6 +54,7 @@
 }
 
 .o--Widget--popupBg {
+  padding: 2.5% !important;
   background: var(--chakra-colors-black-alpha-500) !important;
 }
 
@@ -440,4 +441,58 @@
   #widget-Outseta_chat.displayMode-auto .body .input textarea {
     border-color: var(--global-color-border) !important;
   }
+}
+
+.snt-outseta-modal .o-widget-body {
+  padding: 2rem !important;
+}
+
+/* Custom overrides for SNT landing page modal - FINAL */
+.o--App--authWidget .o--Widget--widgetBody {
+  background-color: #ffffff !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody h1,
+.o--App--authWidget .o--Widget--widgetBody h2,
+.o--App--authWidget .o--Widget--widgetBody h3,
+.o--App--authWidget .o--Widget--widgetBody p,
+.o--App--authWidget .o--Widget--widgetBody span,
+.o--App--authWidget .o--Widget--widgetBody div {
+    color: #000000 !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody .o--Button--btn {
+    background-color: #068CEF !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody .o--Button--btn:is(:hover, [data-hover]):not(:disabled, [data-disabled]) {
+    background-color: #0572c2 !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody a,
+.o--App--authWidget .o--Widget--widgetBody .o--color-accent {
+    color: #068CEF !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody .o--Input--input {
+    background-color: #f7fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #000000 !important;
+    --focus-ring-color: #068CEF !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody .o--Input--input::placeholder {
+    color: #a0aec0 !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody .o--Input--input:is(:focus-visible, [data-focus-visible]) {
+  border-color: #068CEF !important;
+  outline-color: #068CEF !important;
+}
+
+.o--App--authWidget .o--Widget--widgetBody label.o--Label--label {
+    color: #4a5568 !important;
 }

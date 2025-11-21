@@ -6,6 +6,16 @@ import { colorPalettes } from "@/theme/colors";
 const fallback = `-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`;
 
 const customConfig = defineConfig({
+  globalCss: {
+    "@keyframes bounce": {
+      "0%, 20%, 50%, 80%, 100%": { transform: "translateY(0)" },
+      "40%": { transform: "translateY(-15px)" },
+      "60%": { transform: "translateY(-8px)" },
+    } as any,
+    ".animation-bounce": {
+      animation: "bounce 1.5s infinite",
+    },
+  },
   theme: {
     tokens: {
       fonts: {

@@ -40,22 +40,6 @@ const legalLinks = [
 
 export const Footer = () => (
   <>
-    {/* Grüner Glow-Trenner (vollbreit) oben im Footer */}
-    <Box w="100%" position="relative">
-      <Box h={{ base: 10, md: 12 }} position="relative" overflow="hidden">
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          right={0}
-          bottom={0}
-          bg="radial-gradient(55% 60% at 50% 0%, rgba(16,185,129,0.35) 0%, rgba(16,185,129,0.16) 35%, rgba(16,185,129,0.06) 60%, rgba(0,0,0,0) 70%)"
-          filter="blur(14px)"
-        />
-        <Box h="1px" w="100%" bg="linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent)" />
-      </Box>
-    </Box>
-
     <Container as="footer" py={{ base: "10", md: "12" }}>
       <Stack gap="6">
         <Stack direction="row" justify="space-between" align="center">
@@ -65,8 +49,8 @@ export const Footer = () => (
             fontWeight="800"
             lineHeight="0.9"
             fontFamily="'Horizon', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
-            color="#34D399"
-            textShadow="0 0 18px rgba(16,185,129,0.55), 0 0 36px rgba(16,185,129,0.28)"
+            color="white"
+            textShadow="none"
             letterSpacing="tight"
           >
             SNTTRADES

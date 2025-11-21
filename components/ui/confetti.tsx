@@ -3,9 +3,13 @@ import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
 
 export default function Confetti({
   type = "fireworks",
+  colors,
 }: {
   type: "fireworks" | "stars";
+  colors?: string[];
 }) {
+  const defaultColors = ["#10B981", "#22C55E", "#34D399"];
+
   if (type === "fireworks") {
     return (
       <Fireworks
@@ -16,7 +20,7 @@ export default function Confetti({
         }}
         decorateOptions={(options) => ({
           ...options,
-          colors: ["#10B981", "#22C55E", "#34D399"],
+          colors: colors || defaultColors,
         })}
         style={{
           position: "fixed",
