@@ -81,7 +81,7 @@ export default function ThankYouPage() {
             title="Du hast es fast geschafft!"
             description="Wir haben dir eine E-Mail geschickt, du musst nur noch dein Passwort setzen, prüfe bitte auch deinen Spam-Ordner."
           >
-            <Link href="www.snt-mentorship-platform.de" _hover={{ textDecoration: 'none' }}>
+            <a href="https://www.snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
               <Button
                   mt={6}
                   bg={SNT_BLUE}
@@ -90,7 +90,7 @@ export default function ThankYouPage() {
               >
                   ZUM BOOTCAMP
               </Button>
-            </Link>
+            </a>
           </EmptyState>
         </VStack>
       </Flex>

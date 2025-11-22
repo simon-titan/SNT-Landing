@@ -483,8 +483,8 @@ export default function RegisterPage() {
                          </Stack>
  
                          <Link
-                             href="https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipOptions=true"
-                             data-outseta-modal-class="snt-outseta-modal"
+                              href="https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipPlanOptions=true"
+                              data-outseta-modal-class="snt-outseta-modal"
                          >
                              <Button
                                  size="lg"
