@@ -30,28 +30,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Person über E-Mail finden
-    const personSearchResponse = await fetch(`https://${OUTSETA_DOMAIN}/api/v1/crm/people?fields=Uid,Email,FirstName,LastName&Email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Outseta ${OUTSETA_API_KEY}:${OUTSETA_SECRET_KEY}`,
-        'Content-Type': 'application/json',
+    // Person über E-Mail finden (mit Retry-Logik für neu erstellte Accounts)
+    let person = null;
+    let personSearchResult = null;
+    
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) {
+        // Warte zwischen Versuchen (Account könnte noch erstellt werden)
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
-    });
 
-    if (!personSearchResponse.ok) {
-      return NextResponse.json(
-        { error: 'Person konnte nicht gefunden werden' },
-        { status: 404 }
-      );
+      const personSearchResponse = await fetch(`https://${OUTSETA_DOMAIN}/api/v1/crm/people?fields=Uid,Email,FirstName,LastName&Email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Outseta ${OUTSETA_API_KEY}:${OUTSETA_SECRET_KEY}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (personSearchResponse.ok) {
+        personSearchResult = await personSearchResponse.json();
+        person = personSearchResult.items?.[0];
+        
+        if (person && person.Uid) {
+          break; // Person gefunden
+        }
+      } else if (personSearchResponse.status !== 404) {
+        // Bei anderen Fehlern als 404 sofort abbrechen
+        const errorText = await personSearchResponse.text().catch(() => '');
+        console.error(`Outseta API Fehler beim Suchen der Person: ${personSearchResponse.status}`, errorText);
+        return NextResponse.json(
+          { error: 'Fehler beim Suchen der Person', details: errorText },
+          { status: personSearchResponse.status }
+        );
+      }
     }
-
-    const personSearchResult = await personSearchResponse.json();
-    const person = personSearchResult.items?.[0];
     
     if (!person || !person.Uid) {
+      console.warn(`Person mit E-Mail ${email} nicht gefunden nach 3 Versuchen`);
       return NextResponse.json(
-        { error: 'Keine Person mit dieser E-Mail gefunden' },
+        { error: 'Keine Person mit dieser E-Mail gefunden. Bitte warte einen Moment und versuche es erneut.' },
         { status: 404 }
       );
     }
@@ -79,6 +97,17 @@ export async function POST(request: NextRequest) {
     const responseText = await response.text();
 
     if (!response.ok) {
+      // Prüfe ob Person bereits in der Liste ist (409 Conflict)
+      if (response.status === 409 || responseText.includes('already') || responseText.includes('exists')) {
+        console.log(`Person ${person.Uid} ist bereits in der E-Mail-Liste ${emailListUid}`);
+        return NextResponse.json({
+          success: true,
+          message: 'Person ist bereits in der E-Mail-Liste',
+          alreadySubscribed: true
+        });
+      }
+
+      console.error(`Fehler beim Hinzufügen zur E-Mail-Liste: ${response.status}`, responseText);
       return NextResponse.json(
         { 
           error: 'Fehler beim Hinzufügen zur E-Mail-Liste',
@@ -88,7 +117,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = JSON.parse(responseText);
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (e) {
+      // Falls Response kein JSON ist, aber Status OK ist
+      result = { success: true, message: responseText };
+    }
 
     return NextResponse.json({
       success: true,

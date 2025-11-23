@@ -41,6 +41,34 @@ export default function RegisterPage() {
   const [progress, setProgress] = useState(0);
   const [timeLeft, setTimeLeft] = useState({ minutes: 10, seconds: 0 });
   const router = useRouter();
+  
+  // EINFACHE E-Mail-Erfassung: Nur bei tatsächlicher Eingabe im Input-Feld
+  const captureEmailOnInput = () => {
+    // Einfacher Event-Listener für E-Mail-Inputs
+    const handleEmailInput = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      if (target && (target.type === 'email' || target.name === 'Person.Email' || target.name?.includes('Email'))) {
+        const email = target.value?.trim();
+        if (email && email.includes('@') && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          // Speichere E-Mail in unabhängiger Variable
+          localStorage.setItem('sntRegistrationEmail', email);
+          console.log('✅ E-Mail gespeichert:', email);
+        }
+      }
+    };
+    
+    // Event-Listener auf Document-Level (funktioniert auch für dynamisch geladene Modals)
+    document.addEventListener('input', handleEmailInput, true);
+    document.addEventListener('change', handleEmailInput, true);
+    
+    console.log('✅ E-Mail-Erfassung aktiviert');
+    
+    // Cleanup-Funktion zurückgeben
+    return () => {
+      document.removeEventListener('input', handleEmailInput, true);
+      document.removeEventListener('change', handleEmailInput, true);
+    };
+  };
 
   useEffect(() => {
     // Progress Animation
@@ -88,88 +116,244 @@ export default function RegisterPage() {
   }, []);
 
   useEffect(() => {
+    // EINFACHE E-Mail-Erfassung: Nur bei tatsächlicher Eingabe
+    const cleanup = captureEmailOnInput();
+    
+    return cleanup;
+    
     // Outseta Widget laden
     const script = document.createElement("script");
     script.src = "https://cdn.outseta.com/assets/build/js/widget.js";
     script.async = true;
     script.onload = () => {
-      // Widget initialisieren
+      // Widget initialisieren mit expliziter Redirect-URL
       if (typeof window !== 'undefined' && (window as any).Outseta) {
-        (window as any).Outseta.init();
+        const thankYouUrl = `${window.location.origin}/thank-you-3`;
+        (window as any).Outseta.init({
+          auth: {
+            postRegistrationUrl: thankYouUrl
+          }
+        });
+        console.log('✅ Outseta Widget initialisiert');
       }
     };
     document.head.appendChild(script);
 
-    // Success Handler für Registrierung
-    const handleOutsetaSuccess = async (event: MessageEvent) => {
-      if (event.data && event.data.type === 'outseta_success') {
-        handleSuccess();
+    // EINFACHE E-Mail-Extraktion: Nur aus Input-Feld
+    const getEmailFromInput = (): string | null => {
+      const emailInput = document.querySelector('input[name="Person.Email"], input[type="email"]') as HTMLInputElement;
+      if (emailInput && emailInput.value) {
+        const email = emailInput.value.trim();
+        if (email.includes('@') && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          return email;
+        }
       }
+      return null;
+    };
+    
+    // Alte Funktion entfernt - nicht mehr benötigt
+    const extractEmailFromWidget = (): string | null => {
+      // Strategie 1: Suche im gesamten Document (nicht nur in widgetContainer, da Modal außerhalb sein kann)
+      const emailSelectors = [
+        'input[type="email"]',
+        'input[name*="email" i]', // case-insensitive
+        'input[name*="Email"]',
+        'input[name="Person.Email"]', // Spezifisch für Outseta
+        'input[id*="email" i]',
+        'input[autocomplete="email"]'
+      ];
+      
+      for (const selector of emailSelectors) {
+        const inputs = document.querySelectorAll(selector);
+        for (const input of Array.from(inputs)) {
+          const value = (input as HTMLInputElement).value?.trim();
+          if (value && value.includes('@') && value.length > 5 && value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            console.log('E-Mail gefunden via Selector:', selector, value);
+            return value;
+          }
+        }
+      }
+
+      // Strategie 2: Suche in Outseta Modal (falls vorhanden)
+      const outsetaModal = document.querySelector('[data-outseta-modal], .outseta-modal, [class*="outseta"], [id*="outseta"]');
+      if (outsetaModal) {
+        const modalInputs = outsetaModal.querySelectorAll('input[type="email"], input[name*="email" i], input[name*="Email"]');
+        for (const input of Array.from(modalInputs)) {
+          const value = (input as HTMLInputElement).value?.trim();
+          if (value && value.includes('@') && value.length > 5 && value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            console.log('E-Mail gefunden in Outseta Modal:', value);
+            return value;
+          }
+        }
+      }
+
+      // Strategie 3: Suche in widgetContainer (falls vorhanden)
+      const widgetContainer = document.getElementById('outseta-widget-container');
+      if (widgetContainer) {
+        const containerInputs = widgetContainer.querySelectorAll('input[type="email"], input[name*="email" i], input[name*="Email"]');
+        for (const input of Array.from(containerInputs)) {
+          const value = (input as HTMLInputElement).value?.trim();
+          if (value && value.includes('@') && value.length > 5 && value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            console.log('E-Mail gefunden in Widget Container:', value);
+            return value;
+          }
+        }
+      }
+
+      // Strategie 4: Aus Outseta Event-Daten extrahieren (falls verfügbar)
+      if ((window as any).Outseta?.lastSubmittedEmail) {
+        console.log('E-Mail gefunden in Outseta.lastSubmittedEmail:', (window as any).Outseta.lastSubmittedEmail);
+        return (window as any).Outseta.lastSubmittedEmail;
+      }
+
+      return null;
     };
 
-    window.addEventListener('message', handleOutsetaSuccess);
-
-    // E-Mail-Extraktion für E-Mail-Liste
-    const extractEmailOnSubmit = () => {
+    // MutationObserver für Widget-Änderungen
+    let emailObserver: MutationObserver | null = null;
+    const setupEmailObserver = () => {
       const widgetContainer = document.getElementById('outseta-widget-container');
       if (!widgetContainer) return;
 
-      const checkWidget = setInterval(() => {
-        const inputs = widgetContainer.querySelectorAll('input');
-        const buttons = widgetContainer.querySelectorAll('button, input[type="submit"]');
-        
-        if (inputs.length > 0 && buttons.length > 0) {
-          clearInterval(checkWidget);
-          
-          buttons.forEach((button) => {
-            button.addEventListener('click', () => {
-              setTimeout(() => {
-                const emailInputs = widgetContainer.querySelectorAll('input[type="email"], input[name*="email"], input[id*="email"]');
-                const allInputs = widgetContainer.querySelectorAll('input');
-                
-                let foundEmail = '';
-                
-                emailInputs.forEach((input: any) => {
-                  if (input.value && input.value.includes('@')) {
-                    foundEmail = input.value;
-                  }
-                });
-                
-                if (!foundEmail) {
-                  allInputs.forEach((input: any) => {
-                    if (input.value && input.value.includes('@')) {
-                      foundEmail = input.value;
-                    }
-                  });
-                }
-                
-                if (foundEmail) {
-                  localStorage.setItem('pendingEmailSubscription', foundEmail);
-                }
-              }, 100);
-            });
-          });
-        }
-      }, 1000);
-      
-      setTimeout(() => {
-        clearInterval(checkWidget);
-      }, 30000);
+      // MutationObserver nicht mehr benötigt - E-Mail wird über Input-Events erfasst
+
+      emailObserver.observe(widgetContainer, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['value']
+      });
     };
 
-    setTimeout(extractEmailOnSubmit, 2000);
+    // Success Handler für Registrierung - ABFANGEN VOR OUTSETA REDIRECT
+    const handleOutsetaSuccess = async (event: MessageEvent) => {
+      if (event.data && event.data.type === 'outseta_success') {
+        console.log('🎉 Outseta Success Event erhalten:', event.data);
+        
+        // KRITISCH: E-Mail SOFORT extrahieren und speichern, bevor irgendetwas anderes passiert
+        let email: string | null = null;
+        
+        // Strategie 1: E-Mail aus Event-Daten extrahieren (höchste Priorität)
+        email = event.data.email || event.data.user?.email || event.data.person?.email || event.data.Email || event.data.Person?.Email;
+        if (email) {
+          console.log('✅ E-Mail aus Event-Daten:', email);
+        }
+        
+        // EINFACH: Verwende die E-Mail aus unserer unabhängigen Variable (wird beim Eingeben gespeichert)
+        const storedEmail = localStorage.getItem('sntRegistrationEmail');
+        const finalEmail = email || storedEmail || getEmailFromInput();
+        
+        console.log('📧 E-Mail für Weiterleitung:', finalEmail);
+
+        // Weiterleitung - VERHINDERE OUTSETA REDIRECT
+        event.stopPropagation();
+        event.preventDefault();
+        handleSuccess(finalEmail || undefined);
+      }
+    };
+
+    // Event Listener mit capture für frühes Abfangen
+    window.addEventListener('message', handleOutsetaSuccess, true);
+    
+    // ROBUSTER Redirect-Interceptor: Abfangen von Outseta Redirects
+    let lastUrl = window.location.href;
+    let checkUrlChangeInterval: NodeJS.Timeout | null = null;
+    
+    // Interceptiere window.location Änderungen
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    const interceptNavigation = (url: string) => {
+      if (url && url.includes('/thank-you') && !url.includes('/thank-you-3')) {
+        console.log('🛡️ Redirect zu /thank-you erkannt - korrigiere zu /thank-you-3');
+        
+        // EINFACH: Verwende die E-Mail aus unserer unabhängigen Variable
+        const email = localStorage.getItem('sntRegistrationEmail');
+        
+        const newUrl = email 
+          ? `/thank-you-3?email=${encodeURIComponent(email)}`
+          : '/thank-you-3';
+        console.log('🔄 Korrigierter Redirect:', newUrl);
+        return newUrl;
+      }
+      return url;
+    };
+    
+    history.pushState = function(...args) {
+      const url = args[2] as string;
+      if (url) {
+        const correctedUrl = interceptNavigation(url);
+        if (correctedUrl !== url) {
+          args[2] = correctedUrl;
+        }
+      }
+      return originalPushState.apply(history, args);
+    };
+    
+    history.replaceState = function(...args) {
+      const url = args[2] as string;
+      if (url) {
+        const correctedUrl = interceptNavigation(url);
+        if (correctedUrl !== url) {
+          args[2] = correctedUrl;
+        }
+      }
+      return originalReplaceState.apply(history, args);
+    };
+    
+    // Zusätzlich: Polling für window.location Änderungen (Fallback)
+    checkUrlChangeInterval = setInterval(() => {
+      const currentUrl = window.location.href;
+      if (currentUrl !== lastUrl && currentUrl.includes('/thank-you') && !currentUrl.includes('/thank-you-3')) {
+        console.log('🛡️ URL-Änderung zu /thank-you erkannt - korrigiere zu /thank-you-3');
+        
+        // EINFACH: Verwende die E-Mail aus unserer unabhängigen Variable
+        const email = localStorage.getItem('sntRegistrationEmail');
+        
+        const newUrl = email 
+          ? `/thank-you-3?email=${encodeURIComponent(email)}`
+          : '/thank-you-3';
+        console.log('🔄 Korrigierter Redirect (URL-Change):', newUrl);
+        window.location.replace(newUrl);
+        if (checkUrlChangeInterval) {
+          clearInterval(checkUrlChangeInterval);
+        }
+      }
+      lastUrl = currentUrl;
+    }, 50); // Häufiger prüfen für schnelleres Abfangen
+
+    // E-Mail wird bereits über captureEmailOnInput() erfasst - keine weitere Initialisierung nötig
 
     return () => {
-      document.head.removeChild(script);
-      window.removeEventListener('message', handleOutsetaSuccess);
+      if (script.parentNode) {
+        document.head.removeChild(script);
+      }
+      window.removeEventListener('message', handleOutsetaSuccess, true);
+      if (emailObserver) {
+        emailObserver.disconnect();
+      }
+      if (checkUrlChangeInterval) {
+        clearInterval(checkUrlChangeInterval);
+      }
+      // Stelle originale History-Methoden wieder her
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
     };
   }, []);
 
-  const handleSuccess = () => {
+  const handleSuccess = (email?: string) => {
     setIsLoading(true);
+    
+    // EINFACH: Verwende die E-Mail aus unserer unabhängigen Variable
+    const finalEmail = email || localStorage.getItem('sntRegistrationEmail');
+    
     // Kurze Verzögerung für UX
     setTimeout(() => {
-      router.push("/thank-you-3");
+      const url = finalEmail 
+        ? `/thank-you-3?email=${encodeURIComponent(finalEmail)}`
+        : '/thank-you-3';
+      console.log('🚀 Weiterleitung zu:', url, 'mit E-Mail:', finalEmail || 'keine');
+      router.push(url);
     }, 1500);
   };
 
@@ -483,8 +667,11 @@ export default function RegisterPage() {
                          </Stack>
  
                          <Link
-                              href="https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipPlanOptions=true"
+                              href={`https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipPlanOptions=true&postRegistrationUrl=${encodeURIComponent(typeof window !== 'undefined' ? `${window.location.origin}/thank-you-3` : '/thank-you-3')}`}
                               data-outseta-modal-class="snt-outseta-modal"
+                              onClick={(e) => {
+                                console.log('Registrierungs-Link geklickt');
+                              }}
                          >
                              <Button
                                  size="lg"

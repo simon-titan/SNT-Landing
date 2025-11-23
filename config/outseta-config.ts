@@ -13,7 +13,7 @@ export const outsetaConfig = {
     postRegistrationUrl:
       process.env.NODE_ENV === "production"
         ? "https://www.snttrades.de/thank-you-3"
-        : "http://localhost:3000/thank-you",
+        : "http://localhost:3000/thank-you-3",
     /** URL to redirect after successful authentication */
     authenticationCallbackUrl:
       process.env.NODE_ENV === "production"
