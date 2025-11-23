@@ -1,61 +1,56 @@
 .cc--theme {
-  /* Background and Color Variables */
-  --cc-bg: var(--chakra-colors-bg-panel);
-  --cc-primary-color: var(--chakra-colors-fg);
-  --cc-secondary-color: var(--chakra-colors-fg-muted);
-  --cc-overlay-bg: var(--chakra-colors-black-alpha-500);
+  /* Background and Color Variables - Blau-Weiß Design */
+  --cc-bg: #FFFFFF;
+  --cc-primary-color: #09090B;
+  --cc-secondary-color: #52525b;
+  --cc-overlay-bg: rgba(0, 0, 0, 0.5);
 
-  /* Button Variables */
-  --cc-btn-primary-bg: var(--chakra-colors-primary-solid);
-  --cc-btn-primary-color: var(--chakra-colors-primary-contrast);
-  --cc-btn-primary-hover-bg: color-mix(
-    in srgb,
-    var(--chakra-colors-primary-solid) 90%,
-    transparent
-  );
-  --cc-btn-primary-hover-color: var(--chakra-colors-primary-contrast);
-  --cc-btn-secondary-bg: var(--chakra-colors-color-palette-subtle);
-  --cc-btn-secondary-color: var(--chakra-colors-color-palette-fg);
-  --cc-btn-secondary-hover-bg: var(--chakra-colors-color-palette-muted);
-  --cc-btn-secondary-hover-color: var(--chakra-colors-color-palette-fg);
-  --cc-btn-secondary-hover-border-color: transparent;
+  /* Button Variables - SNT Blau */
+  --cc-btn-primary-bg: #068CEF;
+  --cc-btn-primary-color: #FFFFFF;
+  --cc-btn-primary-hover-bg: #0572c2;
+  --cc-btn-primary-hover-color: #FFFFFF;
+  --cc-btn-secondary-bg: #FFFFFF;
+  --cc-btn-secondary-color: #068CEF;
+  --cc-btn-secondary-hover-bg: #f0f9ff;
+  --cc-btn-secondary-hover-color: #068CEF;
+  --cc-btn-secondary-hover-border-color: #068CEF;
   /* Toggle Variables */
-  --cc-toggle-on-bg: var(--chakra-colors-color-palette-solid);
-  --cc-toggle-on-knob-bg: var(--chakra-colors-color-palette-contrast);
-  --cc-toggle-off-bg: var(--chakra-colors-bg-emphasized);
-  --cc-toggle-off-knob-bg: var(--chakra-colors-color-palette-contrast);
-  --cc-toggle-enabled-icon-color: var(--cc-bg);
-  --cc-toggle-disabled-icon-color: var(--cc-bg);
-  --cc-toggle-readonly-bg: var(--chakra-colors-bg-emphasized);
-  --cc-toggle-readonly-knob-bg: var(--chakra-colors-color-palette-contrast);
-  --cc-toggle-readonly-knob-icon-color: var(--chakra-colors-fg);
+  --cc-toggle-on-bg: #068CEF;
+  --cc-toggle-on-knob-bg: #FFFFFF;
+  --cc-toggle-off-bg: #e4e4e7;
+  --cc-toggle-off-knob-bg: #FFFFFF;
+  --cc-toggle-enabled-icon-color: #FFFFFF;
+  --cc-toggle-disabled-icon-color: #FFFFFF;
+  --cc-toggle-readonly-bg: #e4e4e7;
+  --cc-toggle-readonly-knob-bg: #FFFFFF;
+  --cc-toggle-readonly-knob-icon-color: #52525b;
   --cc-pm-toggle-border-radius: 4em;
 
   /* Cookie Category Block Variables */
-  --cc-cookie-category-block-bg: var(--chakra-colors-bg);
-  --cc-cookie-category-block-border: transparent;
-  --cc-cookie-category-block-hover-bg: inherit;
-  --cc-cookie-category-block-hover-border: transparent;
-  --cc-cookie-category-expanded-block-bg: var(--chakra-colors-bg-subtle);
-  --cc-cookie-category-expanded-block-hover-bg: var(--chakra-colors-bg-subtle);
+  --cc-cookie-category-block-bg: #FFFFFF;
+  --cc-cookie-category-block-border: #e4e4e7;
+  --cc-cookie-category-block-hover-bg: #f0f9ff;
+  --cc-cookie-category-block-hover-border: #068CEF;
+  --cc-cookie-category-expanded-block-bg: #f0f9ff;
+  --cc-cookie-category-expanded-block-hover-bg: #e0f2fe;
 
   /* Separator and Footer Variables */
-  --cc-separator-border-color: var(--global-color-border);
-  --cc-footer-border-color: var(--global-color-border);
-  --cc-footer-bg: var(--chakra-colors-color-palette-subtle);
-  --cc-footer-color: var(--chakra-colors-fg-muted);
-  --cc-footer-border-color: var(--global-color-border);
+  --cc-separator-border-color: #e4e4e7;
+  --cc-footer-border-color: #e4e4e7;
+  --cc-footer-bg: #f0f9ff;
+  --cc-footer-color: #52525b;
   --cc-modal-border-radius: var(--chakra-radii-l3);
   --cc-btn-border-radius: var(--chakra-radii-l2);
   --cc-modal-transition-duration: 0.25s;
 
   /* Scrollbar Variables */
-  --cc-webkit-scrollbar-bg: var(--cc-section-category-border);
-  --cc-webkit-scrollbar-hover-bg: var(--cc-btn-primary-hover-bg);
+  --cc-webkit-scrollbar-bg: #e4e4e7;
+  --cc-webkit-scrollbar-hover-bg: #068CEF;
 }
 
 .pm__section--toggle.pm__section--expandable {
-  border: 1px solid var(--global-color-border) !important;
+  border: 1px solid #e4e4e7 !important;
 }
 
 #cc-main .section__toggle:disabled {
@@ -64,7 +59,7 @@
 }
 
 #cc-main .toggle__icon-off svg {
-  stroke: var(--chakra-colors-fg-muted) !important;
+  stroke: #52525b !important;
 }
 
 #cc-main .pm__section--expandable .pm__section-arrow {
@@ -91,7 +86,8 @@
 
 #cc-main .cm__btn--secondary,
 .pm__btn.pm__btn--secondary {
-  box-shadow: 0 0 0px 1px var(--chakra-colors-color-palette-muted) !important;
+  border: 2px solid #068CEF !important;
+  box-shadow: none !important;
 }
 
 #cc-main .cm__btns {
@@ -127,21 +123,20 @@
   transition:
     background-size 0.25s,
     color 0.25s ease;
-  color: var(--chakra-colors-primary-fg) !important;
+  color: #068CEF !important;
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-thickness: auto;
   text-underline-offset: 3px;
-  --mix-textDecorationColor: color-mix(in srgb, currentColor 20%, transparent);
-  text-decoration-color: var(--mix-textDecorationColor, currentColor);
+  text-decoration-color: rgba(6, 140, 239, 0.3);
 }
 
 #cc-main .cm__link-group a {
-  color: var(--chakra-colors-fg-muted) !important;
+  color: #52525b !important;
 }
 
 #cc-main .cm__link-group a:hover {
-  color: var(--chakra-colors-fg-muted) !important;
+  color: #068CEF !important;
   overflow: visible !important;
 }
 
