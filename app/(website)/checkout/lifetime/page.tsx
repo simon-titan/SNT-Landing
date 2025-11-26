@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Flex, Heading, Box, Text } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
+import { CreditCard, GoogleLogo, AppleLogo } from "@phosphor-icons/react/dist/ssr";
+import { keyframes } from "@emotion/react";
 import "../../../../styles/paypal.css";
+
+const SNT_BLUE = "#068CEF";
+const SNT_YELLOW = "rgba(251, 191, 36, 1)";
 
 declare global {
     interface Window {
@@ -11,6 +16,33 @@ declare global {
 }
 
 export default function LifetimeCheckoutPage() {
+    const [timeLeft, setTimeLeft] = useState(0);
+
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+            const endTime = new Date(today.getTime() + 48 * 60 * 60 * 1000); // 48 Stunden ab heute 0:00
+            const diff = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
+            return diff;
+        };
+
+        setTimeLeft(calculateTimeLeft());
+
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const formatTime = (seconds: number) => {
+        const hours = Math.floor(seconds / (60 * 60));
+        const mins = Math.floor((seconds % (60 * 60)) / 60);
+        const secs = seconds % 60;
+        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
     useEffect(() => {
         // Outseta Success Handler
         const setupOutsetaSuccessHandler = () => {
@@ -144,8 +176,7 @@ export default function LifetimeCheckoutPage() {
                 minH="100vh" 
                 bg="white" 
                 display="flex" 
-                flexDirection="column" 
-                pb="32"
+                flexDirection="column"
             >
             {/* Header */}
             <Box 
@@ -153,30 +184,20 @@ export default function LifetimeCheckoutPage() {
                 w="full"
                 py={6} 
                 display="flex" 
+                flexDirection="column"
                 justifyContent="center" 
                 alignItems="center"
-                bg="linear-gradient(135deg, rgba(10, 14, 10, 0.95), rgba(0, 0, 0, 0.98))"
-                borderBottom="1px solid rgba(34, 197, 94, 0.25)"
-                boxShadow="0 4px 20px rgba(34, 197, 94, 0.1)"
-                position="relative"
-                _before={{
-                    content: '""',
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: "radial-gradient(at 50% 0%, rgba(34, 197, 94, 0.1) 0px, transparent 50%)",
-                    pointerEvents: "none"
-                }}
+                bg="black"
+                borderBottom="1px solid"
+                borderColor="gray.800"
+                gap={3}
             >
-                <Box position="relative" zIndex={1}>
+                <Box position="relative" zIndex={1} textAlign="center">
                     <Heading
                         as="h1"
                         fontSize={{ base: "xl", md: "3xl" }}
                         fontWeight="bold"
-                        color="#22c55e"
-                        textShadow="0 0 20px rgba(34, 197, 94, 0.6)"
+                        color="white"
                         textAlign="center"
                     >
                         SNTTRADES™ 
@@ -188,7 +209,27 @@ export default function LifetimeCheckoutPage() {
                         fontWeight="medium"
                         mt={2}
                     >
-                        🔥 Lifetime-Angebot • 200€ gespart • Lebenslanger Zugang
+                        🔥 Lifetime-Angebot • 230€ gespart • Lebenslanger Zugang
+                    </Text>
+                </Box>
+                {/* Timer */}
+                <Box
+                    bg="red.50"
+                    border="2px solid"
+                    borderColor="red.500"
+                    borderRadius="lg"
+                    px={4}
+                    py={2}
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    gap={2}
+                >
+                    <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="red.600">
+                        DAS ANGEBOT GILT NOCH FÜR
+                    </Text>
+                    <Text fontSize={{ base: "sm", md: "md" }} fontWeight="extrabold" color="red.700">
+                        {formatTime(timeLeft)}
                     </Text>
                 </Box>
             </Box>
@@ -209,55 +250,58 @@ export default function LifetimeCheckoutPage() {
                     w="full"
                     maxW="md"
                     mx="auto"
-                    bg="linear-gradient(90deg, #10B981 0%, #34D399 100%)"
-                    p="4px"
+                    bg="white"
                     borderRadius="xl"
                     boxShadow="lg"
+                    border="2px solid"
+                    borderColor={SNT_YELLOW}
+                    p={{ base: 4, md: 6 }}
                 >
                     <Flex
-                        bg="#181c2b"
-                        borderRadius="xl"
-                        px="24px"
-                        py="16px"
                         align="center"
                         justify="center"
                         w="full"
-                        position="relative"
                         flexDirection="column"
+                        gap={1}
                     >
-                        <Text fontSize="4xl" fontWeight="extrabold" color="#22c55e" mb={2}>247€</Text>
-                        <Text fontSize="lg" fontWeight="bold" color="white" letterSpacing="0.5px" mb={1}>EINMALIG</Text>
-                        <Text fontSize="sm" color="gray.300">Lebenslanger Zugang</Text>
-                        
-                        {/* Lifetime Label */}
-                        <Box position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg="#22c55e" color="white" fontWeight={700} fontSize="xs" borderRadius={6} px={4} py={2} boxShadow="0 4px 12px rgba(34, 197, 94, 0.3)" zIndex={10}>
-                            🔥 SONDERANGEBOT
-                        </Box>
+                        {/* Spar-Badge */}
+                        <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
+                            <Text
+                                fontSize={{ base: "sm", sm: "md" }}
+                                fontWeight="bold"
+                                color="red.500"
+                                textDecoration="line-through"
+                            >
+                                567€
+                            </Text>
+                            <Box
+                                bg="red.500"
+                                color="white"
+                                px={2}
+                                py={0.5}
+                                borderRadius="md"
+                                fontSize="2xs"
+                                fontWeight="bold"
+                                whiteSpace="nowrap"
+                            >
+                                230€ gespart!
+                            </Box>
+                        </HStack>
+                        <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">247€</Text>
+                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>EINMALIG</Text>
+                        <Text fontSize="xs" color="gray.600">Lebenslanger Zugang</Text>
                     </Flex>
                 </Box>
             </Box>
 
             <Flex direction={{ base: 'column', md: 'row' }} maxW="6xl" mx="auto" w="full" gap={8} mt={{ base: 0, md: 32 }} px={4}>
                 {/* Linke Seite: Checkout-Widget */}
-                <section style={{ flex: 1, maxWidth: 520, minWidth: 0 }} className="bg-white rounded-xl shadow-lg p-8 flex flex-col justify-center mx-auto">
+                <section style={{ flex: 1, maxWidth: 520, minWidth: 0 }} className="bg-white rounded-xl shadow-lg p-8 flex flex-col justify-center mx-auto border-2 border-gray-200">
                     
                     {/* PayPal Express Registrierung */}
                     <div id="paypal-express-section" style={{ marginBottom: "2rem" }}>
                         {/* Neuer PayPal Hosted Button */}
                         <div id="lifetime-paypal-section" style={{ textAlign: "center" }}>
-                            <div style={{
-                                background: "linear-gradient(135deg, #0070ba 0%, #005ea6 100%)",
-                                borderRadius: "12px",
-                                padding: "16px",
-                                marginBottom: "16px",
-                                color: "white",
-                                fontWeight: "bold",
-                                fontSize: "16px",
-                                textAlign: "center",
-                                boxShadow: "0 4px 12px rgba(0, 112, 186, 0.3)"
-                            }}>
-                                🚀 PAYPAL-EXPRESS-REGISTRIERUNG
-                            </div>
                             {/* PayPal Hosted Button Container */}
                             <div id="paypal-container-BDZ3WHCYCPK9C"></div>
                         </div>
@@ -289,22 +333,39 @@ export default function LifetimeCheckoutPage() {
 
                     {/* Reguläre Registrierung mit Zahlungsmethoden */}
                     <div id="regular-checkout-section">
-                        <div style={{
-                            background: "linear-gradient(135deg, #1f2937 0%, #374151 100%)",
-                            borderRadius: "12px",
-                            padding: "16px",
-                            marginBottom: "16px",
-                            color: "white",
-                            textAlign: "center",
-                            boxShadow: "0 4px 12px rgba(31, 41, 55, 0.3)"
-                        }}>
-                            <div style={{ fontWeight: "bold", fontSize: "16px", marginBottom: "8px" }}>
-                                💳 REGISTRIERUNG MIT KARTE
-                            </div>
-                            <div style={{ fontSize: "14px", opacity: 0.9 }}>
-                                Kreditkarte • Debitkarte • Google Pay • Apple Pay
-                            </div>
-                        </div>
+                        <Box
+                            bg={`linear-gradient(135deg, ${SNT_BLUE} 0%, #0572c2 100%)`}
+                            borderRadius="12px"
+                            p={4}
+                            mb={4}
+                            color="white"
+                            textAlign="center"
+                            boxShadow="0 4px 12px rgba(6, 140, 239, 0.3)"
+                        >
+                            <HStack gap={4} fontSize="16px" fontWeight="medium" flexWrap="wrap" justify="center">
+                                <HStack gap={2}>
+                                    <CreditCard size={20} weight="fill" />
+                                    <Text>Kreditkarte</Text>
+                                </HStack>
+                                <Text opacity={0.7}>•</Text>
+                                <HStack gap={2}>
+                                    <CreditCard size={20} weight="fill" />
+                                    <Text>Debitkarte   </Text>
+                                    
+                                </HStack>
+                                
+                                <Text opacity={0.7}>•</Text>
+                                <HStack gap={2}>
+                                    <GoogleLogo size={20} weight="fill" />
+                                    <Text>Google Pay</Text>
+                                </HStack>
+                                <Text opacity={0.7}>•</Text>
+                                <HStack gap={2}>
+                                    <AppleLogo size={20} weight="fill" />
+                                    <Text>Apple Pay</Text>
+                                </HStack>
+                            </HStack>
+                        </Box>
                         
                         {/* Lifetime Outseta Embed */}
                         <div data-o-auth="1"
@@ -312,7 +373,8 @@ export default function LifetimeCheckoutPage() {
                             data-plan-uid="496LXdmX"
                             data-plan-payment-term="oneTime"
                             data-skip-plan-options="true"
-                            data-mode="embed">
+                            data-mode="embed"
+                            style={{ background: "white", color: "black", padding: "16px", borderRadius: "8px" }}>
                         </div>
                     </div>
                 </section>
@@ -325,90 +387,113 @@ export default function LifetimeCheckoutPage() {
                         w="full"
                         maxW="md"
                         mx="auto"
-                        bg="linear-gradient(90deg, #10B981 0%, #34D399 100%)"
-                        p="4px"
+                        bg="white"
                         borderRadius="xl"
                         boxShadow="lg"
+                        border="2px solid"
+                        borderColor={SNT_YELLOW}
+                        p={6}
                     >
                         <Flex
-                            bg="#181c2b"
-                            borderRadius="xl"
-                            px="24px"
-                            py="16px"
                             align="center"
                             justify="center"
                             w="full"
-                            position="relative"
                             flexDirection="column"
+                            gap={1}
                         >
-                            <Text fontSize="4xl" fontWeight="extrabold" color="#10B981" mb={2}>
+                            {/* Spar-Badge */}
+                            <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
+                                <Text
+                                    fontSize={{ base: "sm", sm: "md" }}
+                                    fontWeight="bold"
+                                    color="red.500"
+                                    textDecoration="line-through"
+                                >
+                                    567€
+                                </Text>
+                                <Box
+                                    bg="red.500"
+                                    color="white"
+                                    px={2}
+                                    py={0.5}
+                                    borderRadius="md"
+                                    fontSize="2xs"
+                                    fontWeight="bold"
+                                    whiteSpace="nowrap"
+                                >
+                                    230€ gespart!
+                                </Box>
+                            </HStack>
+                            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">
                                 247€</Text>
-                            <Text fontSize="lg" fontWeight="bold" color="white" letterSpacing="0.5px" mb={1}>EINMALIG</Text>
-                            <Text fontSize="sm" color="gray.300">Lebenslanger Zugang</Text>
-                            
-                            {/* Lifetime Label */}
-                            <Box position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg="#10B981" color="white" fontWeight={700} fontSize="xs" borderRadius={6} px={4} py={2} boxShadow="0 4px 12px #0002" zIndex={10}>
-                                LIFETIME ANGEBOT
-                            </Box>
+                            <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>EINMALIG</Text>
+                            <Text fontSize="xs" color="gray.600">Lebenslanger Zugang</Text>
                         </Flex>
                     </Box>
                     
                     {/* What you get - Desktop Version */}
-                    <Box bg="linear-gradient(180deg, #000000 0%,rgb(11, 29, 68) 100%)"
-                         borderRadius="xl" boxShadow="md" p={6} display="flex" flexDirection="column" gap={2}>
-                        <Text textAlign="left" fontSize="lg" color="white" fontWeight="bold" mb={2} letterSpacing="-0.5px">
+                    <Box bg="white"
+                         borderRadius="xl" 
+                         boxShadow="md" 
+                         p={6} 
+                         border="1px solid"
+                         borderColor="gray.200"
+                         display="flex" 
+                         flexDirection="column" 
+                         gap={2}>
+                        <Text textAlign="left" fontSize="lg" color="gray.900" fontWeight="bold" mb={2} letterSpacing="-0.5px">
                             Was du bekommst:
                         </Text>
                         <Box as="ul" display="flex" flexDirection="column" gap={2} mb={2} pl={0}>
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
+                                        <circle cx="10" cy="10" r="10" fill={SNT_BLUE}/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
-                                <Text color="lightgrey" as="span">
-                                    <Text as="span" fontWeight="semibold" color="lightgrey">Kompletter Videokurs</Text> rund um unsere Strategie
+                                <Text color="gray.800" as="span">
+                                    <Text as="span" fontWeight="semibold" color="gray.900">Kompletter Videokurs</Text> rund um unsere Strategie
                                 </Text>
                             </Flex>
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
+                                        <circle cx="10" cy="10" r="10" fill={SNT_BLUE}/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
-                                <Text color="lightgrey" as="span">
-                                    <Text as="span" fontWeight="semibold" color="lightgrey">Live Mentoring calls</Text> wo wir live traden
+                                <Text color="gray.800" as="span">
+                                    <Text as="span" fontWeight="semibold" color="gray.900">Live Mentoring calls</Text> wo wir live traden
                                 </Text>
                             </Flex>
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
+                                        <circle cx="10" cy="10" r="10" fill={SNT_BLUE}/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
-                                <Text color="lightgrey" as="span">Zugang zur <Text as="span" fontWeight="semibold" color="lightgrey">exklusiven Community</Text></Text>
+                                <Text color="gray.800" as="span">Zugang zur <Text as="span" fontWeight="semibold" color="gray.900">exklusiven Community</Text></Text>
                             </Flex>
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
+                                        <circle cx="10" cy="10" r="10" fill={SNT_BLUE}/>
                                         <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
-                                <Text color="lightgrey" as="span">Zugang zu unseren <Text as="span" fontWeight="semibold" color="lightgrey">Tradingsoftwares und Tools</Text></Text>
+                                <Text color="gray.800" as="span">Zugang zu unseren <Text as="span" fontWeight="semibold" color="gray.900">Tradingsoftwares und Tools</Text></Text>
                             </Flex>
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill="#22c55e"/>
-                                        <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <circle cx="10" cy="10" r="10" fill={SNT_YELLOW}/>
+                                        <path d="M6 10.5L9 13.5L14 8.5" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
-                                <Text color="lightgrey" as="span">
-                                    <Text as="span" fontWeight="semibold" color="green.300">+ Lebenslange Updates</Text> - Alle zukünftigen Inhalte inklusive
+                                <Text color="gray.800" as="span">
+                                    <Text as="span" fontWeight="semibold" color={SNT_YELLOW}>+ Lebenslange Updates</Text> - Alle zukünftigen Inhalte inklusive
                                 </Text>
                             </Flex>
                         </Box>
@@ -419,4 +504,4 @@ export default function LifetimeCheckoutPage() {
             </Box>
         </>
     );
-} 
+}
