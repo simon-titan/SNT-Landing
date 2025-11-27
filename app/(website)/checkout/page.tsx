@@ -516,10 +516,16 @@ export default function CheckoutLandingPage() {
                                         "Umfassendes Video-Training auf Abruf",
                                         "Live-Mentoring mit erfahrenen Tradern",
                                         "Exklusive Trading-Tools & Software",
-                                        "Interaktive Community mit Gleichgesinnten"
+                                        "Interaktive Community mit Gleichgesinnten",
+                                        "Persönliche Betreuung & Feedback",
+                                        "Strukturierte NEFS Trading-Strategie",
+                                        "Wöchentliche Live-Marktanalysen",
+                                        "24/7 Community-Support",
+                                        "Aufgezeichnete Sessions zum Nachschauen",
+                                        pricingMode === "lifetime" ? "Lebenslanger Zugang (bei Lifetime)" : "Flexibler monatlicher Zugang"
                                     ].map((feature, index) => (
                                         <Box 
-                                            key={`base-${feature}`}
+                                            key={`feature-${index}`}
                                             display="flex" 
                                             alignItems="center" 
                                             gap="3"
@@ -529,40 +535,15 @@ export default function CheckoutLandingPage() {
                                             })} 0.4s ease-out ${index * 0.05}s both`}
                                         >
                                             <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
-                                            <Text fontSize="sm" fontWeight="medium" color="gray.800">{feature}</Text>
+                                            <Text 
+                                                fontSize="sm" 
+                                                fontWeight="medium" 
+                                                color={feature.includes("Lebenslanger") ? SNT_BLUE : "gray.800"}
+                                            >
+                                                {feature}
+                                            </Text>
                                         </Box>
                                     ))}
-                                   
-                                    {pricingMode === "lifetime" && (
-                                        <>
-                                            {[
-                                                "Strukturierte NEFS Trading-Strategie",
-                                                "Wöchentliche Live-Marktanalysen",
-                                                "Aufgezeichnete Sessions zum Nachschauen",
-                                                "Lebenslanger Zugang (bei Lifetime)"
-                                            ].map((feature, index) => (
-                                                <Box 
-                                                    key={`lifetime-${feature}`}
-                                                    display="flex" 
-                                                    alignItems="center" 
-                                                    gap="3"
-                                                    animation={`${keyframes({
-                                                        "0%": { opacity: 0, transform: "translateX(-10px) scale(0.95)" },
-                                                        "100%": { opacity: 1, transform: "translateX(0) scale(1)" }
-                                                    })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.2 + index * 0.05}s both`}
-                                                >
-                                                    <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
-                                                    <Text 
-                                                        fontSize="sm" 
-                                                        fontWeight="medium" 
-                                                        color={feature.includes("Lebenslanger") ? SNT_YELLOW : "gray.800"}
-                                                    >
-                                                        {feature}
-                                                    </Text>
-                                                </Box>
-                                            ))}
-                                        </>
-                                    )}
                                 </VStack>
                             </Box>
                         </Box>
@@ -677,7 +658,7 @@ export default function CheckoutLandingPage() {
 
                             <VStack gap={3} align="stretch">
                                 {[
-                                    { text: "Dauerhaft Zugang", desc: "zu allen neuen Inhalten und Updates" },
+                                    { text: "Dauerhafter Zugang ", desc: "zu allen neuen Inhalten und Updates" },
                                     { text: "Keine wiederkehrenden Kosten", desc: " - Einmalig zahlen, für immer lernen" },
                                     { text: "230€ gespart", desc: " im Vergleich zum regulären Preis" },
                                     { text: "Lebenslange Updates", desc: " - Alle zukünftigen Inhalte inklusive" }
