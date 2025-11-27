@@ -316,6 +316,77 @@ async function createOutsetaAccount(accountData: OutsetaAccountRequest): Promise
 
   if (!registrationResponse.ok) {
     const errorText = await registrationResponse.text();
+    
+    // Prüfen auf Duplicate Email Fehler
+    if (registrationResponse.status === 400 && errorText.includes('Duplicate') && errorText.includes('Email')) {
+      debugLog('Benutzer existiert bereits (Duplicate Email). Versuche Subscription hinzuzufügen.');
+      
+      // 1. Person suchen um UIDs zu bekommen
+      const personResponse = await fetch(`https://${outsetaDomain}/api/v1/crm/people?Email=${encodeURIComponent(accountData.Person.Email)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Outseta ${outsetaApiKey}:${outsetaSecretKey}`,
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (personResponse.ok) {
+        const personData = await personResponse.json();
+        const existingPerson = personData.items?.[0];
+        
+        if (existingPerson && existingPerson.Account?.Uid) {
+          debugLog('Existierenden Benutzer gefunden', { 
+            personUid: existingPerson.Uid,
+            accountUid: existingPerson.Account.Uid
+          });
+          
+          let subscriptionResult = null;
+          
+          // 2. Subscription hinzufügen falls Plan-UID vorhanden
+          if (accountData.SubscriptionPlan?.Uid) {
+            try {
+              const subscriptionResponse = await fetch(`https://${outsetaDomain}/api/v1/billing/subscriptions`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Outseta ${outsetaApiKey}:${outsetaSecretKey}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  Account: { Uid: existingPerson.Account.Uid },
+                  Plan: { Uid: accountData.SubscriptionPlan.Uid },
+                  BillingRenewalTerm: 1
+                })
+              });
+              
+              if (subscriptionResponse.ok) {
+                subscriptionResult = await subscriptionResponse.json();
+                debugLog('Subscription erfolgreich zu existierendem Account hinzugefügt', subscriptionResult);
+              } else {
+                const subError = await subscriptionResponse.text();
+                debugLog('FEHLER beim Hinzufügen der Subscription zu existierendem Account', { status: subscriptionResponse.status, error: subError });
+                // Wir werfen hier keinen Fehler, damit der Prozess nicht komplett abbricht, 
+                // sondern geben zumindest die User-Daten zurück
+              }
+            } catch (subErr) {
+              debugLog('Exception beim Hinzufügen der Subscription', subErr);
+            }
+          }
+          
+          // 3. Ergebnis zurückgeben (wie bei erfolgreicher Neuregistrierung)
+          return {
+            person: existingPerson,
+            account: existingPerson.Account,
+            subscription: subscriptionResult,
+            personUid: existingPerson.Uid,
+            accountUid: existingPerson.Account.Uid,
+            subscriptionUid: subscriptionResult?.Uid || null,
+            isExistingUser: true
+          };
+        }
+      }
+      debugLog('Konnte existierenden Benutzer nicht abrufen trotz Duplicate Fehler');
+    }
+
     debugLog('FEHLER bei Outseta Registration', { 
       status: registrationResponse.status, 
       errorText 
