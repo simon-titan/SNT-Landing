@@ -143,30 +143,29 @@ export default function LifetimeCheckoutPage() {
         setTimeout(setupOutsetaSuccessHandler, 1000);
         setTimeout(setupPayPalLifetimeHandler, 1000);
 
-        // PayPal Hosted Button Script dynamisch einfügen
-        const scriptId = "paypal-sdk-hosted-buttons";
-        if (!document.getElementById(scriptId)) {
-            const script = document.createElement("script");
-            script.src = "https://www.paypal.com/sdk/js?client-id=BAA-0m5pkSxHufms7Bz99yWR1lzshrXB63L2g-cvYFfUsI1-ul1VcqCAsVudEICk3cLUAXx2VAsCFuuTHY&components=hosted-buttons&disable-funding=venmo&currency=EUR";
-            script.crossOrigin = "anonymous";
+    }, []); // Empty dependency array ensures this runs once on mount
+    
+    useEffect(() => {
+        const renderPayPalButton = () => {
+            if (typeof window !== 'undefined' && window.paypal) {
+                window.paypal
+                    .HostedButtons({
+                        hostedButtonId: '68525GEP8BKRS',
+                    })
+                    .render('#paypal-container-68525GEP8BKRS');
+            }
+        };
+
+        if (typeof window !== 'undefined' && !window.paypal) {
+            const script = document.createElement('script');
+            script.src = 'https://www.paypal.com/sdk/js?client-id=BAA-0m5pkSxHufms7Bz99yWR1lzshrXB63L2g-cvYFfUsI1-ul1VcqCAsVudEICk3cLUAXx2VAsCFuuTHY&components=hosted-buttons&disable-funding=venmo&currency=EUR';
             script.async = true;
-            script.id = scriptId;
             script.onload = () => {
-                if (window.paypal && window.paypal.HostedButtons) {
-                    window.paypal.HostedButtons({
-                        hostedButtonId: "BDZ3WHCYCPK9C"
-                    }).render("#paypal-container-BDZ3WHCYCPK9C");
-                }
+                renderPayPalButton();
             };
             document.body.appendChild(script);
         } else {
-            // Falls Script schon geladen, direkt rendern
-            if (window.paypal && window.paypal.HostedButtons) {
-                window.paypal.HostedButtons({
-                    hostedButtonId: "BDZ3WHCYCPK9C"
-                }).render("#paypal-container-BDZ3WHCYCPK9C");
-            }
-        
+            renderPayPalButton();
         }
     }, []);
 
@@ -303,7 +302,10 @@ export default function LifetimeCheckoutPage() {
                         {/* Neuer PayPal Hosted Button */}
                         <div id="lifetime-paypal-section" style={{ textAlign: "center" }}>
                             {/* PayPal Hosted Button Container */}
-                            <div id="paypal-container-BDZ3WHCYCPK9C"></div>
+                            <Box
+                                id="paypal-container-68525GEP8BKRS"
+                                mt={4}
+                            ></Box>
                         </div>
                         {/* Trennlinie */}
                         <div style={{ 
