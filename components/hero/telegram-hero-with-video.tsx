@@ -152,7 +152,7 @@ export function TelegramHeroWithVideo() {
               Tägliche Marktanalysen, Lernimpulse und echte Einblicke - kostenlos in meiner Telegram Community.
             </Text>
           </Stack>
-          <Stack align="center" direction={{ base: "column", md: "row" }} gap="3">
+          <Stack align="center" direction={{ base: "column", md: "row" }} gap="3" position="relative" zIndex={10}>
             <Link href="https://t.me/seitennulltrades" >
               <Button size="xl" fontWeight="bold" colorScheme="blue" bg="#3b82f6" _hover={{ bg: "#2563eb" }} borderRadius="md" px="8" boxShadow="0 0 24px rgba(59, 130, 246,0.35)" border="1px solid rgba(59, 130, 246,0.45)">
                JETZT KOSTENLOS BEITRETEN
