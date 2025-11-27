@@ -232,7 +232,7 @@ export const ResultsMarquee = () => {
       position="relative"
       py={{ base: 8, md: 12 }}
       pt="5%"
-      bg="transparent"
+      bg="white"
     >
       <style>{`
         @keyframes marqueeRight {

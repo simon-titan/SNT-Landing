@@ -300,7 +300,7 @@ export const ReviewMarquee = () => {
       py={{ base: 6, md: 10 }}
       pt="5%"
       pb="5%"
-      bg="transparent"
+      bg="white"
       _hover={{ cursor: "pointer" }}
     >
       <Box as="style">{`

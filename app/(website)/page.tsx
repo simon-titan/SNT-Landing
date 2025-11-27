@@ -25,13 +25,21 @@ import {
   ArrowRight,
   WarningCircle,
   CheckCircle,
+  HandWaving,
+  Lightning,
+  RocketLaunch,
+  Money,
+  DeviceMobile,
+  UsersThree,
+  Target,
+  Sparkle,
 } from "@phosphor-icons/react/dist/ssr";
 import { ReviewMarquee } from "@/components/ui/ReviewMarquee";
 import { ResultsMarquee } from "@/components/ui/ResultsMarquee";
 import { FounderSection } from "@/components/ui/FounderSection";
 import { CourseOverviewSection } from "@/components/ui/CourseOverviewSection";
-import { Project30PricingSection } from "@/components/ui/project30-pricing-section";
-import { LandingHeroNoVideo } from "@/components/hero/landing-hero-no-video";
+import { SntPremiumPricing } from "@/components/ui/snt-premium-pricing";
+import { LandingHeroWithVideo } from "@/components/hero/landing-hero-with-video";
 // Removed BrandedVimeoPlayer usage from this page; available in landing-hero-with-video
 // import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
  
@@ -45,7 +53,7 @@ export const metadata = generateMetadata({
 export default async function Page() {
   return (
     <>
-      <LandingHeroNoVideo />
+      <LandingHeroWithVideo />
       
       <ResultsMarquee />
       
@@ -54,21 +62,21 @@ export default async function Page() {
       <Box
         w="100%"
         h="2px"
-        background="linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.6), transparent)"
-        boxShadow="0 0 20px rgba(34, 197, 94, 0.4)"
+        background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)"
+        boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"
       />
       
       {/* Project 30 Pricing Section - Direkt unter Community Stats */}
       <Box id="project30-pricing">
-      <Project30PricingSection />
+      <SntPremiumPricing />
       </Box>
       
       {/* Glow Trenner */}
       <Box
         w="100%"
         h="2px"
-        background="linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.6), transparent)"
-        boxShadow="0 0 20px rgba(34, 197, 94, 0.4)"
+        background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)"
+        boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"
       />
       
       <ReviewMarquee />
@@ -77,22 +85,22 @@ export default async function Page() {
       <Box
         w="100%"
         h="2px"
-        background="linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.6), transparent)"
-        boxShadow="0 0 20px rgba(34, 197, 94, 0.4)"
+        background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)"
+        boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"
       />
       
       <FounderSection
-        image="/personal/emre.jpg"
-        name="Hi, Ich bin Emre 👋"
+        image="/personal/emre-2.jpg"
+        name={<>Hi, Ich bin Emre <HandWaving size={32} style={{ display: 'inline-block', verticalAlign: 'middle' }} /></>}
         subtitle="MEET THE FOUNDER"
         description={
           <Box fontSize="md" color="white">
             <Text mb={4} lineHeight="1.6">
-              Meine Reise begann nach dem <Text as="span" fontWeight="semibold" color="#22c55e">Abitur</Text> – ursprünglich wollte ich eine eigene <Text as="span" fontWeight="semibold" color="#22c55e">Brand aufbauen</Text>. Doch als ich das enorme <Text as="span" fontWeight="semibold" color="#22c55e">Potenzial im Trading</Text> erkannt habe, habe ich alles andere losgelassen und mich zu <Text as="span" fontWeight="semibold" color="#22c55e">100 % dem Trading</Text> gewidmet.
+              Meine Reise begann nach dem <Text as="span" fontWeight="semibold" color="#3b82f6">Abitur</Text> – ursprünglich wollte ich eine eigene <Text as="span" fontWeight="semibold" color="#3b82f6">Brand aufbauen</Text>. Doch als ich das enorme <Text as="span" fontWeight="semibold" color="#3b82f6">Potenzial im Trading</Text> erkannt habe, habe ich alles andere losgelassen und mich zu <Text as="span" fontWeight="semibold" color="#3b82f6">100 % dem Trading</Text> gewidmet.
             </Text>
             
             <Text mb={6} lineHeight="1.6">
-              Die ersten Jahre waren intensiv. Ich habe nicht nur die <Text as="span" fontWeight="semibold" color="#22c55e">Märkte studiert</Text>, sondern auch mich selbst – <Text as="span" fontWeight="semibold" color="#22c55e">mentale Stärke, Disziplin und Unternehmertum</Text> wurden zu Schlüsselkomponenten auf meinem Weg.
+              Die ersten Jahre waren intensiv. Ich habe nicht nur die <Text as="span" fontWeight="semibold" color="#3b82f6">Märkte studiert</Text>, sondern auch mich selbst – <Text as="span" fontWeight="semibold" color="#3b82f6">mentale Stärke, Disziplin und Unternehmertum</Text> wurden zu Schlüsselkomponenten auf meinem Weg.
             </Text>
             
             {/* Cooler "3 Jahre später" Bereich */}
@@ -100,10 +108,10 @@ export default async function Page() {
               position="relative"
               my={8}
               p={6}
-              bg="rgba(34, 197, 94, 0.1)"
+              bg="rgba(59, 130, 246, 0.1)"
               borderRadius="xl"
-              border="2px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 8px 32px rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(34, 197, 94, 0.1)"
+              border="2px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 8px 32px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(59, 130, 246, 0.1)"
               _before={{
                 content: '""',
                 position: "absolute",
@@ -111,69 +119,74 @@ export default async function Page() {
                 left: "20px",
                 right: "20px",
                 height: "2px",
-                background: "linear-gradient(90deg, transparent, #22c55e, transparent)",
+                background: "linear-gradient(90deg, transparent, #3b82f6, transparent)",
                 borderRadius: "full"
               }}
             >
-              <Text 
-                fontSize="xl" 
-                fontWeight="bold" 
-                mb={4} 
-                color="#22c55e"
-                textAlign="center"
-                textShadow="0 0 15px rgba(34, 197, 94, 0.6)"
-                position="relative"
-                _before={{
-                  content: '"⚡"',
-                  position: "absolute",
-                  left: "-30px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  fontSize: "1.5rem"
-                }}
-                _after={{
-                  content: '"⚡"',
-                  position: "absolute",
-                  right: "-30px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  fontSize: "1.5rem"
-                }}
-              >
-              3 Jahre später...
-            </Text>
+              <HStack justify="center" mb={4}>
+                <Lightning size={32} color="#3b82f6" />
+                <Text 
+                  fontSize="xl" 
+                  fontWeight="bold" 
+                  color="#3b82f6"
+                  textAlign="center"
+                  textShadow="0 0 15px rgba(59, 130, 246, 0.6)"
+                  mx={4}
+                >
+                3 Jahre später...
+                </Text>
+                <Lightning size={32} color="#3b82f6" />
+              </HStack>
             
               <VStack align="start" gap={3}>
-                <Text color="white" fontSize="md">
-                  🚀 Vollzeit <Text as="span" fontWeight="bold" color="#22c55e">Daytrader, Scalper & Investor</Text>
-                </Text>
-                <Text color="white" fontSize="md">
-                  💰 <Text as="span" fontWeight="bold" color="#22c55e">Mehrfach funded</Text> bei verschiedenen Propfirms mit <Text as="span" fontWeight="bold" color="#22c55e">mehreren tausenden $ von Auszahlungen</Text>
-                </Text>
-                <Text color="white" fontSize="md">
-                  📱 Über <Text as="span" fontWeight="bold" color="#22c55e">10.000 Follower</Text> auf Social Media
-                </Text>
-                <Text color="white" fontSize="md">
-                  👥 Aufbau einer <Text as="span" fontWeight="bold" color="#22c55e">großen geschlossenen Community</Text> mit echten Gleichgesinnten
-                </Text>
-                <Text color="white" fontSize="md">
-                  🎯 Gemeinsam mit Ali über <Text as="span" fontWeight="bold" color="#22c55e">1.000 Menschen im Trading ausgebildet</Text>
-                </Text>
-                <Text color="white" fontSize="md" fontStyle="italic">
-                  ✨ Unsere Mission: anderen zeigen, wie sie strukturiert und professionell ihre eigene Trading-Reise starten können
-                </Text>
+                <HStack align="center" gap={3}>
+                  <RocketLaunch size={24} color="#3b82f6" />
+                  <Text color="white" fontSize="md">
+                    Vollzeit <Text as="span" fontWeight="bold" color="#3b82f6">Daytrader, Scalper & Investor</Text>
+                  </Text>
+                </HStack>
+                <HStack align="center" gap={3}>
+                  <Money size={24} color="#3b82f6" />
+                  <Text color="white" fontSize="md">
+                    <Text as="span" fontWeight="bold" color="#3b82f6">Mehrfach funded</Text> bei verschiedenen Propfirms mit <Text as="span" fontWeight="bold" color="#3b82f6">mehreren tausenden $ von Auszahlungen</Text>
+                  </Text>
+                </HStack>
+                <HStack align="center" gap={3}>
+                  <DeviceMobile size={24} color="#3b82f6" />
+                  <Text color="white" fontSize="md">
+                    Über <Text as="span" fontWeight="bold" color="#3b82f6">10.000 Follower</Text> auf Social Media
+                  </Text>
+                </HStack>
+                <HStack align="center" gap={3}>
+                  <UsersThree size={24} color="#3b82f6" />
+                  <Text color="white" fontSize="md">
+                    Aufbau einer <Text as="span" fontWeight="bold" color="#3b82f6">großen geschlossenen Community</Text> mit echten Gleichgesinnten
+                  </Text>
+                </HStack>
+                <HStack align="center" gap={3}>
+                  <Target size={24} color="#3b82f6" />
+                  <Text color="white" fontSize="md">
+                    Gemeinsam mit Ali über <Text as="span" fontWeight="bold" color="#3b82f6">1.000 Menschen im Trading ausgebildet</Text>
+                  </Text>
+                </HStack>
+                <HStack align="center" gap={3}>
+                  <Sparkle size={24} color="#3b82f6" />
+                  <Text color="white" fontSize="md" fontStyle="italic">
+                    Unsere Mission: anderen zeigen, wie sie strukturiert und professionell ihre eigene Trading-Reise starten können
+                  </Text>
+                </HStack>
             </VStack>
             </Box>
             
             <Text mb={4} lineHeight="1.6">
-              Wenn du das Ganze ernst meinst und bereit bist, <Text as="span" fontWeight="semibold" color="#22c55e">in dich selbst zu investieren</Text> – dann bist du hier genau richtig.
+              Wenn du das Ganze ernst meinst und bereit bist, <Text as="span" fontWeight="semibold" color="#3b82f6">in dich selbst zu investieren</Text> – dann bist du hier genau richtig.
             </Text>
             
             <Text mb={4} lineHeight="1.6">
-              Hier findest du kein Bla-Bla, sondern <Text as="span" fontWeight="semibold" color="#22c55e">echte Ergebnisse, echte Strategien und ein echtes Netzwerk</Text>.
+              Hier findest du kein Bla-Bla, sondern <Text as="span" fontWeight="semibold" color="#3b82f6">echte Ergebnisse, echte Strategien und ein echtes Netzwerk</Text>.
             </Text>
             
-            <Text fontWeight="bold" fontSize="lg" color="#22c55e" textShadow="0 0 10px rgba(34, 197, 94, 0.4)">
+            <Text fontWeight="bold" fontSize="lg" color="#3b82f6" textShadow="0 0 10px rgba(59, 130, 246, 0.4)">
               Starte jetzt – dein Trading-Weg beginnt hier.
             </Text>
           </Box>
@@ -194,36 +207,24 @@ export default async function Page() {
       <Box
         w="100%"
         h="2px"
-        background="linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.6), transparent)"
-        boxShadow="0 0 20px rgba(34, 197, 94, 0.4)"
+        background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)"
+        boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"
       />
       
       {/* Trading Ausbildung Vorteile Section */}
       <Section 
         size="lg" 
-        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(10, 14, 10, 0.95))"
-        position="relative"
         py={{ base: 16, md: 24 }}
-        _before={{
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "radial-gradient(at 50% 20%, rgba(34, 197, 94, 0.12) 0px, transparent 50%), radial-gradient(at 20% 80%, rgba(16, 185, 129, 0.08) 0px, transparent 50%)",
-          pointerEvents: "none"
-        }}
       >
         <VStack gap={12} maxW="6xl" mx="auto" position="relative" zIndex={1}>
           <VStack gap={4} textAlign="center">
             <Text 
-              color="#22c55e" 
+              color="#3b82f6" 
               fontWeight="bold" 
               fontSize="sm" 
               textTransform="uppercase"
               letterSpacing="wider"
-              textShadow="0 0 10px rgba(34, 197, 94, 0.5)"
+              textShadow="0 0 10px rgba(59, 130, 246, 0.5)"
             >
               So funktioniert's
             </Text>
@@ -235,16 +236,16 @@ export default async function Page() {
             >
               Bring dein Trading aufs{' '}
               <Box as="span" 
-                background="linear-gradient(90deg, rgba(34, 197, 94, 0.3), transparent 95%)" 
-                color="#22c55e" 
+                background="linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent 95%)" 
+                color="#3b82f6" 
                 px={3} 
                 py={1} 
                 borderRadius="md" 
                 fontWeight="bold" 
                 display="inline-block"
-                border="1px solid rgba(34, 197, 94, 0.4)"
-                boxShadow="0 0 20px rgba(34, 197, 94, 0.3)"
-                textShadow="0 0 15px rgba(34, 197, 94, 0.6)"
+                border="1px solid rgba(59, 130, 246, 0.4)"
+                boxShadow="0 0 20px rgba(59, 130, 246, 0.3)"
+                textShadow="0 0 15px rgba(59, 130, 246, 0.6)"
               >
                 nächste Level.
               </Box>
@@ -258,13 +259,13 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.8)"
               backdropFilter="blur(20px)"
               borderRadius="2xl"
-              border="2px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.2)"
+              border="2px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 20px 60px 0 rgba(59, 130, 246, 0.2)"
               overflow="hidden"
               position="relative"
               _hover={{
-                borderColor: "rgba(34, 197, 94, 0.5)",
-                boxShadow: "0 25px 80px 0 rgba(34, 197, 94, 0.3)"
+                borderColor: "rgba(59, 130, 246, 0.5)",
+                boxShadow: "0 25px 80px 0 rgba(59, 130, 246, 0.3)"
               }}
               transition="all 0.3s ease"
             >
@@ -275,7 +276,7 @@ export default async function Page() {
                 gap={8}
               >
                 <Box flex="1">
-                  <Text color="#22c55e" fontWeight="bold" fontSize="lg" mb={3}>
+                  <Text color="#3b82f6" fontWeight="bold" fontSize="lg" mb={3}>
                     PHASE 1
                   </Text>
                   <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }} color="white" mb={4}>
@@ -286,15 +287,15 @@ export default async function Page() {
                   </Text>
                   <VStack align="start" gap={2}>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Fokus auf's Wesentliche</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Strategien wirklich verstehen</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Lernen wann und wo du willst</Text>
                     </HStack>
                   </VStack>
@@ -303,9 +304,9 @@ export default async function Page() {
                   <Box
                     w="120px"
                     h="120px"
-                    bg="rgba(34, 197, 94, 0.1)"
+                    bg="rgba(59, 130, 246, 0.1)"
                     borderRadius="xl"
-                    border="1px solid rgba(34, 197, 94, 0.3)"
+                    border="1px solid rgba(59, 130, 246, 0.3)"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
@@ -322,13 +323,13 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.8)"
               backdropFilter="blur(20px)"
               borderRadius="2xl"
-              border="2px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.2)"
+              border="2px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 20px 60px 0 rgba(59, 130, 246, 0.2)"
               overflow="hidden"
               position="relative"
               _hover={{
-                borderColor: "rgba(34, 197, 94, 0.5)",
-                boxShadow: "0 25px 80px 0 rgba(34, 197, 94, 0.3)"
+                borderColor: "rgba(59, 130, 246, 0.5)",
+                boxShadow: "0 25px 80px 0 rgba(59, 130, 246, 0.3)"
               }}
               transition="all 0.3s ease"
             >
@@ -339,7 +340,7 @@ export default async function Page() {
                 gap={8}
               >
                 <Box flex="1">
-                  <Text color="#22c55e" fontWeight="bold" fontSize="lg" mb={3}>
+                  <Text color="#3b82f6" fontWeight="bold" fontSize="lg" mb={3}>
                     PHASE 2
                   </Text>
                   <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }} color="white" mb={4}>
@@ -350,15 +351,15 @@ export default async function Page() {
                   </Text>
                   <VStack align="start" gap={2}>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Lernen & direkt anwenden</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Mehr Sicherheit im Trading</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Praxisnah</Text>
                     </HStack>
                   </VStack>
@@ -367,9 +368,9 @@ export default async function Page() {
                   <Box
                     w="120px"
                     h="120px"
-                    bg="rgba(34, 197, 94, 0.1)"
+                    bg="rgba(59, 130, 246, 0.1)"
                     borderRadius="xl"
-                    border="1px solid rgba(34, 197, 94, 0.3)"
+                    border="1px solid rgba(59, 130, 246, 0.3)"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
@@ -386,13 +387,13 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.8)"
               backdropFilter="blur(20px)"
               borderRadius="2xl"
-              border="2px solid rgba(34, 197, 94, 0.4)"
-              boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.25)"
+              border="2px solid rgba(59, 130, 246, 0.4)"
+              boxShadow="0 20px 60px 0 rgba(59, 130, 246, 0.25)"
               overflow="hidden"
               position="relative"
               _hover={{
-                borderColor: "rgba(34, 197, 94, 0.6)",
-                boxShadow: "0 25px 80px 0 rgba(34, 197, 94, 0.4)"
+                borderColor: "rgba(59, 130, 246, 0.6)",
+                boxShadow: "0 25px 80px 0 rgba(59, 130, 246, 0.4)"
               }}
               transition="all 0.3s ease"
             >
@@ -403,7 +404,7 @@ export default async function Page() {
                 gap={8}
               >
                 <Box flex="1">
-                  <Text color="#22c55e" fontWeight="bold" fontSize="lg" mb={3}>
+                  <Text color="#3b82f6" fontWeight="bold" fontSize="lg" mb={3}>
                     PHASE 3
                   </Text>
                   <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }} color="white" mb={4}>
@@ -414,15 +415,15 @@ export default async function Page() {
                   </Text>
                   <VStack align="start" gap={2}>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Konstanz & Kontrolle</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Mehr Freiheit durch Ergebnisse</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#22c55e" />
+                      <Box w={2} h={2} borderRadius="full" bg="#3b82f6" />
                       <Text fontSize="sm" color="white">Klarer Weg zu deinem Ziel</Text>
                     </HStack>
                   </VStack>
@@ -431,13 +432,13 @@ export default async function Page() {
                   <Box
                     w="120px"
                     h="120px"
-                    bg="rgba(34, 197, 94, 0.15)"
+                    bg="rgba(59, 130, 246, 0.15)"
                     borderRadius="xl"
-                    border="1px solid rgba(34, 197, 94, 0.4)"
+                    border="1px solid rgba(59, 130, 246, 0.4)"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    boxShadow="0 8px 24px rgba(34, 197, 94, 0.2)"
+                    boxShadow="0 8px 24px rgba(59, 130, 246, 0.2)"
                   >
                     <Text fontSize="3xl">🚀</Text>
                   </Box>
@@ -451,29 +452,17 @@ export default async function Page() {
       {/* Was alles beinhaltet ist Section */}
       <Section 
         size="lg" 
-        bg="linear-gradient(135deg, rgba(10, 14, 10, 0.98), rgba(0, 0, 0, 0.95))"
-        position="relative"
         py={{ base: 16, md: 20 }}
-        _before={{
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "radial-gradient(at 80% 20%, rgba(34, 197, 94, 0.1) 0px, transparent 50%), radial-gradient(at 20% 80%, rgba(16, 185, 129, 0.08) 0px, transparent 50%)",
-          pointerEvents: "none"
-        }}
       >
         <VStack gap={12} maxW="6xl" mx="auto" position="relative" zIndex={1}>
           <VStack gap={4} textAlign="center">
             <Text 
-              color="#22c55e" 
+              color="#3b82f6" 
               fontWeight="bold" 
               fontSize="sm" 
               textTransform="uppercase"
               letterSpacing="wider"
-              textShadow="0 0 10px rgba(34, 197, 94, 0.5)"
+              textShadow="0 0 10px rgba(59, 130, 246, 0.5)"
             >
               Alles inklusive
             </Text>
@@ -486,16 +475,16 @@ export default async function Page() {
             >
               Das ist alles in der{' '}
               <Box as="span" 
-                background="linear-gradient(90deg, rgba(34, 197, 94, 0.3), transparent 95%)" 
-                color="#22c55e" 
+                background="linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent 95%)" 
+                color="#3b82f6" 
                 px={3} 
                 py={1} 
                 borderRadius="md" 
                 fontWeight="bold" 
                 display="inline-block"
-                border="1px solid rgba(34, 197, 94, 0.4)"
-                boxShadow="0 0 20px rgba(34, 197, 94, 0.3)"
-                textShadow="0 0 15px rgba(34, 197, 94, 0.6)"
+                border="1px solid rgba(59, 130, 246, 0.4)"
+                boxShadow="0 0 20px rgba(59, 130, 246, 0.3)"
+                textShadow="0 0 15px rgba(59, 130, 246, 0.6)"
               >
                 Ausbildung
               </Box>{' '}
@@ -509,37 +498,37 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.7)"
               backdropFilter="blur(16px)"
               borderRadius="xl"
-              border="1px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.15)"
+              border="1px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)"
               p={6}
               textAlign="center"
               _hover={{
                 transform: "translateY(-4px)",
-                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                borderColor: "rgba(34, 197, 94, 0.4)"
+                boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
+                borderColor: "rgba(59, 130, 246, 0.4)"
               }}
               transition="all 0.3s ease"
             >
               <Box
                 w="60px"
                 h="60px"
-                bg="rgba(34, 197, 94, 0.15)"
+                bg="rgba(59, 130, 246, 0.15)"
                 borderRadius="full"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 mx="auto"
                 mb={4}
-                border="1px solid rgba(34, 197, 94, 0.3)"
+                border="1px solid rgba(59, 130, 246, 0.3)"
               >
                 <Text fontSize="2xl">👥</Text>
               </Box>
               <Text 
                 fontWeight="bold" 
                 fontSize="lg" 
-                color="#22c55e" 
+                color="#3b82f6" 
                 mb={2}
-                textShadow="0 0 8px rgba(34, 197, 94, 0.4)"
+                textShadow="0 0 8px rgba(59, 130, 246, 0.4)"
               >
                 Community
               </Text>
@@ -553,37 +542,37 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.7)"
               backdropFilter="blur(16px)"
               borderRadius="xl"
-              border="1px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.15)"
+              border="1px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)"
               p={6}
               textAlign="center"
               _hover={{
                 transform: "translateY(-4px)",
-                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                borderColor: "rgba(34, 197, 94, 0.4)"
+                boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
+                borderColor: "rgba(59, 130, 246, 0.4)"
               }}
               transition="all 0.3s ease"
             >
               <Box
                 w="60px"
                 h="60px"
-                bg="rgba(34, 197, 94, 0.15)"
+                bg="rgba(59, 130, 246, 0.15)"
                 borderRadius="full"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 mx="auto"
                 mb={4}
-                border="1px solid rgba(34, 197, 94, 0.3)"
+                border="1px solid rgba(59, 130, 246, 0.3)"
               >
                 <Text fontSize="2xl">🛠️</Text>
               </Box>
               <Text 
                 fontWeight="bold" 
                 fontSize="lg" 
-                color="#22c55e" 
+                color="#3b82f6" 
                 mb={2}
-                textShadow="0 0 8px rgba(34, 197, 94, 0.4)"
+                textShadow="0 0 8px rgba(59, 130, 246, 0.4)"
               >
                 Trading Tools
               </Text>
@@ -597,37 +586,37 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.7)"
               backdropFilter="blur(16px)"
               borderRadius="xl"
-              border="1px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.15)"
+              border="1px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)"
               p={6}
               textAlign="center"
               _hover={{
                 transform: "translateY(-4px)",
-                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                borderColor: "rgba(34, 197, 94, 0.4)"
+                boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
+                borderColor: "rgba(59, 130, 246, 0.4)"
               }}
               transition="all 0.3s ease"
             >
               <Box
                 w="60px"
                 h="60px"
-                bg="rgba(34, 197, 94, 0.15)"
+                bg="rgba(59, 130, 246, 0.15)"
                 borderRadius="full"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 mx="auto"
                 mb={4}
-                border="1px solid rgba(34, 197, 94, 0.3)"
+                border="1px solid rgba(59, 130, 246, 0.3)"
               >
                 <Text fontSize="2xl">🎓</Text>
               </Box>
               <Text 
                 fontWeight="bold" 
                 fontSize="lg" 
-                color="#22c55e" 
+                color="#3b82f6" 
                 mb={2}
-                textShadow="0 0 8px rgba(34, 197, 94, 0.4)"
+                textShadow="0 0 8px rgba(59, 130, 246, 0.4)"
               >
                 Lernplattform
               </Text>
@@ -641,37 +630,37 @@ export default async function Page() {
               bg="rgba(10, 14, 10, 0.7)"
               backdropFilter="blur(16px)"
               borderRadius="xl"
-              border="1px solid rgba(34, 197, 94, 0.3)"
-              boxShadow="0 8px 32px 0 rgba(34, 197, 94, 0.15)"
+              border="1px solid rgba(59, 130, 246, 0.3)"
+              boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)"
               p={6}
               textAlign="center"
               _hover={{
                 transform: "translateY(-4px)",
-                boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                borderColor: "rgba(34, 197, 94, 0.4)"
+                boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
+                borderColor: "rgba(59, 130, 246, 0.4)"
               }}
               transition="all 0.3s ease"
             >
               <Box
                 w="60px"
                 h="60px"
-                bg="rgba(34, 197, 94, 0.15)"
+                bg="rgba(59, 130, 246, 0.15)"
                 borderRadius="full"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 mx="auto"
                 mb={4}
-                border="1px solid rgba(34, 197, 94, 0.3)"
+                border="1px solid rgba(59, 130, 246, 0.3)"
               >
                 <Text fontSize="2xl">🎥</Text>
               </Box>
               <Text 
                 fontWeight="bold" 
                 fontSize="lg" 
-                color="#22c55e" 
+                color="#3b82f6" 
                 mb={2}
-                textShadow="0 0 8px rgba(34, 197, 94, 0.4)"
+                textShadow="0 0 8px rgba(59, 130, 246, 0.4)"
               >
                 Live-Mentoring
               </Text>

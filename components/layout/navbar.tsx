@@ -12,6 +12,7 @@ import {
   Heading,
   IconButton,
   Icon,
+  Text,
 } from "@chakra-ui/react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -39,8 +40,12 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { useRouter, usePathname } from "next/navigation";
-import { List, Question } from "@phosphor-icons/react/dist/ssr";
+import { List, Question, Fire, Sparkle } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
+import { CloseButton } from "../ui/close-button";
+
+const SNT_BLUE = "#068CEF";
+const SNT_YELLOW = "rgba(251, 191, 36, 1)";
 
 export const MenuLink = (props) => {
   return (
@@ -227,13 +232,9 @@ const MobileNavigation = () => {
         <DrawerTrigger asChild>
           <IconButton
             aria-label="Menü öffnen"
-            variant="ghost"
+            variant="outline"
             size="sm"
-            color="#49E79C"
-            _hover={{ 
-              bg: "rgba(73,231,156,0.1)",
-              color: "#49E79C"
-            }}
+            colorScheme="blue"
           >
             <Icon>
               <List />
@@ -241,55 +242,35 @@ const MobileNavigation = () => {
           </IconButton>
         </DrawerTrigger>
         <DrawerBackdrop />
-        <DrawerContent>
+        <DrawerContent bg="white">
           <DrawerHeader>
             <DrawerTitle></DrawerTitle>
-            <DrawerCloseTrigger />
+            <DrawerCloseTrigger asChild>
+            <CloseButton size="xl" colorScheme="red"/>
+            </DrawerCloseTrigger>
           </DrawerHeader>
           <DrawerBody>
             <VStack gap="6" align="stretch" py="4">
-              {/* Support Link für Mobile - im gleichen Stil wie Mentorship Login */}
+              {/* Support Link für Mobile */}
               <Button
                 w="full"
                 height="48px"
                 fontSize="lg"
-                bg="rgba(73,231,156,0.08)"
-                color="#49E79C"
-                border="1px solid rgba(73,231,156,0.45)"
-                backdropFilter="blur(10px) saturate(160%)"
-                boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
-                _hover={{ 
-                  bg: "rgba(73,231,156,0.16)", 
-                  boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" 
-                }}
-                _active={{ 
-                  bg: "rgba(73,231,156,0.22)", 
-                  boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" 
-                }}
+                variant="ghost"
+                color="black"
                 onClick={() => handleNavigate(() => router.push('/support'))}
               >
                 SUPPORT
               </Button>
               
               {/* Mentorship Login für Mobile */}
-              <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer">
+              <a href="https://snt-mentorship-platform.de" target="_blank" rel="noopener noreferrer" style={{ width: '100%' }}>
                 <Button
                   w="full"
                   height="48px"
                   fontSize="lg"
-                  bg="rgba(73,231,156,0.08)"
-                  color="#49E79C"
-                  border="1px solid rgba(73,231,156,0.45)"
-                  backdropFilter="blur(10px) saturate(160%)"
-                  boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
-                  _hover={{ 
-                    bg: "rgba(73,231,156,0.16)", 
-                    boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" 
-                  }}
-                  _active={{ 
-                    bg: "rgba(73,231,156,0.22)", 
-                    boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" 
-                  }}
+                  variant="ghost"
+                  color="black"
                   onClick={() => setIsOpen(false)}
                 >
                   PLATTFORM LOGIN
@@ -305,28 +286,35 @@ const MobileNavigation = () => {
 
 export const Navbar = ({ type }: { type: "website" | "app" }) => {
   return (
-    <Box px="0" py="0" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="docked">
-      {/* Grüner Infobalken mit schwarzem Text */}
+    <Box px="0" py="0" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="sticky">
+      {/* Black Friday Banner */}
       <Box
-        w="100vw"
-        bg="#22c55e"
-        color="black"
-        fontSize="xs"
-        px="4"
-        py="2"
-        textAlign="center"
-        fontWeight="medium"
-      >
-        Nicht sicher, wann du starten sollst?{' '}
-        <Link
-          href="/checkout/lifetime"
-          color="black"
-          textDecoration="underline"
+          w="100vw"
+          bg="black"
+          color="white"
+          fontSize={{ base: "xs", md: "sm" }}
+          px="4"
+          py="3"
+          textAlign="center"
           fontWeight="bold"
-          _hover={{ color: "gray.800" }}
-        >
-          DANN FANG JETZT AN &gt;
-        </Link>
+          position="relative"
+          overflow="hidden"
+          borderBottom="1px solid"
+          borderColor={SNT_BLUE}
+      >
+          <HStack
+              justify="center"
+              align="center"
+              gap={2}
+              position="relative"
+              zIndex={1}
+          >
+              <Fire size={18} weight="fill" color={SNT_YELLOW} />
+              <Text>
+                  BLACK FRIDAY SPECIAL - <Text as="span" color={SNT_YELLOW} fontWeight="extrabold">50% RABATT</Text> - Bis zu 230€ sparen beim Lifetime-Plan!
+              </Text>
+              <Sparkle size={18} weight="fill" color={SNT_YELLOW} />
+          </HStack>
       </Box>
 
       {/* Navbar */}
@@ -336,8 +324,8 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
         background="#000000"
         px="0"
         py="0"
-        boxShadow="0 14px 40px -14px rgba(73,231,156,0.55)"
-        borderBottom="1px solid rgba(73,231,156,0.25)"
+        boxShadow="0 14px 40px -14px rgba(255,255,255,0.25)"
+        borderBottom="1px solid rgba(255,255,255,0.15)"
       >
         <Box w="100%" mx="auto" px="4" py="2">
           <Box position="relative" w="full" h="44px" display="flex" alignItems="center">
@@ -381,11 +369,7 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   fontWeight="800"
                   fontFamily="var(--font-horizon), Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
                   lineHeight="0.9"
-                  color="#49E79C"
-                  textShadow="0 0 10px rgba(73,231,156,0.75), 0 0 22px rgba(73,231,156,0.35)"
-                  _hover={{
-                    textShadow: "0 0 14px rgba(73,231,156,0.85), 0 0 28px rgba(73,231,156,0.45)"
-                  }}
+                  color={SNT_BLUE}
                   transition="all 0.3s ease"
                   whiteSpace="nowrap"
                 >
