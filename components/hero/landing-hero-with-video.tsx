@@ -59,16 +59,16 @@ export function LandingHeroWithVideo() {
               Wir haben über <Text as="span" color="#3b82f6" fontWeight="bold">6+ Jahre Erfahrung</Text>, um dir in einem klar aufgebauten, selbstbestimmten Kurs genau das zu zeigen, was im Trading wirklich zählt.<br />
             </Text>
           </Stack>
-          <Stack align="center" direction={{ base: "column", md: "row" }} gap="3">
+          <Stack align="center" direction={{ base: "column", md: "row" }} gap="3" position="relative" zIndex={10}>
             <Link href="#project30-pricing">
               <Button size="xl" fontWeight="bold" colorScheme="blue" bg="#3b82f6" _hover={{ bg: "#2563eb" }} borderRadius="md" px="8" boxShadow="0 0 24px rgba(59, 130, 246,0.35)" border="1px solid rgba(59, 130, 246,0.45)">
                ⚡ JETZT STARTEN
               </Button>
             </Link>
           </Stack>
-          <Stack direction="row" align="center" cursor="pointer" justify="center" mt={0}>
+          <Stack direction="row" align="center" cursor="pointer" justify="center" mt={0} position="relative" zIndex={1}>
             <WarningCircle size={16} color="#A0AEC0" />
-            <Text fontSize="xs" color="gray.400" cursor="pointer" textAlign="center" zIndex={1000}>
+            <Text fontSize="xs" color="gray.400" cursor="pointer" textAlign="center">
               Trading beinhaltet Risiken. <Link href="/legal/disclaimer" color="gray.400" cursor="pointer" textDecoration="underline">Lies unseren Disclaimer!</Link>
             </Text>
           </Stack>
