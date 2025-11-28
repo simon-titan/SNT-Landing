@@ -5,32 +5,37 @@ const TELEGRAM_TOKEN = '8306953306:AAEBzDdHEHC8ZWjQAz6RGO4jXm4DmJwOJgc';
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 
 // Nachrichten
-const welcomeMessage = `HERZLICH WILLKOMMEN BEI SNTTRADES,
+const welcomeMessage = `🚨 *BLACK MONTH 50% auf LIFETIME und MONATLICH - SPARE BIS ZU 230€* 🚨
 
-Diese Entscheidung wird dein *Leben verändern* – **das verspreche ich dir!**
-**Warum?** Ganz einfach: Was du bei uns lernen wirst, ist *unbezahlbar:*
+*SNT TRADING AUSBILDUNG* 📊
 
-Ausführlicher *Video-Kurs* übers *Trading* und unsere eigene *Trading-Strategie! 👇*
+HERZLICH WILLKOMMEN BEI SNTTRADES,
 
-✅ *- SCALPING MASTERCLASS (NEFS STRATEGIE)*
+Diese Entscheidung wird dein Leben verändern – das verspreche ich dir!
 
-✅ *- ÜBER 40+ VIDEOS. (STÄNDIG NEU ERSCHEINENDES LERNMATERIAL)*
+*Warum?* Ganz einfach: Was du bei uns lernen wirst, ist unbezahlbar:
 
-✅ *- RIESIGE COMMUNITY/GLEICH GESINNTE (≈1000 Nutzer)* 
+Ausführlicher Video-Kurs übers Trading und unsere eigene Trading-Strategie! 👇
 
-✅ *- MEHRERE ZOOM CALLS IM MONAT (MINDSET/LIVETRADING/Q&A)*
+✅ - SCALPING MASTERCLASS (NEFS STRATEGIE)
 
-✅ *- GEWINNSPIELE, PREISKRÖNUNGEN ETC.*
+✅ - DAYTRADING MASTERCLASS
 
-🏆 Ich zeige dir, wie man *erfolgreich tradet, worauf du achten musst, und geben dir wertvolle* **Tipps und Tricks**. 
+✅ - ÜBER 40+ VIDEOS. (STÄNDIG NEU ERSCHEINENDES LERNMATERIAL)
 
-🎖Außerdem wirst du *meine Strategie* und meine Angehens weise, die ich *Tag täglich am Markt anwende*, lernen.
+✅ - RIESIGE COMMUNITY/GLEICH GESINNTE
 
-🎓 Über *≈1000 Mitglieder* auf dem Discord, mit denen du dich täglich austauschen kannst. 
+✅ - 3-4 ZOOM CALLS IN DER WOCHE (MINDSET/LIVETRADING/Q&A)
 
-Das Ziel ist es die größte *Trading FAMILIE Deutschlands* zu werden.
+✅ - GEWINNSPIELE, PREISKRÖNUNGEN ETC.
 
-*Mach jetzt den ersten Schritt in eine erfolgreiche Zukunft! Schließ dich uns an und werde Teil der SNT Family. Dein Erfolg wartet nicht auf dich* 👇👇👇👇`;
+🏆 Ich zeige dir, wie man erfolgreich tradet, worauf du achten musst, und geben dir wertvolle Tipps und Tricks. 
+
+🎖Außerdem wirst du meine Strategie und meine Angehens weise, die ich Tag täglich am Markt anwende, lernen.
+
+Mach jetzt den ersten Schritt in eine erfolgreiche Zukunft! Schließ dich uns an und werde Teil der SNT Family. Dein Erfolg wartet nicht auf dich 👇
+
+*DAS ABO IST JEDERZEIT KÜNDBAR. KEINE VERSTECKTEN FRISTEN.*`;
 
 const paymentMessage = `Fast geschafft! 😮‍💨
 Als neues Mitglied hast du direkt Zugang zu unserer Trading Strategie, Community und der exklusiven Lern-Plattform`;
@@ -68,18 +73,18 @@ export async function POST(request: NextRequest) {
         // Setze User Session
         setUserSession(userId, { stage: 'start' });
 
-        // Sende Willkommensnachricht
-        await sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
-
-        // Sende Plan-Auswahl direkt danach (ohne setTimeout)
-        await sendMessage(chatId, 'Wähle dein Abo-Modell:', {
+        // Sende Willkommensnachricht mit Buttons
+        await sendMessage(chatId, welcomeMessage, {
+          parse_mode: 'Markdown',
           reply_markup: {
             inline_keyboard: [
-              [{ text: '📅 Monatlich - 44.90€', callback_data: 'subscription_monthly' }],
-              [{ text: '💎 Lifetime - 247€', callback_data: 'subscription_lifetime' }]
+              [{ text: 'Monatlich 44.90€ (anstatt 97€)', url: `https://www.snttrades.de/checkout/monthly?telegram_user_id=${userId}` }],
+              [{ text: 'Lifetime 247.00€ (anstatt 567€)', url: `https://www.snttrades.de/checkout/lifetime?telegram_user_id=${userId}` }]
             ]
           }
         });
+
+        // Setze User Session
         setUserSession(userId, { stage: 'selection' });
       }
     }
@@ -99,7 +104,7 @@ export async function POST(request: NextRequest) {
 Perfekte Wahl für den flexiblen Einstieg!`, {
           reply_markup: {
             inline_keyboard: [
-              [{ text: 'Jetzt kaufen', url: 'https://www.snttrades.de/checkout/monthly' }]
+              [{ text: 'Jetzt kaufen', url: `https://www.snttrades.de/checkout/monthly?telegram_user_id=${userId}` }]
             ]
           },
           parse_mode: 'Markdown'
@@ -113,7 +118,7 @@ Perfekte Wahl für den flexiblen Einstieg!`, {
 Die beste Investition in deine Trading-Zukunft!`, {
           reply_markup: {
             inline_keyboard: [
-              [{ text: 'Jetzt kaufen', url: 'https://www.snttrades.de/checkout/lifetime' }]
+              [{ text: 'Jetzt kaufen', url: `https://www.snttrades.de/checkout/lifetime?telegram_user_id=${userId}` }]
             ]
           },
           parse_mode: 'Markdown'

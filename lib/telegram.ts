@@ -28,11 +28,16 @@ export function setUserSession(userId: number, session: { stage: 'start' | 'sele
 
 // Funktion zum Senden der Erfolgs-Nachricht
 export async function sendSuccessMessage(userId: number) {
-  const successMessage = `Herzlich willkommen bei SNT-ELITE! 🏆
+  const successMessage = `HERZLICH WILLKOMMEN IN DER SNT FAMILY! 🚀
 
-Deine Zugangsdaten hast du per E-Mail erhalten.
+Du hast es geschafft - Dein Zugang ist freigeschaltet.
 
-Die Plattform findest du unter: snt-elite-platform.de`;
+📥 WICHTIG:
+Du hast soeben eine E-Mail erhalten. In dieser Mail findest du den Link, um dein Passwort für die Plattform festzulegen.
+
+Bitte prüfe auch deinen Spam-Ordner!
+
+Wir sehen uns im Training! 📊`;
   
   try {
     const session = getUserSession(userId);

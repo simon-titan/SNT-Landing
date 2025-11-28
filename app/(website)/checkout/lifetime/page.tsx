@@ -44,14 +44,31 @@ export default function LifetimeCheckoutPage() {
     };
 
     useEffect(() => {
+        // Telegram User ID speichern
+        const urlParams = new URLSearchParams(window.location.search);
+        const telegramUserId = urlParams.get('telegram_user_id');
+        if (telegramUserId) {
+            localStorage.setItem('telegram_user_id', telegramUserId);
+            sessionStorage.setItem('telegram_user_id', telegramUserId);
+            console.log('Telegram User ID gespeichert:', telegramUserId);
+        }
+
         // Outseta Success Handler
         const setupOutsetaSuccessHandler = () => {
             // Event Listener für Outseta Registrierung
             window.addEventListener('message', (event) => {
                 if (event.data && event.data.type === 'outseta_success') {
                     console.log('✅ Outseta Registrierung erfolgreich:', event.data);
+                    
+                    const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                    let redirectUrl = '/thank-you-2?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+                    
+                    if (telegramUserId) {
+                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                    }
+                    
                     // Weiterleitung zur Thank You Seite
-                    window.location.href = '/thank-you-2?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+                    window.location.href = redirectUrl;
                 }
             });
 
@@ -60,7 +77,15 @@ export default function LifetimeCheckoutPage() {
                 const currentUrl = window.location.href;
                 if (currentUrl.includes('success') || currentUrl.includes('completed')) {
                     console.log('✅ Outseta Success URL erkannt');
-                    window.location.href = '/thank-you-2?source=outseta_url';
+                    
+                    const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                    let redirectUrl = '/thank-you-2?source=outseta_url';
+                    
+                    if (telegramUserId) {
+                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                    }
+                    
+                    window.location.href = redirectUrl;
                 }
             };
 
@@ -75,7 +100,12 @@ export default function LifetimeCheckoutPage() {
                         widgetText.includes('Thank you')) {
                         console.log('✅ Outseta Success Text erkannt');
                         setTimeout(() => {
-                            window.location.href = '/thank-you-2?source=outseta_text';
+                            const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                            let redirectUrl = '/thank-you-2?source=outseta_text';
+                            if (telegramUserId) {
+                                redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                            }
+                            window.location.href = redirectUrl;
                         }, 2000); // 2 Sekunden Delay für User-Feedback
                     }
                 }
@@ -151,6 +181,17 @@ export default function LifetimeCheckoutPage() {
                 window.paypal
                     .HostedButtons({
                         hostedButtonId: '68525GEP8BKRS',
+                        onApprove: function(data: any, actions: any) {
+                            console.log('PayPal Lifetime genehmigt:', data);
+                            const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                            let redirectUrl = '/thank-you-2?source=paypal_lifetime&order_id=' + (data.orderID || 'unknown');
+                            
+                            if (telegramUserId) {
+                                redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                            }
+                            
+                            window.location.href = redirectUrl;
+                        }
                     })
                     .render('#paypal-container-68525GEP8BKRS');
             }

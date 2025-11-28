@@ -36,14 +36,32 @@ export default function MonthlyCheckoutPage() {
     };
 
     useEffect(() => {
+        // Telegram User ID speichern
+        const urlParams = new URLSearchParams(window.location.search);
+        const telegramUserId = urlParams.get('telegram_user_id');
+        if (telegramUserId) {
+            localStorage.setItem('telegram_user_id', telegramUserId);
+            sessionStorage.setItem('telegram_user_id', telegramUserId);
+            console.log('Telegram User ID gespeichert:', telegramUserId);
+        }
+
         // Outseta Success Handler
         const setupOutsetaSuccessHandler = () => {
             // Event Listener für Outseta Registrierung
             window.addEventListener('message', (event) => {
                 if (event.data && event.data.type === 'outseta_success') {
                     console.log('✅ Outseta Registrierung erfolgreich:', event.data);
+                    
+                    // Telegram ID aus Storage holen
+                    const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                    let redirectUrl = '/thank-you-2?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+                    
+                    if (telegramUserId) {
+                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                    }
+
                     // Weiterleitung zur Thank You Seite
-                    window.location.href = '/thank-you-2?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+                    window.location.href = redirectUrl;
                 }
             });
 
@@ -52,7 +70,12 @@ export default function MonthlyCheckoutPage() {
                 const currentUrl = window.location.href;
                 if (currentUrl.includes('success') || currentUrl.includes('completed')) {
                     console.log('✅ Outseta Success URL erkannt');
-                    window.location.href = '/thank-you-2?source=outseta_url';
+                    const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                    let redirectUrl = '/thank-you-2?source=outseta_url';
+                    if (telegramUserId) {
+                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                    }
+                    window.location.href = redirectUrl;
                 }
             };
 
@@ -67,7 +90,12 @@ export default function MonthlyCheckoutPage() {
                         widgetText.includes('Thank you')) {
                         console.log('✅ Outseta Success Text erkannt');
                         setTimeout(() => {
-                            window.location.href = '/thank-you-2?source=outseta_text';
+                            const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                            let redirectUrl = '/thank-you-2?source=outseta_text';
+                            if (telegramUserId) {
+                                redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                            }
+                            window.location.href = redirectUrl;
                         }, 2000); // 2 Sekunden Delay für User-Feedback
                     }
                 }
@@ -104,9 +132,13 @@ export default function MonthlyCheckoutPage() {
                         tagline: false
                     },
                     createSubscription: function(data, actions) {
+                        const telegramUserId = localStorage.getItem('telegram_user_id');
+                        // Füge Telegram ID zum custom_id hinzu für Backend-Verarbeitung
+                        const customId = telegramUserId ? `TG_USER_${telegramUserId}|SNTTRADES_MONTHLY_PLAN` : 'SNTTRADES_MONTHLY_PLAN';
+                        
                         return actions.subscription.create({
                             plan_id: 'P-59C23375XF491315BNCBCDVQ',
-                            custom_id: 'SNTTRADES_MONTHLY_PLAN',
+                            custom_id: customId,
                             application_context: {
                                 brand_name: 'SNTTRADES',
                                 shipping_preference: 'NO_SHIPPING',
@@ -119,9 +151,17 @@ export default function MonthlyCheckoutPage() {
                     },
                     onApprove: function(data, actions) {
                         console.log('PayPal Subscription genehmigt:', data.subscriptionID);
-                        alert(`Abonnement erfolgreich erstellt! ID: ${data.subscriptionID}`);
-                        // Weiterleitung zur Thank-You Seite
-                        window.location.href = '/thank-you-2?subscription_id=' + data.subscriptionID;
+                        
+                        // Konstruiere Redirect URL mit Telegram ID
+                        const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                        let redirectUrl = '/thank-you-2?subscription_id=' + data.subscriptionID;
+                        
+                        if (telegramUserId) {
+                            redirectUrl += `&telegram_user_id=${telegramUserId}`;
+                            console.log('Redirecting with Telegram ID:', telegramUserId);
+                        }
+                        
+                        window.location.href = redirectUrl;
                     },
                     onError: function(err) {
                         console.error('PayPal Subscription Fehler:', err);
