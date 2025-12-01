@@ -121,30 +121,6 @@ export default function ThankYouPage() {
           if (response.ok) {
             const data = await response.json();
             localStorage.removeItem('sntRegistrationEmail');
-            
-            // Erfolgs-Notification
-            const notification = document.createElement('div');
-            notification.innerHTML = '✅ Du wurdest zur E-Mail-Liste hinzugefügt!';
-            notification.style.cssText = `
-              position: fixed; 
-              top: 20px; 
-              right: 20px; 
-              background: #10B981; 
-              color: white; 
-              padding: 12px 20px; 
-              border-radius: 8px; 
-              z-index: 9999;
-              font-weight: bold;
-              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-              if (document.body.contains(notification)) {
-                document.body.removeChild(notification);
-              }
-            }, 5000);
-            
             return true;
           } else {
             const errorData = await response.json().catch(() => ({}));
