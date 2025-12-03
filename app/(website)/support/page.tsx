@@ -26,6 +26,8 @@ import {
 import "@/styles/contact-page-styles.css";
 import { useRef } from "react";
 
+const SNT_BLUE = "#068CEF";
+
 // Lokale CSS-Regel um o--submit-help-request zu verstecken
 const hideSubmitButton = `
   .o--submit-help-request {
@@ -71,28 +73,28 @@ const helpCategories = [
     title: "Technischer Support",
     description: "Hilfe bei technischen Problemen und Plattform-Fragen",
     icon: VideoCamera,
-    color: "green",
+    color: "blue",
     link: "#technisch"
   },
   {
     title: "Community & Networking",
     description: "Fragen zur Community und zum Austausch mit anderen",
     icon: Users,
-    color: "purple",
+    color: "blue",
     link: "#community"
   },
   {
     title: "Zahlung & Abrechnung",
     description: "Fragen zu Zahlungen, Rechnungen und Abonnements",
     icon: CreditCard,
-    color: "orange",
+    color: "blue",
     link: "#zahlung"
   },
   {
     title: "Sicherheit & Datenschutz",
     description: "Informationen zu Sicherheit und Datenschutz",
     icon: Shield,
-    color: "red",
+    color: "blue",
     link: "#sicherheit"
   }
 ];
@@ -121,10 +123,10 @@ export default function SupportPage() {
   return (
     <>
       <style jsx>{hideSubmitButton}</style>
-                   <Section
+      <Section
         header
-        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(10, 14, 10, 0.95))"
-        borderBottomColor="rgba(34, 197, 94, 0.25)"
+        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(5, 10, 20, 0.95))"
+        borderBottomColor="rgba(6, 140, 239, 0.25)"
         borderBottomWidth="1px"
         position="relative"
         _before={{
@@ -134,7 +136,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 50% 0%, rgba(34, 197, 94, 0.15) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%)",
+          background: "radial-gradient(at 50% 0%, rgba(6, 140, 239, 0.15) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(5, 114, 194, 0.1) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -145,11 +147,11 @@ export default function SupportPage() {
                 <Box
                   p={3}
                   borderRadius="full"
-                  bg="rgba(34, 197, 94, 0.15)"
-                  border="1px solid rgba(34, 197, 94, 0.3)"
-                  boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+                  bg="rgba(6, 140, 239, 0.15)"
+                  border="1px solid rgba(6, 140, 239, 0.3)"
+                  boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
                 >
-                  <Icon as={Lifebuoy} boxSize={8} color="#22c55e" />
+                  <Icon as={Lifebuoy} boxSize={8} color={SNT_BLUE} />
                 </Box>
                 <Heading 
                   as="h1" 
@@ -173,9 +175,9 @@ export default function SupportPage() {
         </VStack>
       </Section>
 
-            {/* Hilfe-Kategorien */}
+      {/* Hilfe-Kategorien */}
       <Section
-        bg="linear-gradient(135deg, rgba(10, 14, 10, 0.98), rgba(0, 0, 0, 0.95))"
+        bg="linear-gradient(135deg, rgba(5, 10, 20, 0.98), rgba(0, 0, 0, 0.95))"
         position="relative"
         _before={{
           content: '""',
@@ -184,7 +186,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 30% 70%, rgba(34, 197, 94, 0.1) 0px, transparent 50%), radial-gradient(at 70% 30%, rgba(16, 185, 129, 0.08) 0px, transparent 50%)",
+          background: "radial-gradient(at 30% 70%, rgba(6, 140, 239, 0.1) 0px, transparent 50%), radial-gradient(at 70% 30%, rgba(5, 114, 194, 0.08) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -204,15 +206,15 @@ export default function SupportPage() {
                 <Box 
                   key={index} 
                   p="6" 
-                  bg="rgba(10, 14, 10, 0.7)"
+                  bg="rgba(5, 10, 20, 0.7)"
                   backdropFilter="blur(16px)"
-                  border="1px solid rgba(34, 197, 94, 0.25)" 
+                  border="1px solid rgba(6, 140, 239, 0.25)" 
                   borderRadius="xl"
                   cursor="pointer" 
                   _hover={{ 
                     transform: "translateY(-4px)", 
-                    boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                    borderColor: "rgba(34, 197, 94, 0.4)"
+                    boxShadow: "0 12px 40px 0 rgba(6, 140, 239, 0.25)",
+                    borderColor: "rgba(6, 140, 239, 0.4)"
                   }} 
                   transition="all 0.3s ease"
                   onClick={scrollToTicket}
@@ -221,11 +223,11 @@ export default function SupportPage() {
                     <Box
                       p="3"
                       borderRadius="full"
-                      bg="rgba(34, 197, 94, 0.15)"
-                      border="1px solid rgba(34, 197, 94, 0.3)"
-                      boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+                      bg="rgba(6, 140, 239, 0.15)"
+                      border="1px solid rgba(6, 140, 239, 0.3)"
+                      boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
                     >
-                      <Icon as={category.icon} boxSize={6} color="#22c55e" />
+                      <Icon as={category.icon} boxSize={6} color={SNT_BLUE} />
                     </Box>
                     <VStack gap="2">
                       <Heading as="h3" textStyle="lg" color="white">
@@ -243,9 +245,9 @@ export default function SupportPage() {
         </Container>
       </Section>
 
-            {/* FAQ-Bereich */}
+      {/* FAQ-Bereich */}
       <Section 
-        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(10, 14, 10, 0.98))"
+        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(5, 10, 20, 0.98))"
         position="relative"
         _before={{
           content: '""',
@@ -254,7 +256,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 20% 80%, rgba(34, 197, 94, 0.08) 0px, transparent 50%), radial-gradient(at 80% 20%, rgba(16, 185, 129, 0.06) 0px, transparent 50%)",
+          background: "radial-gradient(at 20% 80%, rgba(6, 140, 239, 0.08) 0px, transparent 50%), radial-gradient(at 80% 20%, rgba(5, 114, 194, 0.06) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -264,11 +266,11 @@ export default function SupportPage() {
               <Box
                 p={3}
                 borderRadius="full"
-                bg="rgba(34, 197, 94, 0.15)"
-                border="1px solid rgba(34, 197, 94, 0.3)"
-                boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+                bg="rgba(6, 140, 239, 0.15)"
+                border="1px solid rgba(6, 140, 239, 0.3)"
+                boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
               >
-                <Icon as={Question} boxSize={8} color="#22c55e" />
+                <Icon as={Question} boxSize={8} color={SNT_BLUE} />
               </Box>
               <Heading 
                 as="h2" 
@@ -288,19 +290,19 @@ export default function SupportPage() {
                 <Box 
                   key={index} 
                   w="full" 
-                  bg="rgba(10, 14, 10, 0.7)"
+                  bg="rgba(5, 10, 20, 0.7)"
                   backdropFilter="blur(16px)"
-                  border="1px solid rgba(34, 197, 94, 0.25)" 
+                  border="1px solid rgba(6, 140, 239, 0.25)" 
                   borderRadius="xl" 
                   p="6"
                   _hover={{
-                    borderColor: "rgba(34, 197, 94, 0.4)",
-                    boxShadow: "0 8px 32px 0 rgba(34, 197, 94, 0.15)"
+                    borderColor: "rgba(6, 140, 239, 0.4)",
+                    boxShadow: "0 8px 32px 0 rgba(6, 140, 239, 0.15)"
                   }}
                   transition="all 0.3s ease"
                 >
                   <VStack gap="3" align="stretch">
-                    <Heading as="h3" textStyle="lg" color="#22c55e">
+                    <Heading as="h3" textStyle="lg" color={SNT_BLUE}>
                       {faq.question}
                     </Heading>
                     <Text color="gray.200" fontSize="md" lineHeight="1.6">
@@ -312,16 +314,16 @@ export default function SupportPage() {
                           as="button"
                           px="4"
                           py="2"
-                          bg="#22c55e"
+                          bg={SNT_BLUE}
                           color="white"
                           borderRadius="md"
                           fontSize="sm"
                           fontWeight="medium"
                           cursor="pointer"
-                          _hover={{ bg: "#16a34a" }}
+                          _hover={{ bg: "#0572c2" }}
                           transition="background-color 0.2s"
                           onClick={scrollToTicket}
-                          boxShadow="0 4px 12px rgba(34, 197, 94, 0.3)"
+                          boxShadow="0 4px 12px rgba(6, 140, 239, 0.3)"
                         >
                           Ticket öffnen
                         </Box>
@@ -337,7 +339,7 @@ export default function SupportPage() {
 
       {/* Ticket-System */}
       <Section
-        bg="linear-gradient(135deg, rgba(10, 14, 10, 0.95), rgba(0, 0, 0, 0.98))"
+        bg="linear-gradient(135deg, rgba(5, 10, 20, 0.95), rgba(0, 0, 0, 0.98))"
         position="relative"
         _before={{
           content: '""',
@@ -346,7 +348,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 50% 50%, rgba(34, 197, 94, 0.1) 0px, transparent 60%)",
+          background: "radial-gradient(at 50% 50%, rgba(6, 140, 239, 0.1) 0px, transparent 60%)",
           pointerEvents: "none"
         }}
       >
@@ -356,11 +358,11 @@ export default function SupportPage() {
               <Box
                 p={3}
                 borderRadius="full"
-                bg="rgba(34, 197, 94, 0.15)"
-                border="1px solid rgba(34, 197, 94, 0.3)"
-                boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+                bg="rgba(6, 140, 239, 0.15)"
+                border="1px solid rgba(6, 140, 239, 0.3)"
+                boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
               >
-                <Icon as={Ticket} boxSize={8} color="#22c55e" />
+                <Icon as={Ticket} boxSize={8} color={SNT_BLUE} />
               </Box>
               <Heading 
                 as="h2" 
@@ -376,13 +378,13 @@ export default function SupportPage() {
             </VStack>
 
             <Box 
-              bg="rgba(10, 14, 10, 0.8)"
+              bg="rgba(5, 10, 20, 0.8)"
               backdropFilter="blur(20px)"
-              border="1px solid rgba(34, 197, 94, 0.3)" 
+              border="1px solid rgba(6, 140, 239, 0.3)" 
               borderRadius="xl" 
               p="8" 
               w="full"
-              boxShadow="0 20px 60px 0 rgba(34, 197, 94, 0.2)"
+              boxShadow="0 20px 60px 0 rgba(6, 140, 239, 0.2)"
             >
               <Support />
             </Box>
@@ -390,9 +392,9 @@ export default function SupportPage() {
         </Container>
       </Section>
 
-            {/* Alternative Kontaktmöglichkeiten */}
+      {/* Alternative Kontaktmöglichkeiten */}
       <Section 
-        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(10, 14, 10, 0.95))"
+        bg="linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(5, 10, 20, 0.95))"
         position="relative"
         _before={{
           content: '""',
@@ -401,7 +403,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 80% 20%, rgba(34, 197, 94, 0.08) 0px, transparent 50%), radial-gradient(at 20% 80%, rgba(16, 185, 129, 0.06) 0px, transparent 50%)",
+          background: "radial-gradient(at 80% 20%, rgba(6, 140, 239, 0.08) 0px, transparent 50%), radial-gradient(at 20% 80%, rgba(5, 114, 194, 0.06) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -423,16 +425,16 @@ export default function SupportPage() {
 
             <SimpleGrid columns={{ base: 1, md: 2 }} gap="6" w="full">
               <Box 
-                bg="rgba(10, 14, 10, 0.7)"
+                bg="rgba(5, 10, 20, 0.7)"
                 backdropFilter="blur(16px)"
-                border="1px solid rgba(34, 197, 94, 0.25)" 
+                border="1px solid rgba(6, 140, 239, 0.25)" 
                 borderRadius="xl" 
                 p="6" 
                 textAlign="center"
                 _hover={{
                   transform: "translateY(-4px)",
-                  boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                  borderColor: "rgba(34, 197, 94, 0.4)"
+                  boxShadow: "0 12px 40px 0 rgba(6, 140, 239, 0.25)",
+                  borderColor: "rgba(6, 140, 239, 0.4)"
                 }}
                 transition="all 0.3s ease"
               >
@@ -440,15 +442,15 @@ export default function SupportPage() {
                   <Box
                     p={3}
                     borderRadius="full"
-                    bg="rgba(34, 197, 94, 0.15)"
-                    border="1px solid rgba(34, 197, 94, 0.3)"
-                    boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+                    bg="rgba(6, 140, 239, 0.15)"
+                    border="1px solid rgba(6, 140, 239, 0.3)"
+                    boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
                   >
-                    <Icon as={EnvelopeSimple} boxSize={8} color="#22c55e" />
+                    <Icon as={EnvelopeSimple} boxSize={8} color={SNT_BLUE} />
                   </Box>
                   <VStack gap="2">
                     <Heading as="h3" textStyle="lg" color="white">E-Mail Support</Heading>
-                    <Text color="#22c55e" fontSize="sm" fontWeight="medium">
+                    <Text color={SNT_BLUE} fontSize="sm" fontWeight="medium">
                       seitennulltrades@gmail.com
                     </Text>
                     <Text color="gray.300" fontSize="sm">
@@ -459,16 +461,16 @@ export default function SupportPage() {
               </Box>
 
               <Box 
-                bg="rgba(10, 14, 10, 0.7)"
+                bg="rgba(5, 10, 20, 0.7)"
                 backdropFilter="blur(16px)"
-                border="1px solid rgba(34, 197, 94, 0.25)" 
+                border="1px solid rgba(6, 140, 239, 0.25)" 
                 borderRadius="xl" 
                 p="6" 
                 textAlign="center"
                 _hover={{
                   transform: "translateY(-4px)",
-                  boxShadow: "0 12px 40px 0 rgba(34, 197, 94, 0.25)",
-                  borderColor: "rgba(34, 197, 94, 0.4)"
+                  boxShadow: "0 12px 40px 0 rgba(6, 140, 239, 0.25)",
+                  borderColor: "rgba(6, 140, 239, 0.4)"
                 }}
                 transition="all 0.3s ease"
               >
@@ -476,11 +478,11 @@ export default function SupportPage() {
                   <Box
                     p={3}
                     borderRadius="full"
-                    bg="rgba(34, 197, 94, 0.15)"
-                    border="1px solid rgba(34, 197, 94, 0.3)"
-                    boxShadow="0 4px 12px rgba(34, 197, 94, 0.2)"
+                    bg="rgba(6, 140, 239, 0.15)"
+                    border="1px solid rgba(6, 140, 239, 0.3)"
+                    boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
                   >
-                    <Icon as={Users} boxSize={8} color="#22c55e" />
+                    <Icon as={Users} boxSize={8} color={SNT_BLUE} />
                   </Box>
                   <VStack gap="2">
                     <Heading as="h3" textStyle="lg" color="white">Community</Heading>
@@ -497,10 +499,6 @@ export default function SupportPage() {
           </VStack>
         </Container>
       </Section>
-
-     
     </>
   );
 }
-
-

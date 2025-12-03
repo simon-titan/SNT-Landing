@@ -2,37 +2,23 @@
 
 import React, { useEffect, useState } from "react";
 import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
-import { CreditCard, GoogleLogo, AppleLogo } from "@phosphor-icons/react/dist/ssr";
-import { keyframes } from "@emotion/react";
+import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 
 const SNT_BLUE = "#068CEF";
 
 export default function MonthlyCheckoutPage() {
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [isClient, setIsClient] = useState(false);
+    const discountActive = isDiscountActive();
+    const pricing = discountActive ? pricingConfig.discount.monthly : pricingConfig.standard.monthly;
 
     useEffect(() => {
-        const calculateTimeLeft = () => {
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-            const endTime = new Date(today.getTime() + 48 * 60 * 60 * 1000); // 48 Stunden ab heute 0:00
-            const diff = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
-            return diff;
-        };
-
-        setTimeLeft(calculateTimeLeft());
-
-        const timer = setInterval(() => {
-            setTimeLeft(calculateTimeLeft());
-        }, 1000);
-
-        return () => clearInterval(timer);
+        setIsClient(true);
     }, []);
 
-    const formatTime = (seconds: number) => {
-        const hours = Math.floor(seconds / (60 * 60));
-        const mins = Math.floor((seconds % (60 * 60)) / 60);
-        const secs = seconds % 60;
-        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    // Preis formatieren
+    const formatPrice = (price: number) => {
+        return price % 1 === 0 ? `${price}€` : `${price.toFixed(2).replace('.', ',')}€`;
     };
 
     useEffect(() => {
@@ -47,31 +33,27 @@ export default function MonthlyCheckoutPage() {
 
         // Outseta Success Handler
         const setupOutsetaSuccessHandler = () => {
-            // Event Listener für Outseta Registrierung
             window.addEventListener('message', (event) => {
                 if (event.data && event.data.type === 'outseta_success') {
                     console.log('✅ Outseta Registrierung erfolgreich:', event.data);
                     
-                    // Telegram ID aus Storage holen
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-2?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+                    let redirectUrl = '/thank-you-3?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
                     
                     if (telegramUserId) {
                         redirectUrl += `&telegram_user_id=${telegramUserId}`;
                     }
 
-                    // Weiterleitung zur Thank You Seite
                     window.location.href = redirectUrl;
                 }
             });
 
-            // Zusätzlich: Überwache URL-Änderungen die auf Success hindeuten
             const checkOutsetaSuccess = () => {
                 const currentUrl = window.location.href;
                 if (currentUrl.includes('success') || currentUrl.includes('completed')) {
                     console.log('✅ Outseta Success URL erkannt');
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-2?source=outseta_url';
+                    let redirectUrl = '/thank-you-3?source=outseta_url';
                     if (telegramUserId) {
                         redirectUrl += `&telegram_user_id=${telegramUserId}`;
                     }
@@ -79,7 +61,6 @@ export default function MonthlyCheckoutPage() {
                 }
             };
 
-            // Überwache DOM-Änderungen für Success-Anzeigen
             const observer = new MutationObserver(() => {
                 const outsetaWidget = document.querySelector('[data-o-auth="1"]');
                 if (outsetaWidget) {
@@ -91,12 +72,12 @@ export default function MonthlyCheckoutPage() {
                         console.log('✅ Outseta Success Text erkannt');
                         setTimeout(() => {
                             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                            let redirectUrl = '/thank-you-2?source=outseta_text';
+                            let redirectUrl = '/thank-you-3?source=outseta_text';
                             if (telegramUserId) {
                                 redirectUrl += `&telegram_user_id=${telegramUserId}`;
                             }
                             window.location.href = redirectUrl;
-                        }, 2000); // 2 Sekunden Delay für User-Feedback
+                        }, 2000);
                     }
                 }
             });
@@ -109,16 +90,15 @@ export default function MonthlyCheckoutPage() {
                 });
             }
 
-            // Periodische URL-Überprüfung
             setInterval(checkOutsetaSuccess, 1000);
         };
 
         // PayPal Button Rendering Funktion
         const renderPayPalButton = () => {
-            const container = document.getElementById('paypal-button-container-P-59C23375XF491315BNCBCDVQ');
+            const containerId = pricing.paypal.containerId;
+            const container = document.getElementById(containerId);
             if (!container) return;
             
-            // Container leeren um doppelte Buttons zu vermeiden
             container.innerHTML = '';
             
             if ((window as any).paypal) {
@@ -127,17 +107,16 @@ export default function MonthlyCheckoutPage() {
                         shape: 'rect',
                         color: 'gold',
                         layout: 'vertical',
-                        label: 'pay',
+                        label: 'paypal',
                         height: 48,
                         tagline: false
                     },
-                    createSubscription: function(data, actions) {
+                    createSubscription: function(data: any, actions: any) {
                         const telegramUserId = localStorage.getItem('telegram_user_id');
-                        // Füge Telegram ID zum custom_id hinzu für Backend-Verarbeitung
                         const customId = telegramUserId ? `TG_USER_${telegramUserId}|SNTTRADES_MONTHLY_PLAN` : 'SNTTRADES_MONTHLY_PLAN';
                         
                         return actions.subscription.create({
-                            plan_id: 'P-59C23375XF491315BNCBCDVQ',
+                            plan_id: pricing.paypal.planId,
                             custom_id: customId,
                             application_context: {
                                 brand_name: 'SNTTRADES',
@@ -149,12 +128,11 @@ export default function MonthlyCheckoutPage() {
                             }
                         });
                     },
-                    onApprove: function(data, actions) {
+                    onApprove: function(data: any) {
                         console.log('PayPal Subscription genehmigt:', data.subscriptionID);
                         
-                        // Konstruiere Redirect URL mit Telegram ID
                         const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                        let redirectUrl = '/thank-you-2?subscription_id=' + data.subscriptionID;
+                        let redirectUrl = '/thank-you-3?subscription_id=' + data.subscriptionID;
                         
                         if (telegramUserId) {
                             redirectUrl += `&telegram_user_id=${telegramUserId}`;
@@ -163,11 +141,11 @@ export default function MonthlyCheckoutPage() {
                         
                         window.location.href = redirectUrl;
                     },
-                    onError: function(err) {
+                    onError: function(err: any) {
                         console.error('PayPal Subscription Fehler:', err);
                         alert('Es gab einen Fehler beim Erstellen des Abonnements. Bitte versuchen Sie es erneut.');
                     }
-                }).render('#paypal-button-container-P-59C23375XF491315BNCBCDVQ');
+                }).render(`#${containerId}`);
             }
         };
 
@@ -182,16 +160,19 @@ export default function MonthlyCheckoutPage() {
             };
             document.head.appendChild(script);
         } else {
-            // Falls SDK bereits geladen, Button direkt rendern
             setTimeout(renderPayPalButton, 100);
         }
 
-        // Setup aller Success Handler
         setTimeout(setupOutsetaSuccessHandler, 1000);
-    }, []);
+    }, [pricing]);
 
     return (
         <>
+            <style jsx global>{`
+                .item-header {
+                    display: none !important;
+                }
+            `}</style>
             <Box 
                 minH="100vh" 
                 bg="white" 
@@ -213,43 +194,25 @@ export default function MonthlyCheckoutPage() {
                 gap={3}
             >
                 <Box position="relative" zIndex={1} textAlign="center">
-                    <Heading
-                        as="h1"
-                        fontSize={{ base: "xl", md: "3xl" }}
-                        fontWeight="bold"
-                        color="white"
-                        textAlign="center"
-                    >
-                        SNTTRADES™ 
-                    </Heading>
+                    <HStack gap={2} justify="center" mb={2}>
+                        <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
+                        <Heading
+                            as="h1"
+                            fontSize={{ base: "xl", md: "3xl" }}
+                            fontWeight="bold"
+                            color="white"
+                            textAlign="center"
+                        >
+                            SNTTRADES™ 
+                        </Heading>
+                    </HStack>
                     <Text 
                         textAlign="center" 
                         color="gray.300" 
                         fontSize="sm" 
                         fontWeight="medium"
-                        mt={2}
                     >
                         Monatlicher Zugang • Jederzeit kündbar
-                    </Text>
-                </Box>
-                {/* Timer */}
-                <Box
-                    bg="red.50"
-                    border="2px solid"
-                    borderColor="red.500"
-                    borderRadius="lg"
-                    px={4}
-                    py={2}
-                    display="flex"
-                    flexDirection="row"
-                    alignItems="center"
-                    gap={2}
-                >
-                    <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="red.600">
-                        DAS ANGEBOT GILT NOCH FÜR
-                    </Text>
-                    <Text fontSize={{ base: "sm", md: "md" }} fontWeight="extrabold" color="red.700">
-                        {formatTime(timeLeft)}
                     </Text>
                 </Box>
             </Box>
@@ -284,31 +247,33 @@ export default function MonthlyCheckoutPage() {
                         flexDirection="column"
                         gap={1}
                     >
-                        {/* Spar-Badge */}
-                        <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
-                            <Text
-                                fontSize={{ base: "sm", sm: "md" }}
-                                fontWeight="bold"
-                                color="red.500"
-                                textDecoration="line-through"
-                            >
-                                97.00€
-                            </Text>
-                            <Box
-                                bg="red.500"
-                                color="white"
-                                px={2}
-                                py={0.5}
-                                borderRadius="md"
-                                fontSize="2xs"
-                                fontWeight="bold"
-                                whiteSpace="nowrap"
-                            >
-                                52.10€ gespart!
-                            </Box>
-                        </HStack>
-                        <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">44.90€</Text>
-                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>PRO MONAT</Text>
+                        {/* Rabatt-Badge nur wenn aktiv */}
+                        {discountActive && pricing.originalPrice && (
+                            <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
+                                <Text
+                                    fontSize={{ base: "sm", sm: "md" }}
+                                    fontWeight="bold"
+                                    color="red.500"
+                                    textDecoration="line-through"
+                                >
+                                    {formatPrice(pricing.originalPrice)}
+                                </Text>
+                                <Box
+                                    bg="red.500"
+                                    color="white"
+                                    px={2}
+                                    py={0.5}
+                                    borderRadius="md"
+                                    fontSize="2xs"
+                                    fontWeight="bold"
+                                    whiteSpace="nowrap"
+                                >
+                                    {pricing.savingsAmount} gespart!
+                                </Box>
+                            </HStack>
+                        )}
+                        <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
+                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
                         <Text fontSize="xs" color="gray.600">Jederzeit kündbar</Text>
                     </Flex>
                 </Box>
@@ -322,7 +287,9 @@ export default function MonthlyCheckoutPage() {
                     <div id="paypal-express-section" style={{ marginBottom: "2rem" }}>
                         {/* PayPal Abo Button (Monatlich) */}
                         <div id="monthly-paypal-section" style={{ textAlign: "center" }}>
-                            <div id="paypal-button-container-P-59C23375XF491315BNCBCDVQ" style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}></div>
+                            {isClient && (
+                                <div id={pricing.paypal.containerId} style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}></div>
+                            )}
                         </div>
 
                         {/* Trennlinie */}
@@ -385,15 +352,17 @@ export default function MonthlyCheckoutPage() {
                             </HStack>
                         </Box>
                         
-                        {/* Monthly Outseta Embed */}
-                        <div data-o-auth="1"
-                            data-widget-mode="register"
-                            data-plan-uid="7ma651QE"
-                            data-plan-payment-term="month"
-                            data-skip-plan-options="true"
-                            data-mode="embed"
-                            style={{ background: "white", color: "black", padding: "16px", borderRadius: "8px" }}>
-                        </div>
+                        {/* Monthly Outseta Embed - dynamisch basierend auf Rabatt */}
+                        {isClient && (
+                            <div data-o-auth="1"
+                                data-widget-mode="register"
+                                data-plan-uid={pricing.outseta.planUid}
+                                data-plan-payment-term={pricing.outseta.paymentTerm}
+                                data-skip-plan-options="true"
+                                data-mode="embed"
+                                style={{ background: "white", color: "black", padding: "16px", borderRadius: "8px" }}>
+                            </div>
+                        )}
                     </div>
                 </section>
                 
@@ -419,37 +388,39 @@ export default function MonthlyCheckoutPage() {
                             flexDirection="column"
                             gap={1}
                         >
-                            {/* Spar-Badge */}
-                            <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
-                                <Text
-                                    fontSize={{ base: "sm", sm: "md" }}
-                                    fontWeight="bold"
-                                    color="red.500"
-                                    textDecoration="line-through"
-                                >
-                                    97.00€
-                                </Text>
-                                <Box
-                                    bg="red.500"
-                                    color="white"
-                                    px={2}
-                                    py={0.5}
-                                    borderRadius="md"
-                                    fontSize="2xs"
-                                    fontWeight="bold"
-                                    whiteSpace="nowrap"
-                                >
-                                    52.10€ gespart!
-                                </Box>
-                            </HStack>
-                            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">44.90€</Text>
-                            <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>PRO MONAT</Text>
+                            {/* Rabatt-Badge nur wenn aktiv */}
+                            {discountActive && pricing.originalPrice && (
+                                <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
+                                    <Text
+                                        fontSize={{ base: "sm", sm: "md" }}
+                                        fontWeight="bold"
+                                        color="red.500"
+                                        textDecoration="line-through"
+                                    >
+                                        {formatPrice(pricing.originalPrice)}
+                                    </Text>
+                                    <Box
+                                        bg="red.500"
+                                        color="white"
+                                        px={2}
+                                        py={0.5}
+                                        borderRadius="md"
+                                        fontSize="2xs"
+                                        fontWeight="bold"
+                                        whiteSpace="nowrap"
+                                    >
+                                        {pricing.savingsAmount} gespart!
+                                    </Box>
+                                </HStack>
+                            )}
+                            <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
+                            <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
                             <Text fontSize="xs" color="gray.600">Jederzeit kündbar</Text>
                         </Flex>
                     </Box>
 
                     
-                    {/* What you get - Desktop Version nach oben verschoben */}
+                    {/* What you get - Desktop Version */}
                     <Box bg="white"
                          borderRadius="xl" 
                          boxShadow="md" 

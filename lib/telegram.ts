@@ -1,4 +1,4 @@
-const TELEGRAM_TOKEN = '8306953306:AAEBzDdHEHC8ZWjQAz6RGO4jXm4DmJwOJgc';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 
 // Hilfsfunktion zum Senden von Nachrichten

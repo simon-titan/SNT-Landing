@@ -342,10 +342,10 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   aria-label="Support"
                   variant="ghost"
                   size="md"
-                  color="#49E79C"
+                  color={SNT_BLUE}
                   _hover={{ 
-                    bg: "rgba(73,231,156,0.1)",
-                    color: "#49E79C"
+                    bg: "rgba(6,140,239,0.1)",
+                    color: SNT_BLUE
                   }}
                 >
                   <Icon>
@@ -391,18 +391,18 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   size="xs"
                   height="28px"
                   fontSize="xs"
-                  bg="rgba(73,231,156,0.08)"
-                  color="#49E79C"
-                  border="1px solid rgba(73,231,156,0.45)"
+                  bg="rgba(6,140,239,0.08)"
+                  color={SNT_BLUE}
+                  border="1px solid rgba(6,140,239,0.45)"
                   backdropFilter="blur(10px) saturate(160%)"
-                  boxShadow="0 0 20px rgba(73,231,156,0.35), inset 0 0 12px rgba(73,231,156,0.15)"
+                  boxShadow="0 0 20px rgba(6,140,239,0.35), inset 0 0 12px rgba(6,140,239,0.15)"
                   _hover={{ 
-                    bg: "rgba(73,231,156,0.16)", 
-                    boxShadow: "0 0 26px rgba(73,231,156,0.5), inset 0 0 14px rgba(73,231,156,0.2)" 
+                    bg: "rgba(6,140,239,0.16)", 
+                    boxShadow: "0 0 26px rgba(6,140,239,0.5), inset 0 0 14px rgba(6,140,239,0.2)" 
                   }}
                   _active={{ 
-                    bg: "rgba(73,231,156,0.22)", 
-                    boxShadow: "0 0 18px rgba(73,231,156,0.45), inset 0 0 10px rgba(73,231,156,0.22)" 
+                    bg: "rgba(6,140,239,0.22)", 
+                    boxShadow: "0 0 18px rgba(6,140,239,0.45), inset 0 0 10px rgba(6,140,239,0.22)" 
                   }}
                   whiteSpace="nowrap"
                 >

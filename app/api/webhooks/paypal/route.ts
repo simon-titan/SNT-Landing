@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { pricingConfig, isDiscountActive } from '@/config/pricing-config';
 
 // PayPal-Webhook-Ereignisse
 type PayPalWebhookEvent = {
@@ -37,13 +37,19 @@ type OutsetaAccountRequest = {
   };
 };
 
-// Plan-Mapping basierend auf PayPal-Produkten
-const PLAN_MAPPING: Record<string, string> = {
-  // PayPal Lifetime Button (NULRVQG5GN8PE)
-  'NULRVQG5GN8PE': process.env.OUTSETA_LIFETIME_PLAN_UID || 'rmkzJaWg',
-  // PayPal Abo Plan ID
-  'P-59C23375XF491315BNCBCDVQ': process.env.OUTSETA_MONTHLY_PLAN_UID || 'Nmd4Oxm0',
-};
+// Dynamisches Plan-Mapping basierend auf Rabatt-Status
+function getPlanMapping(): Record<string, string> {
+  const pricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
+  
+  return {
+    // PayPal Lifetime Hosted Buttons
+    'MXYWGLBVSQTXW': pricing.lifetime.webhook.outsetaPlanUid, // Standard Lifetime
+    '68525GEP8BKRS': pricingConfig.discount.lifetime.webhook.outsetaPlanUid, // Rabatt Lifetime (für existierende Transaktionen)
+    // PayPal Monthly Subscription Plans
+    'P-7LS829244N6815906NEXPFVA': pricing.monthly.webhook.outsetaPlanUid, // Standard Monthly
+    'P-59C23375XF491315BNCBCDVQ': pricingConfig.discount.monthly.webhook.outsetaPlanUid, // Rabatt Monthly (für existierende Transaktionen)
+  };
+}
 
 // Debug-Funktion für ausführliches Logging
 function debugLog(message: string, data?: any) {
@@ -217,8 +223,8 @@ async function createOutsetaAccount(accountData: OutsetaAccountRequest): Promise
   debugLog('Starte Outseta Account-Erstellung');
   
   const outsetaDomain = process.env.OUTSETA_DOMAIN || 'seitennull---fzco.outseta.com';
-  const outsetaApiKey = process.env.OUTSETA_API_KEY || '9e7e21fb-147a-4e7e-b137-6a1459c78b77' ;
-  const outsetaSecretKey = process.env.OUTSETA_SECRET_KEY || '7c37ebc69ff5b7e012c470ea7b20e819';
+  const outsetaApiKey = process.env.OUTSETA_API_KEY;
+  const outsetaSecretKey = process.env.OUTSETA_SECRET_KEY;
 
   debugLog('Outseta Konfiguration', {
     domain: outsetaDomain,
@@ -445,26 +451,34 @@ function extractCustomerData(event: PayPalWebhookEvent): {
         // Einmalige Zahlung (Lifetime)
         customerData = event.resource?.payer || event.resource?.payee;
         
+        const planMapping = getPlanMapping();
+        const pricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
+        
         // Erweiterte Lifetime-Plan-Erkennung
-        if (event.resource?.invoice_id?.includes('NULRVQG5GN8PE') ||
+        if (event.resource?.invoice_id?.includes('MXYWGLBVSQTXW') ||
+            event.resource?.invoice_id?.includes('68525GEP8BKRS') ||
             event.resource?.custom === 'LIFETIME' ||
             event.resource?.custom_id === 'LIFETIME' ||
-            event.resource?.item_name?.includes('Lifetime') ||
-            event.resource?.product_id === 'NULRVQG5GN8PE') {
-          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+            event.resource?.item_name?.includes('Lifetime')) {
+          // Prüfe welcher Button verwendet wurde
+          if (event.resource?.invoice_id?.includes('68525GEP8BKRS')) {
+            planUid = planMapping['68525GEP8BKRS'];
+          } else {
+            planUid = planMapping['MXYWGLBVSQTXW'];
+          }
           debugLog('Lifetime Plan erkannt', { planUid });
         }
         
         // Plan basierend auf custom field bestimmen
         if (event.resource?.custom === 'SNTTRADES_MONTHLY_PLAN') {
-          planUid = PLAN_MAPPING['P-59C23375XF491315BNCBCDVQ'];
+          planUid = pricing.monthly.webhook.outsetaPlanUid;
           debugLog('Monthly Plan aus custom field erkannt', { planUid });
         }
         
         // Fallback: Wenn kein Plan erkannt wurde, Standard-Lifetime-Plan verwenden
         // (da es sich um eine Einmalzahlung handelt)
         if (!planUid) {
-          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+          planUid = pricing.lifetime.webhook.outsetaPlanUid;
           debugLog('Lifetime Plan als Fallback gesetzt (Einmalzahlung)', { planUid });
         }
         break;
@@ -481,7 +495,9 @@ function extractCustomerData(event: PayPalWebhookEvent): {
           return null; // Subscription-Events ohne Kundendaten ignorieren
         }
         
-        planUid = PLAN_MAPPING[event.resource?.plan_id] || PLAN_MAPPING['P-59C23375XF491315BNCBCDVQ'];
+        const subPlanMapping = getPlanMapping();
+        const subPricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
+        planUid = subPlanMapping[event.resource?.plan_id] || subPricing.monthly.webhook.outsetaPlanUid;
         debugLog('Abo Plan erkannt', { 
           plan_id: event.resource?.plan_id, 
           planUid,
@@ -495,20 +511,28 @@ function extractCustomerData(event: PayPalWebhookEvent): {
         // Checkout Order
         customerData = event.resource?.payer;
         
+        const orderPlanMapping = getPlanMapping();
+        const orderPricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
+        
         // Lifetime-Plan-Erkennung für Checkout Orders
-        if (event.resource?.invoice_id?.includes('NULRVQG5GN8PE') ||
+        if (event.resource?.invoice_id?.includes('MXYWGLBVSQTXW') ||
+            event.resource?.invoice_id?.includes('68525GEP8BKRS') ||
             event.resource?.custom === 'LIFETIME' ||
             event.resource?.custom_id === 'LIFETIME' ||
-            event.resource?.item_name?.includes('Lifetime') ||
-            event.resource?.product_id === 'NULRVQG5GN8PE') {
-          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+            event.resource?.item_name?.includes('Lifetime')) {
+          // Prüfe welcher Button verwendet wurde
+          if (event.resource?.invoice_id?.includes('68525GEP8BKRS')) {
+            planUid = orderPlanMapping['68525GEP8BKRS'];
+          } else {
+            planUid = orderPlanMapping['MXYWGLBVSQTXW'];
+          }
           debugLog('Lifetime Plan in Checkout Order erkannt', { planUid });
         }
         
         // Fallback: Wenn kein Plan erkannt wurde, Standard-Lifetime-Plan verwenden
         // (da es sich um eine Einmalzahlung handelt)
         if (!planUid) {
-          planUid = PLAN_MAPPING['NULRVQG5GN8PE'];
+          planUid = orderPricing.lifetime.webhook.outsetaPlanUid;
           debugLog('Lifetime Plan als Fallback in Checkout Order gesetzt', { planUid });
         }
         break;
