@@ -2,11 +2,15 @@
 
 import { Box, HStack, Heading } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/components/ui/link";
 
 const SNT_BLUE = "#068CEF";
 
 export const SupportNavbar = () => {
+  const handleRegisterClick = () => {
+    // Dispatch custom event to open modal
+    window.dispatchEvent(new CustomEvent("openRegistrationModal"));
+  };
+
   return (
     <Box px="0" py="0" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="docked">
       <Box
@@ -32,29 +36,24 @@ export const SupportNavbar = () => {
             </Heading>
 
             <HStack gap="2">
-              <Link
-                href="https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=wmjBBxmV&planPaymentTerm=month&skipPlanOptions=true"
-                data-outseta-modal-class="snt-outseta-modal"
-                _hover={{ textDecoration: 'none' }}
+              <Button
+                size="xs"
+                height="28px"
+                fontSize="xs"
+                bg={SNT_BLUE}
+                color="white"
+                border="1px solid transparent"
+                onClick={handleRegisterClick}
+                _hover={{ 
+                  bg: "#0572c2", 
+                }}
+                _active={{ 
+                  bg: "#0465b8", 
+                }}
+                transition="all 0.3s ease"
               >
-                <Button
-                  size="xs"
-                  height="28px"
-                  fontSize="xs"
-                  bg={SNT_BLUE}
-                  color="white"
-                  border="1px solid transparent"
-                  _hover={{ 
-                    bg: "#0572c2", 
-                  }}
-                  _active={{ 
-                    bg: "#0465b8", 
-                  }}
-                  transition="all 0.3s ease"
-                >
-                  JETZT STARTEN
-                </Button>
-              </Link>
+                JETZT STARTEN
+              </Button>
             </HStack>
           </HStack>
         </Box>
