@@ -387,7 +387,7 @@ export default function RegisterPage() {
                       maxW="100%" 
                       mx="auto" 
                       mb={{ base: 4, md: 6 }}
-                      bg="linear-gradient(120deg, rgba(89, 180, 245, 0.8), rgba(85, 178, 245, 0.5), rgba(239, 68, 68, 0.4), rgba(247, 194, 194, 0.6))"
+                      bg="linear-gradient(120deg, rgba(89, 180, 245, 0.6), rgba(85, 178, 245, 0.3), rgba(239, 68, 68, 0.2), rgba(247, 194, 194, 0.6))"
                       borderRadius="xl" 
                       p="7px"
                       position="relative"
