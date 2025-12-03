@@ -11,8 +11,9 @@ import {
     HStack,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
-import { CheckCircle, Crown, Lightning, Fire, Sparkle } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, Crown } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
+import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 
 const SNT_BLUE = "#068CEF";
 
@@ -26,6 +27,11 @@ interface PricingTogglePropsWithModal extends PricingToggleProps {
 }
 
 const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWithModal) => {
+    const pricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
+    const savingsText = isDiscountActive() 
+        ? `Lifetime (${pricing.lifetime.savingsAmount} sparen!)`
+        : "Lifetime";
+
     return (
         <HStack
             gap={0}
@@ -73,7 +79,7 @@ const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWi
                     fontSize="sm"
                     fontWeight="medium"
                 >
-                    Lifetime (230€ sparen!)
+                    {savingsText}
                 </Button>
                 {/* SNT-EMPFEHLUNG Badge */}
                 <Box
@@ -105,16 +111,18 @@ export function SntPremiumPricing() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const previousModeRef = useRef<"monthly" | "lifetime">("lifetime");
 
+    const discountActive = isDiscountActive();
+    const pricing = discountActive ? pricingConfig.discount : pricingConfig.standard;
+    const currentPlan = pricingMode === "lifetime" ? pricing.lifetime : pricing.monthly;
+
     const handlePlanSelection = (plan: 'lifetime' | 'monthly') => {
         router.push(`/checkout/${plan}`);
     };
 
     const handleModeChange = (newMode: "monthly" | "lifetime") => {
-        // Wenn von Lifetime zu Monatlich gewechselt wird, Modal öffnen
         if (previousModeRef.current === "lifetime" && newMode === "monthly") {
             setIsModalOpen(true);
         } else {
-            // Sonst direkt wechseln
             setPricingMode(newMode);
             previousModeRef.current = newMode;
         }
@@ -132,7 +140,11 @@ export function SntPremiumPricing() {
 
     const handleStayLifetime = () => {
         setIsModalOpen(false);
-        // Bleibt bei Lifetime, kein State-Update nötig
+    };
+
+    // Preis formatieren
+    const formatPrice = (price: number) => {
+        return price % 1 === 0 ? `${price}€` : `${price.toFixed(2).replace('.', ',')}€`;
     };
 
     return (
@@ -185,7 +197,7 @@ export function SntPremiumPricing() {
                         align="stretch"
                         w="100%"
                     >
-                        {/* Main Plan Card - Ändert sich basierend auf Toggle */}
+                        {/* Main Plan Card */}
                         <Box
                             flex="1"
                             maxW="400px"
@@ -284,15 +296,15 @@ export function SntPremiumPricing() {
                                     <Text 
                                         fontSize="sm" 
                                         fontWeight="medium" 
-                                        opacity={pricingMode === "lifetime" ? "0.8" : "0.9"}
+                                        opacity={0.8}
                                         key={`${pricingMode}-desc`}
                                         animation={`${keyframes({
                                             "0%": { opacity: 0, transform: "translateY(-5px)" },
-                                            "100%": { opacity: pricingMode === "lifetime" ? 0.8 : 0.9, transform: "translateY(0)" }
+                                            "100%": { opacity: 0.8, transform: "translateY(0)" }
                                         })} 0.4s ease-out 0.1s both`}
                                     >
                                         {pricingMode === "lifetime" 
-                                            ? "⏰ Limitiertes Angebot - Spare 230€ beim Lifetime-Zugang!" 
+                                            ? "Lebenslanger Zugang zur kompletten Trading-Ausbildung" 
                                             : "Flexibler monatlicher Zugang zur kompletten Trading-Ausbildung"}
                                     </Text>
                                 </VStack>
@@ -301,36 +313,39 @@ export function SntPremiumPricing() {
                             {/* Price */}
                             <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
                                 <VStack gap={2} textAlign="center">
-                                    <HStack 
-                                        gap={2} 
-                                        align="center" 
-                                        justify="center"
-                                        key="savings"
-                                        animation={`${keyframes({
-                                            "0%": { opacity: 0, transform: "scale(0.8) translateY(-10px)" },
-                                            "100%": { opacity: 1, transform: "scale(1) translateY(0)" }
-                                        })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both`}
-                                    >
-                                        <Text
-                                            fontSize="xl"
-                                            fontWeight="bold"
-                                            color="red.500"
-                                            textDecoration="line-through"
+                                    {/* Rabatt-Badge nur wenn Rabatt aktiv */}
+                                    {discountActive && currentPlan.originalPrice && (
+                                        <HStack 
+                                            gap={2} 
+                                            align="center" 
+                                            justify="center"
+                                            key="savings"
+                                            animation={`${keyframes({
+                                                "0%": { opacity: 0, transform: "scale(0.8) translateY(-10px)" },
+                                                "100%": { opacity: 1, transform: "scale(1) translateY(0)" }
+                                            })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both`}
                                         >
-                                            {pricingMode === "lifetime" ? "567€" : "97.00€"}
-                                        </Text>
-                                        <Box
-                                            bg="red.500"
-                                            color="white"
-                                            px={3}
-                                            py={1}
-                                            borderRadius="md"
-                                            fontSize="xs"
-                                            fontWeight="bold"
-                                        >
-                                            {pricingMode === "lifetime" ? "230€ gespart!" : "52.10€ gespart!"}
-                                        </Box>
-                                    </HStack>
+                                            <Text
+                                                fontSize="xl"
+                                                fontWeight="bold"
+                                                color="red.500"
+                                                textDecoration="line-through"
+                                            >
+                                                {formatPrice(currentPlan.originalPrice)}
+                                            </Text>
+                                            <Box
+                                                bg="red.500"
+                                                color="white"
+                                                px={3}
+                                                py={1}
+                                                borderRadius="md"
+                                                fontSize="xs"
+                                                fontWeight="bold"
+                                            >
+                                                {currentPlan.savingsAmount} gespart!
+                                            </Box>
+                                        </HStack>
+                                    )}
                                     <HStack gap={1} align="baseline" justify="center">
                                         <Text 
                                             fontSize="5xl" 
@@ -343,7 +358,7 @@ export function SntPremiumPricing() {
                                                 "100%": { opacity: 1, transform: "scale(1) translateY(0)" }
                                             })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both`}
                                         >
-                                            {pricingMode === "lifetime" ? "247€" : "44.90€"}
+                                            {formatPrice(currentPlan.price)}
                                         </Text>
                                         {pricingMode === "monthly" && (
                                             <Text 
@@ -381,7 +396,7 @@ export function SntPremiumPricing() {
                                 <Button
                                     size="xl"
                                     w="full"
-                                    bg={pricingMode === "lifetime" ? SNT_BLUE : SNT_BLUE}
+                                    bg={SNT_BLUE}
                                     color="white"
                                     fontWeight="bold"
                                     _hover={{
@@ -457,7 +472,7 @@ export function SntPremiumPricing() {
                             </Text>
                             <Text color="gray.700" fontSize="sm">
                                 {pricingMode === "lifetime" 
-                                    ? "Mit dem Lifetime-Plan sparst du nicht nur 320€, sondern erhältst auch lebenslangen Zugang zu allen zukünftigen Updates, neuen Strategien und erweiterten Inhalten - ohne zusätzliche Kosten!"
+                                    ? "Mit dem Lifetime-Plan erhältst du lebenslangen Zugang zu allen zukünftigen Updates, neuen Strategien und erweiterten Inhalten - ohne zusätzliche Kosten!"
                                     : "Mit dem monatlichen Plan hast du maximale Flexibilität. Du kannst jederzeit kündigen und zahlst nur für die Monate, in denen du die Ausbildung nutzt."}
                             </Text>
                         </Box>
@@ -537,11 +552,11 @@ export function SntPremiumPricing() {
                                 <HStack gap={2} mb={2}>
                                     <Crown size={24} color={SNT_BLUE} weight="fill" />
                                     <Text fontWeight="bold" color="gray.900" fontSize={{ base: "md", md: "lg" }}>
-                                        Lifetime lohnt sich bereits nach 6 Monaten!
+                                        Lifetime lohnt sich bereits nach 5 Monaten!
                                     </Text>
                                 </HStack>
                                 <Text color="gray.700" fontSize={{ base: "sm", md: "md" }}>
-                                    Bei 44.90€/Monat zahlst du nach 6 Monaten bereits mehr als die einmalige Lifetime-Gebühr von 247€.
+                                    Bei {formatPrice(pricing.monthly.price)}/Monat zahlst du nach 5 Monaten bereits mehr als die einmalige Lifetime-Gebühr von {formatPrice(pricing.lifetime.price)}.
                                 </Text>
                             </Box>
 
@@ -549,7 +564,6 @@ export function SntPremiumPricing() {
                                 {[
                                     { text: "Dauerhafter Zugang ", desc: "zu allen neuen Inhalten und Updates" },
                                     { text: "Keine wiederkehrenden Kosten", desc: " - Einmalig zahlen, für immer lernen" },
-                                    { text: "230€ gespart", desc: " im Vergleich zum regulären Preis" },
                                     { text: "Lebenslange Updates", desc: " - Alle zukünftigen Inhalte inklusive" }
                                 ].map((item, index) => (
                                     <HStack 

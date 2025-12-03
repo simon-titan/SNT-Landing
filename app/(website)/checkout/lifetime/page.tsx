@@ -2,12 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
-import { CreditCard, GoogleLogo, AppleLogo } from "@phosphor-icons/react/dist/ssr";
-import { keyframes } from "@emotion/react";
-import "../../../../styles/paypal.css";
+import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 
 const SNT_BLUE = "#068CEF";
-const SNT_YELLOW = "rgba(251, 191, 36, 1)";
 
 declare global {
     interface Window {
@@ -16,31 +14,17 @@ declare global {
 }
 
 export default function LifetimeCheckoutPage() {
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [isClient, setIsClient] = useState(false);
+    const discountActive = isDiscountActive();
+    const pricing = discountActive ? pricingConfig.discount.lifetime : pricingConfig.standard.lifetime;
 
     useEffect(() => {
-        const calculateTimeLeft = () => {
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-            const endTime = new Date(today.getTime() + 48 * 60 * 60 * 1000); // 48 Stunden ab heute 0:00
-            const diff = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
-            return diff;
-        };
-
-        setTimeLeft(calculateTimeLeft());
-
-        const timer = setInterval(() => {
-            setTimeLeft(calculateTimeLeft());
-        }, 1000);
-
-        return () => clearInterval(timer);
+        setIsClient(true);
     }, []);
 
-    const formatTime = (seconds: number) => {
-        const hours = Math.floor(seconds / (60 * 60));
-        const mins = Math.floor((seconds % (60 * 60)) / 60);
-        const secs = seconds % 60;
-        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    // Preis formatieren
+    const formatPrice = (price: number) => {
+        return price % 1 === 0 ? `${price}€` : `${price.toFixed(2).replace('.', ',')}€`;
     };
 
     useEffect(() => {
@@ -55,31 +39,28 @@ export default function LifetimeCheckoutPage() {
 
         // Outseta Success Handler
         const setupOutsetaSuccessHandler = () => {
-            // Event Listener für Outseta Registrierung
             window.addEventListener('message', (event) => {
                 if (event.data && event.data.type === 'outseta_success') {
                     console.log('✅ Outseta Registrierung erfolgreich:', event.data);
                     
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-2?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+                    let redirectUrl = '/thank-you-3?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
                     
                     if (telegramUserId) {
                         redirectUrl += `&telegram_user_id=${telegramUserId}`;
                     }
                     
-                    // Weiterleitung zur Thank You Seite
                     window.location.href = redirectUrl;
                 }
             });
 
-            // Zusätzlich: Überwache URL-Änderungen die auf Success hindeuten
             const checkOutsetaSuccess = () => {
                 const currentUrl = window.location.href;
                 if (currentUrl.includes('success') || currentUrl.includes('completed')) {
                     console.log('✅ Outseta Success URL erkannt');
                     
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-2?source=outseta_url';
+                    let redirectUrl = '/thank-you-3?source=outseta_url';
                     
                     if (telegramUserId) {
                         redirectUrl += `&telegram_user_id=${telegramUserId}`;
@@ -89,7 +70,6 @@ export default function LifetimeCheckoutPage() {
                 }
             };
 
-            // Überwache DOM-Änderungen für Success-Anzeigen
             const observer = new MutationObserver(() => {
                 const outsetaWidget = document.querySelector('[data-o-auth="1"]');
                 if (outsetaWidget) {
@@ -101,12 +81,12 @@ export default function LifetimeCheckoutPage() {
                         console.log('✅ Outseta Success Text erkannt');
                         setTimeout(() => {
                             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                            let redirectUrl = '/thank-you-2?source=outseta_text';
+                            let redirectUrl = '/thank-you-3?source=outseta_text';
                             if (telegramUserId) {
                                 redirectUrl += `&telegram_user_id=${telegramUserId}`;
                             }
                             window.location.href = redirectUrl;
-                        }, 2000); // 2 Sekunden Delay für User-Feedback
+                        }, 2000);
                     }
                 }
             });
@@ -119,72 +99,28 @@ export default function LifetimeCheckoutPage() {
                 });
             }
 
-            // Periodische URL-Überprüfung
             setInterval(checkOutsetaSuccess, 1000);
         };
 
-        // PayPal Lifetime Success Handler
-        const setupPayPalLifetimeHandler = () => {
-            // Funktion um Form Event Listener hinzuzufügen
-            const attachFormListener = () => {
-                const lifetimeForm = document.querySelector('form[action*="paypal.com/ncp/payment"]');
-                if (lifetimeForm && !lifetimeForm.getAttribute('data-listener-attached')) {
-                    lifetimeForm.setAttribute('data-listener-attached', 'true');
-                    lifetimeForm.addEventListener('submit', () => {
-                        console.log('📝 PayPal Lifetime Zahlung initiiert');
-                        // Speichere Zeitstempel für Return-Handler
-                        localStorage.setItem('paypal_lifetime_initiated', Date.now().toString());
-                    });
-                    console.log('🔗 PayPal Lifetime Form Listener angehängt');
-                }
-            };
-
-            // Versuche sofort und dann periodisch den Listener anzuhängen
-            attachFormListener();
-            const formInterval = setInterval(() => {
-                attachFormListener();
-                // Stoppe nach 30 Sekunden
-                setTimeout(() => clearInterval(formInterval), 30000);
-            }, 1000);
-
-            // Überwache Returns von PayPal (falls User zurückkommt)
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('payment_id') || urlParams.get('PayerID') || urlParams.get('token')) {
-                const initiatedTime = localStorage.getItem('paypal_lifetime_initiated');
-                if (initiatedTime && (Date.now() - parseInt(initiatedTime)) < 300000) { // 5 Minuten
-                    console.log('✅ PayPal Lifetime Return erkannt');
-                    localStorage.removeItem('paypal_lifetime_initiated');
-                    window.location.href = '/thank-you-2?source=paypal_lifetime&payment_id=' + (urlParams.get('payment_id') || 'unknown');
-                }
-            }
-
-            // Alternative: Überwache Click auf PayPal Button als Fallback
-            document.addEventListener('click', (event) => {
-                const target = event.target as HTMLElement;
-                if (target && (target.classList.contains('pp-NULRVQG5GN8PE') || 
-                              target.closest('form[action*="paypal.com/ncp/payment"]'))) {
-                    console.log('📝 PayPal Lifetime Button geklickt');
-                    localStorage.setItem('paypal_lifetime_initiated', Date.now().toString());
-                }
-            });
-        };
-
-        // Setup aller Success Handler
         setTimeout(setupOutsetaSuccessHandler, 1000);
-        setTimeout(setupPayPalLifetimeHandler, 1000);
-
-    }, []); // Empty dependency array ensures this runs once on mount
+    }, []);
     
     useEffect(() => {
         const renderPayPalButton = () => {
-            if (typeof window !== 'undefined' && window.paypal) {
+            if (typeof window !== 'undefined' && window.paypal?.HostedButtons) {
+                const containerId = pricing.paypal.containerId;
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = '';
+                }
+                
                 window.paypal
                     .HostedButtons({
-                        hostedButtonId: '68525GEP8BKRS',
-                        onApprove: function(data: any, actions: any) {
+                        hostedButtonId: pricing.paypal.hostedButtonId,
+                        onApprove: function(data: any) {
                             console.log('PayPal Lifetime genehmigt:', data);
                             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                            let redirectUrl = '/thank-you-2?source=paypal_lifetime&order_id=' + (data.orderID || 'unknown');
+                            let redirectUrl = '/thank-you-3?source=paypal_lifetime&order_id=' + (data.orderID || 'unknown');
                             
                             if (telegramUserId) {
                                 redirectUrl += `&telegram_user_id=${telegramUserId}`;
@@ -193,25 +129,49 @@ export default function LifetimeCheckoutPage() {
                             window.location.href = redirectUrl;
                         }
                     })
-                    .render('#paypal-container-68525GEP8BKRS');
+                    .render(`#${containerId}`);
             }
         };
 
-        if (typeof window !== 'undefined' && !window.paypal) {
+        // Entferne ggf. vorhandenes PayPal SDK (könnte falsches sein)
+        const existingScript = document.querySelector('script[src*="paypal.com/sdk/js"]');
+        if (existingScript && !existingScript.getAttribute('src')?.includes('hosted-buttons')) {
+            existingScript.remove();
+            delete (window as any).paypal;
+        }
+
+        // Lade korrektes Hosted Buttons SDK
+        if (typeof window !== 'undefined' && (!window.paypal || !window.paypal.HostedButtons)) {
+            const existingHostedScript = document.getElementById('paypal-hosted-buttons-sdk');
+            if (existingHostedScript) {
+                // SDK bereits vorhanden, warte kurz und render dann
+                setTimeout(renderPayPalButton, 500);
+                return;
+            }
+            
             const script = document.createElement('script');
-            script.src = 'https://www.paypal.com/sdk/js?client-id=BAA-0m5pkSxHufms7Bz99yWR1lzshrXB63L2g-cvYFfUsI1-ul1VcqCAsVudEICk3cLUAXx2VAsCFuuTHY&components=hosted-buttons&disable-funding=venmo&currency=EUR';
+            script.id = 'paypal-hosted-buttons-sdk';
+            script.src = pricing.paypal.sdkUrl;
             script.async = true;
             script.onload = () => {
-                renderPayPalButton();
+                setTimeout(renderPayPalButton, 100);
             };
             document.body.appendChild(script);
         } else {
             renderPayPalButton();
         }
-    }, []);
+    }, [pricing]);
 
     return (
         <>
+            <style jsx global>{`
+                .item-header {
+                    display: none !important;
+                }
+                .o--text-sm.o--text-secondary {
+                    display: none !important;
+                }
+            `}</style>
             <Box 
                 minH="100vh" 
                 bg="white" 
@@ -233,43 +193,25 @@ export default function LifetimeCheckoutPage() {
                 gap={3}
             >
                 <Box position="relative" zIndex={1} textAlign="center">
-                    <Heading
-                        as="h1"
-                        fontSize={{ base: "xl", md: "3xl" }}
-                        fontWeight="bold"
-                        color="white"
-                        textAlign="center"
-                    >
-                        SNTTRADES™ 
-                    </Heading>
+                    <HStack gap={2} justify="center" mb={2}>
+                        <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
+                        <Heading
+                            as="h1"
+                            fontSize={{ base: "xl", md: "3xl" }}
+                            fontWeight="bold"
+                            color="white"
+                            textAlign="center"
+                        >
+                            SNTTRADES™ 
+                        </Heading>
+                    </HStack>
                     <Text 
                         textAlign="center" 
                         color="gray.300" 
                         fontSize="sm" 
                         fontWeight="medium"
-                        mt={2}
                     >
-                        🔥 Lifetime-Angebot • 230€ gespart • Lebenslanger Zugang
-                    </Text>
-                </Box>
-                {/* Timer */}
-                <Box
-                    bg="red.50"
-                    border="2px solid"
-                    borderColor="red.500"
-                    borderRadius="lg"
-                    px={4}
-                    py={2}
-                    display="flex"
-                    flexDirection="row"
-                    alignItems="center"
-                    gap={2}
-                >
-                    <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="red.600">
-                        DAS ANGEBOT GILT NOCH FÜR
-                    </Text>
-                    <Text fontSize={{ base: "sm", md: "md" }} fontWeight="extrabold" color="red.700">
-                        {formatTime(timeLeft)}
+                        Lifetime-Zugang • Lebenslang lernen
                     </Text>
                 </Box>
             </Box>
@@ -294,7 +236,7 @@ export default function LifetimeCheckoutPage() {
                     borderRadius="xl"
                     boxShadow="lg"
                     border="2px solid"
-                    borderColor={SNT_YELLOW}
+                    borderColor={SNT_BLUE}
                     p={{ base: 4, md: 6 }}
                 >
                     <Flex
@@ -304,31 +246,33 @@ export default function LifetimeCheckoutPage() {
                         flexDirection="column"
                         gap={1}
                     >
-                        {/* Spar-Badge */}
-                        <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
-                            <Text
-                                fontSize={{ base: "sm", sm: "md" }}
-                                fontWeight="bold"
-                                color="red.500"
-                                textDecoration="line-through"
-                            >
-                                567€
-                            </Text>
-                            <Box
-                                bg="red.500"
-                                color="white"
-                                px={2}
-                                py={0.5}
-                                borderRadius="md"
-                                fontSize="2xs"
-                                fontWeight="bold"
-                                whiteSpace="nowrap"
-                            >
-                                230€ gespart!
-                            </Box>
-                        </HStack>
-                        <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">247€</Text>
-                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>EINMALIG</Text>
+                        {/* Rabatt-Badge nur wenn aktiv */}
+                        {discountActive && pricing.originalPrice && (
+                            <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
+                                <Text
+                                    fontSize={{ base: "sm", sm: "md" }}
+                                    fontWeight="bold"
+                                    color="red.500"
+                                    textDecoration="line-through"
+                                >
+                                    {formatPrice(pricing.originalPrice)}
+                                </Text>
+                                <Box
+                                    bg="red.500"
+                                    color="white"
+                                    px={2}
+                                    py={0.5}
+                                    borderRadius="md"
+                                    fontSize="2xs"
+                                    fontWeight="bold"
+                                    whiteSpace="nowrap"
+                                >
+                                    {pricing.savingsAmount} gespart!
+                                </Box>
+                            </HStack>
+                        )}
+                        <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
+                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
                         <Text fontSize="xs" color="gray.600">Lebenslanger Zugang</Text>
                     </Flex>
                 </Box>
@@ -340,14 +284,17 @@ export default function LifetimeCheckoutPage() {
                     
                     {/* PayPal Express Registrierung */}
                     <div id="paypal-express-section" style={{ marginBottom: "2rem" }}>
-                        {/* Neuer PayPal Hosted Button */}
-                        <div id="lifetime-paypal-section" style={{ textAlign: "center" }}>
-                            {/* PayPal Hosted Button Container */}
-                            <Box
-                                id="paypal-container-68525GEP8BKRS"
-                                mt={4}
-                            ></Box>
-                        </div>
+                        {/* PayPal Hosted Button Container */}
+                        <Box display="flex" justifyContent="center" w="full">
+                            {isClient && (
+                                <Box
+                                    id={pricing.paypal.containerId}
+                                    mt={4}
+                                    w="full"
+                                    maxW="400px"
+                                ></Box>
+                            )}
+                        </Box>
                         {/* Trennlinie */}
                         <div style={{ 
                             margin: "24px 0",
@@ -393,10 +340,8 @@ export default function LifetimeCheckoutPage() {
                                 <Text opacity={0.7}>•</Text>
                                 <HStack gap={2}>
                                     <CreditCard size={20} weight="fill" />
-                                    <Text>Debitkarte   </Text>
-                                    
+                                    <Text>Debitkarte</Text>
                                 </HStack>
-                                
                                 <Text opacity={0.7}>•</Text>
                                 <HStack gap={2}>
                                     <GoogleLogo size={20} weight="fill" />
@@ -410,15 +355,17 @@ export default function LifetimeCheckoutPage() {
                             </HStack>
                         </Box>
                         
-                        {/* Lifetime Outseta Embed */}
-                        <div data-o-auth="1"
-                            data-widget-mode="register"
-                            data-plan-uid="496LXdmX"
-                            data-plan-payment-term="oneTime"
-                            data-skip-plan-options="true"
-                            data-mode="embed"
-                            style={{ background: "white", color: "black", padding: "16px", borderRadius: "8px" }}>
-                        </div>
+                        {/* Lifetime Outseta Embed - dynamisch basierend auf Rabatt */}
+                        {isClient && (
+                            <div data-o-auth="1"
+                                data-widget-mode="register"
+                                data-plan-uid={pricing.outseta.planUid}
+                                data-plan-payment-term={pricing.outseta.paymentTerm}
+                                data-skip-plan-options="true"
+                                data-mode="embed"
+                                style={{ background: "white", color: "black", padding: "16px", borderRadius: "8px" }}>
+                            </div>
+                        )}
                     </div>
                 </section>
                 
@@ -434,7 +381,7 @@ export default function LifetimeCheckoutPage() {
                         borderRadius="xl"
                         boxShadow="lg"
                         border="2px solid"
-                        borderColor={SNT_YELLOW}
+                        borderColor={SNT_BLUE}
                         p={6}
                     >
                         <Flex
@@ -444,32 +391,34 @@ export default function LifetimeCheckoutPage() {
                             flexDirection="column"
                             gap={1}
                         >
-                            {/* Spar-Badge */}
-                            <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
-                                <Text
-                                    fontSize={{ base: "sm", sm: "md" }}
-                                    fontWeight="bold"
-                                    color="red.500"
-                                    textDecoration="line-through"
-                                >
-                                    567€
-                                </Text>
-                                <Box
-                                    bg="red.500"
-                                    color="white"
-                                    px={2}
-                                    py={0.5}
-                                    borderRadius="md"
-                                    fontSize="2xs"
-                                    fontWeight="bold"
-                                    whiteSpace="nowrap"
-                                >
-                                    230€ gespart!
-                                </Box>
-                            </HStack>
+                            {/* Rabatt-Badge nur wenn aktiv */}
+                            {discountActive && pricing.originalPrice && (
+                                <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
+                                    <Text
+                                        fontSize={{ base: "sm", sm: "md" }}
+                                        fontWeight="bold"
+                                        color="red.500"
+                                        textDecoration="line-through"
+                                    >
+                                        {formatPrice(pricing.originalPrice)}
+                                    </Text>
+                                    <Box
+                                        bg="red.500"
+                                        color="white"
+                                        px={2}
+                                        py={0.5}
+                                        borderRadius="md"
+                                        fontSize="2xs"
+                                        fontWeight="bold"
+                                        whiteSpace="nowrap"
+                                    >
+                                        {pricing.savingsAmount} gespart!
+                                    </Box>
+                                </HStack>
+                            )}
                             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">
-                                247€</Text>
-                            <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>EINMALIG</Text>
+                                {formatPrice(pricing.price)}</Text>
+                            <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
                             <Text fontSize="xs" color="gray.600">Lebenslanger Zugang</Text>
                         </Flex>
                     </Box>
@@ -531,12 +480,12 @@ export default function LifetimeCheckoutPage() {
                             <Flex as="li" align="center" gap={2}>
                                 <Box as="span" display="flex" alignItems="center" justifyContent="center">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="10" cy="10" r="10" fill={SNT_YELLOW}/>
-                                        <path d="M6 10.5L9 13.5L14 8.5" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <circle cx="10" cy="10" r="10" fill={SNT_BLUE}/>
+                                        <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Box>
                                 <Text color="gray.800" as="span">
-                                    <Text as="span" fontWeight="semibold" color={SNT_YELLOW}>+ Lebenslange Updates</Text> - Alle zukünftigen Inhalte inklusive
+                                    <Text as="span" fontWeight="semibold" color={SNT_BLUE}>Lebenslange Updates</Text> - Alle zukünftigen Inhalte inklusive
                                 </Text>
                             </Flex>
                         </Box>
