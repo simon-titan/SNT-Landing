@@ -138,6 +138,18 @@ export const NavbarLinkMenu = (props: StackProps) => {
 };
 
 export const NavbarActionMenu = ({ type }: { type: "website" | "app" }) => {
+  const pathname = usePathname();
+  const isRegisterPage = pathname === "/register";
+
+  const handleSignUpClick = (e: React.MouseEvent) => {
+    if (isRegisterPage) {
+      e.preventDefault();
+      e.stopPropagation();
+      // Dispatch custom event to open modal
+      window.dispatchEvent(new CustomEvent("openRegistrationModal"));
+    }
+  };
+
   return (
     <>
       <SignedOut>
@@ -146,9 +158,15 @@ export const NavbarActionMenu = ({ type }: { type: "website" | "app" }) => {
             Login
           </Button>
         </Login>
-        <SignUp popup>
-          <Button size="sm">Sign up</Button>
-        </SignUp>
+        {isRegisterPage ? (
+          <Button size="sm" onClick={handleSignUpClick}>
+            Sign up
+          </Button>
+        ) : (
+          <SignUp popup>
+            <Button size="sm">Sign up</Button>
+          </SignUp>
+        )}
       </SignedOut>
       <SignedIn>
         {type == "app" ? (
