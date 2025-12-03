@@ -6,7 +6,7 @@ import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { ApprovedIcon } from "../ui/approved-icon";
 
 const SNT_BLUE = "#068CEF";
-const SNT_YELLOW = "rgba(251, 191, 36, 1)"; // Corresponds to #FBBF24
+const SNT_YELLOW = "rgb(253, 227, 76)"; // Corresponds to #FBBF24
 
 interface SntHeroProps {
   onRegisterClick?: () => void;
@@ -64,10 +64,10 @@ export default function SntHero({ onRegisterClick }: SntHeroProps) {
           as="h1"
           textAlign="center"
           color="black"
-          fontWeight="medium"
-          fontSize={{ base: "xl", sm: "2xl", md: "3xl", lg: "4xl" }}
-          lineHeight={{ base: "1.4", md: "1.3" }}
-          maxW={{ base: "95%", md: "85%" }}
+          fontWeight="bold"
+          fontSize={{ base: "3xl", sm: "2xl", md: "3xl", lg: "4xl" }}
+          lineHeight={{ base: "1.2", md: "1" }}
+          maxW={{ base: "90%", md: "85%" }}
           textShadow="none"
         >
           Stell dir ein Leben vor, in dem du{" "}
@@ -80,9 +80,8 @@ export default function SntHero({ onRegisterClick }: SntHeroProps) {
             bg={`linear-gradient(90deg, ${SNT_YELLOW} 0%, rgba(251, 191, 36,0.22) 85%, rgba(251, 191, 36,0) 100%)`}
             display="inline-block"
           >
-            Zeit & Ort
-          </Box>{" "}
-          deiner Arbeit{" "}
+            Zeit & Ort </Box><br></br>
+          deiner Arbeit
           <Box
             as="span"
             color="black"
@@ -93,7 +92,7 @@ export default function SntHero({ onRegisterClick }: SntHeroProps) {
             display="inline-block"
           >
             selbst bestimmen
-          </Box>{" "}
+          </Box>
           kannst.
         </Heading>
 
@@ -102,7 +101,7 @@ export default function SntHero({ onRegisterClick }: SntHeroProps) {
           textAlign="center"
           color="gray.700"
           fontSize={{ base: "sm", md: "lg" }}
-          lineHeight={{ base: "1.6", md: "1.7" }}
+          lineHeight={{ base: "1.2", md: "1.3" }}
           maxW={{ base: "95%", md: "80%" }}
           px={{ base: 2, md: 0 }}
         >
