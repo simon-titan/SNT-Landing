@@ -5,7 +5,7 @@ export const pricingConfig = {
    * true = 50% Rabatt aktiv (44.90€/247€)
    * false = Standardpreise (97€/467€)
    */
-  discountActive: false,
+  discountActive: true,
 
   /** Standardpreise (ohne Rabatt) */
   standard: {
