@@ -17,7 +17,7 @@ export default function NavbarConditional() {
   return (
     <>
       <Navbar type="website" />
-      <Box h={{ base: "88px", md: "100px" }} bg="white" />
+      <Box h={{ base: "56px", md: "64px" }} />
     </>
   );
 }

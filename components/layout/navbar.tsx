@@ -40,7 +40,7 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { useRouter, usePathname } from "next/navigation";
-import { List, Question, Fire, Sparkle } from "@phosphor-icons/react/dist/ssr";
+import { List, Question } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { CloseButton } from "../ui/close-button";
 
@@ -305,36 +305,6 @@ const MobileNavigation = () => {
 export const Navbar = ({ type }: { type: "website" | "app" }) => {
   return (
     <Box px="0" py="0" m="0" w="100vw" position="fixed" top="0" left="0" zIndex="sticky">
-      {/* Black Friday Banner */}
-      <Box
-          w="100vw"
-          bg="black"
-          color="white"
-          fontSize={{ base: "xs", md: "sm" }}
-          px="4"
-          py="3"
-          textAlign="center"
-          fontWeight="bold"
-          position="relative"
-          overflow="hidden"
-          borderBottom="1px solid"
-          borderColor={SNT_BLUE}
-      >
-          <HStack
-              justify="center"
-              align="center"
-              gap={2}
-              position="relative"
-              zIndex={1}
-          >
-              <Fire size={18} weight="fill" color={SNT_YELLOW} />
-              <Text>
-                  BLACK FRIDAY SPECIAL - <Text as="span" color={SNT_YELLOW} fontWeight="extrabold">50% RABATT</Text> - Bis zu 230€ sparen beim Lifetime-Plan!
-              </Text>
-              <Sparkle size={18} weight="fill" color={SNT_YELLOW} />
-          </HStack>
-      </Box>
-
       {/* Navbar */}
       <Box
         as="header"

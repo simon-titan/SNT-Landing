@@ -246,31 +246,6 @@ export default function LifetimeCheckoutPage() {
                         flexDirection="column"
                         gap={1}
                     >
-                        {/* Rabatt-Badge nur wenn aktiv */}
-                        {discountActive && pricing.originalPrice && (
-                            <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
-                                <Text
-                                    fontSize={{ base: "sm", sm: "md" }}
-                                    fontWeight="bold"
-                                    color="red.500"
-                                    textDecoration="line-through"
-                                >
-                                    {formatPrice(pricing.originalPrice)}
-                                </Text>
-                                <Box
-                                    bg="red.500"
-                                    color="white"
-                                    px={2}
-                                    py={0.5}
-                                    borderRadius="md"
-                                    fontSize="2xs"
-                                    fontWeight="bold"
-                                    whiteSpace="nowrap"
-                                >
-                                    {pricing.savingsAmount} gespart!
-                                </Box>
-                            </HStack>
-                        )}
                         <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
                         <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
                         <Text fontSize="xs" color="gray.600">Lebenslanger Zugang</Text>
@@ -391,31 +366,6 @@ export default function LifetimeCheckoutPage() {
                             flexDirection="column"
                             gap={1}
                         >
-                            {/* Rabatt-Badge nur wenn aktiv */}
-                            {discountActive && pricing.originalPrice && (
-                                <HStack gap={2} align="center" justify="center" flexWrap="wrap" mb={1}>
-                                    <Text
-                                        fontSize={{ base: "sm", sm: "md" }}
-                                        fontWeight="bold"
-                                        color="red.500"
-                                        textDecoration="line-through"
-                                    >
-                                        {formatPrice(pricing.originalPrice)}
-                                    </Text>
-                                    <Box
-                                        bg="red.500"
-                                        color="white"
-                                        px={2}
-                                        py={0.5}
-                                        borderRadius="md"
-                                        fontSize="2xs"
-                                        fontWeight="bold"
-                                        whiteSpace="nowrap"
-                                    >
-                                        {pricing.savingsAmount} gespart!
-                                    </Box>
-                                </HStack>
-                            )}
                             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">
                                 {formatPrice(pricing.price)}</Text>
                             <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>

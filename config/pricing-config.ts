@@ -2,10 +2,10 @@
 export const pricingConfig = {
   /**
    * Rabatt aktivieren/deaktivieren
-   * true = 50% Rabatt aktiv (44.90€/247€)
+   * true = Aktive Preise (47€/247€) - ohne Sale-Optik
    * false = Standardpreise (97€/467€)
    */
-  discountActive: false,
+  discountActive: true,
 
   /** Standardpreise (ohne Rabatt) */
   standard: {
@@ -48,17 +48,17 @@ export const pricingConfig = {
     },
   },
 
-  /** Rabatt-Preise (50% Rabatt) */
+  /** Aktive Preise (47€/247€) - ohne Sale-Optik */
   discount: {
     monthly: {
-      price: 44.90,
-      originalPrice: 97,
-      savings: "50%",
-      savingsAmount: "52.10€",
+      price: 47,
+      originalPrice: null as number | null, // Keine Sale-Optik, aber Logik bleibt erhalten
+      savings: null as string | null,
+      savingsAmount: null as string | null,
       label: "PRO MONAT",
       paypal: {
-        planId: "P-59C23375XF491315BNCBCDVQ",
-        containerId: "paypal-button-container-P-59C23375XF491315BNCBCDVQ",
+        planId: "P-86799084EE8763009NE273NY",
+        containerId: "paypal-button-container-P-86799084EE8763009NE273NY",
       },
       outseta: {
         planUid: "7ma651QE",
@@ -70,13 +70,13 @@ export const pricingConfig = {
     },
     lifetime: {
       price: 247,
-      originalPrice: 467,
-      savings: "50%",
-      savingsAmount: "220€",
+      originalPrice: null as number | null, // Keine Sale-Optik, aber Logik bleibt erhalten
+      savings: null as string | null,
+      savingsAmount: null as string | null,
       label: "EINMALIG",
       paypal: {
-        hostedButtonId: "68525GEP8BKRS",
-        containerId: "paypal-container-68525GEP8BKRS",
+        hostedButtonId: "WJFRTGKPWUZPG",
+        containerId: "paypal-container-WJFRTGKPWUZPG",
         sdkUrl: "https://www.paypal.com/sdk/js?client-id=BAA-0m5pkSxHufms7Bz99yWR1lzshrXB63L2g-cvYFfUsI1-ul1VcqCAsVudEICk3cLUAXx2VAsCFuuTHY&components=hosted-buttons&disable-funding=venmo&currency=EUR",
       },
       outseta: {

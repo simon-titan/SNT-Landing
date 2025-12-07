@@ -28,9 +28,7 @@ interface PricingTogglePropsWithModal extends PricingToggleProps {
 
 const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWithModal) => {
     const pricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
-    const savingsText = isDiscountActive() 
-        ? `Lifetime (${pricing.lifetime.savingsAmount} sparen!)`
-        : "Lifetime";
+    const savingsText = "Lifetime";
 
     return (
         <HStack
@@ -313,39 +311,6 @@ export function SntPremiumPricing() {
                             {/* Price */}
                             <Box p={6} textAlign="center" borderBottom="1px solid" borderColor="gray.100">
                                 <VStack gap={2} textAlign="center">
-                                    {/* Rabatt-Badge nur wenn Rabatt aktiv */}
-                                    {discountActive && currentPlan.originalPrice && (
-                                        <HStack 
-                                            gap={2} 
-                                            align="center" 
-                                            justify="center"
-                                            key="savings"
-                                            animation={`${keyframes({
-                                                "0%": { opacity: 0, transform: "scale(0.8) translateY(-10px)" },
-                                                "100%": { opacity: 1, transform: "scale(1) translateY(0)" }
-                                            })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both`}
-                                        >
-                                            <Text
-                                                fontSize="xl"
-                                                fontWeight="bold"
-                                                color="red.500"
-                                                textDecoration="line-through"
-                                            >
-                                                {formatPrice(currentPlan.originalPrice)}
-                                            </Text>
-                                            <Box
-                                                bg="red.500"
-                                                color="white"
-                                                px={3}
-                                                py={1}
-                                                borderRadius="md"
-                                                fontSize="xs"
-                                                fontWeight="bold"
-                                            >
-                                                {currentPlan.savingsAmount} gespart!
-                                            </Box>
-                                        </HStack>
-                                    )}
                                     <HStack gap={1} align="baseline" justify="center">
                                         <Text 
                                             fontSize="5xl" 
