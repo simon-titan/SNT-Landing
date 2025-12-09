@@ -85,8 +85,8 @@ function getButtonLabels() {
   
   if (discountActive) {
     return {
-      monthly: `Monatlich ${formatPrice(pricing.monthly.price)} (anstatt ${formatPrice(pricing.monthly.originalPrice!)})`,
-      lifetime: `Lifetime ${formatPrice(pricing.lifetime.price)} (anstatt ${formatPrice(pricing.lifetime.originalPrice!)})`
+      monthly: `Monatlich ${formatPrice(pricing.monthly.price)} `,
+      lifetime: `Lifetime ${formatPrice(pricing.lifetime.price)} `
     };
   }
   
