@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Text, VStack, SimpleGrid } from "@chakra-ui/react";
+import { Student, TrendUp, Trophy } from "@phosphor-icons/react/dist/ssr";
 
 const stats = [
   {
@@ -83,34 +84,19 @@ const useIntersectionObserver = (threshold: number = 0.1) => {
 
 const courses = [
   {
-    icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="16" stroke="#3b82f6" strokeWidth="3" fill="rgba(59, 130, 246, 0.1)"/>
-        <circle cx="20" cy="20" r="6" fill="#3b82f6"/>
-      </svg>
-    ),
+    icon: <Student size={40} weight="fill" color="#3b82f6" />,
     title: "Trading-Einsteiger ohne Vorkenntnisse",
     desc: "Wir begleiten dich vom absoluten Anfänger bis hin zum profitablen Vollzeit-Trader – Schritt für Schritt, praxisnah und verständlich.",
     link: "Ich bin Anfänger",
   },
   {
-    icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <rect x="6" y="6" width="28" height="28" rx="4" stroke="#3b82f6" strokeWidth="3" fill="rgba(59, 130, 246, 0.1)"/>
-        <rect x="14" y="14" width="12" height="12" rx="2" fill="#3b82f6"/>
-      </svg>
-    ),
+    icon: <TrendUp size={40} weight="fill" color="#3b82f6" />,
     title: "Fortgeschrittene Trader, die den nächsten Schritt machen wollen",
     desc: "Du hast bereits erste Erfahrungen im Trading gesammelt – wir helfen dir dabei, deine Strategie zu verfeinern, konstanter profitabel zu werden und den Schritt zum Vollzeit-Trader zu gehen.",
     link: "Ich bin ein fortgeschrittener Trader",
   },
   {
-    icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <polygon points="20,6 32,32 8,32" stroke="#3b82f6" strokeWidth="3" fill="rgba(59, 130, 246, 0.1)"/>
-        <polygon points="20,14 26,24 14,24" fill="#3b82f6"/>
-      </svg>
-    ),
+    icon: <Trophy size={40} weight="fill" color="#3b82f6" />,
     title: "Erfahrene Trader, die unsere Strategien erlernen möchten",
     desc: "Auch erfahrene Trader stoßen irgendwann an Grenzen. Wir geben dir tiefere Einblicke in unsere erprobten Strategien, die dir helfen, effizienter, zielgerichteter und profitabler zu traden. Denn: Wir begleiten Trader von null Erfahrung bis hin zum profitablen Vollzeit-Trader – und geben auch Profis den letzten Schliff.",
     link: "Ich bin ein erfahrener Trader",
@@ -232,8 +218,11 @@ export const CourseOverviewSection = () => {
                 borderRadius="xl"
                 bg="rgba(59, 130, 246, 0.15)"
                 border="1px solid rgba(59, 130, 246, 0.3)"
-                display="inline-block"
+                display="inline-flex"
+                alignItems="center"
+                justifyContent="center"
                 boxShadow="0 4px 12px rgba(59, 130, 246, 0.2)"
+                w="fit-content"
               >
                 {course.icon}
               </Box>
@@ -261,7 +250,14 @@ export const CourseOverviewSection = () => {
             </Text>
             <Box mt="auto" position="relative" zIndex={1}>
               <a
-                href="/checkout/lifetime"
+                href="#product-page-section"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const element = document.getElementById('product-page-section');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
                 style={{
                   fontWeight: 600,
                   color: '#3b82f6',
@@ -269,6 +265,7 @@ export const CourseOverviewSection = () => {
                   textDecoration: 'none',
                   transition: 'all 0.3s ease',
                   display: 'inline-block',
+                  cursor: 'pointer',
                 }}
                 onMouseOver={e => {
                   e.currentTarget.style.color = '#2563eb';

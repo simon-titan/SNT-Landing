@@ -1,6 +1,9 @@
 "use client";
 import React from "react";
-import { Box, Text, VStack, HStack, Stack, Image } from "@chakra-ui/react";
+import { Box, Text, VStack, HStack, Stack, Image, Link } from "@chakra-ui/react";
+import { SiInstagram, SiTiktok } from "react-icons/si";
+import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { projectConfig } from "@/config";
 
 export interface FounderSectionProps {
   image: string;
@@ -12,26 +15,24 @@ export interface FounderSectionProps {
   reverse?: boolean;
 }
 
-const BlueCheckIcon = () => (
-  <Box position="relative">
-    <svg 
-      width="20" 
-      height="20" 
-      viewBox="0 0 20 20" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg" 
-      style={{ display: 'inline-block', verticalAlign: 'middle' }}
-    >
-      <circle cx="10" cy="10" r="9" fill="rgba(59, 130, 246, 0.2)" stroke="rgba(59, 130, 246, 0.4)" strokeWidth="1"/>
-      <path 
-        d="M6 10.5L8.5 13L14 7.5" 
-        stroke="#3b82f6" 
-        strokeWidth="2.5" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-        filter="drop-shadow(0 0 4px rgba(59, 130, 246, 0.6))"
-      />
-    </svg>
+const SimpleCheckIcon = () => (
+  <Box
+    w="20px"
+    h="20px"
+    borderRadius="full"
+    bg="rgba(255, 255, 255, 0.1)"
+    border="1px solid rgba(255, 255, 255, 0.2)"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    flexShrink={0}
+  >
+    <Box
+      w="8px"
+      h="8px"
+      borderRadius="full"
+      bg="white"
+    />
   </Box>
 );
 
@@ -44,137 +45,158 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
   highlights = [],
   reverse = false,
 }) => {
+  const socialLinks = [
+    { 
+      href: projectConfig.links.instagram, 
+      icon: SiInstagram,
+      label: "Instagram"
+    },
+    { 
+      href: projectConfig.links.tiktok, 
+      icon: SiTiktok,
+      label: "TikTok"
+    },
+  ];
+
   return (
     <Box 
       as="section" 
-      py={{ base: 16, md: 32 }} 
+      py={{ base: 12, md: 20 }} 
       px={{ base: 4, md: 8 }} 
       w="full" 
-      display="flex" 
-      justifyContent="center" 
-      alignItems="center"
       bg="black"
-      position="relative"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
     >
       <Box 
-        bg="rgba(10, 14, 10, 0.7)" 
-        backdropFilter="blur(20px)"
-        borderRadius="2xl" 
-        boxShadow="0 20px 60px 0 rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(59, 130, 246, 0.1)" 
-        border="1px solid rgba(59, 130, 246, 0.25)"
         w="full" 
-        maxW="5xl" 
-        px={{ base: 4, md: 10 }} 
-        py={{ base: 8, md: 12 }}
-        position="relative"
-        _hover={{
-          boxShadow: "0 25px 80px 0 rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(59, 130, 246, 0.2)"
-        }}
-        transition="all 0.3s ease"
+        maxW="7xl" 
+        mx="auto"
       >
         <Stack
-          direction={{ base: "column", md: reverse ? "row-reverse" : "row" }}
-          align="center"
-          gap={{ base: 8, md: 16 }}
-          w="full"
+          direction={{ base: "column", lg: reverse ? "row-reverse" : "row" }}
+          align={{ base: "center", lg: "start" }}
           justify="center"
+          gap={{ base: 8, lg: 12 }}
+          w="full"
         >
-          {/* Profilbild */}
-          <VStack flexShrink={0} gap={4} position="relative">
+          {/* Profilbild - Größer */}
+          <VStack flexShrink={0} gap={4} w={{ base: "full", lg: "auto" }}>
             <Box
-              w="280px"
-              h="380px"
+              w={{ base: "280px", md: "360px", lg: "420px" }}
+              h={{ base: "380px", md: "480px", lg: "560px" }}
               position="relative"
-              borderRadius="2xl"
+              borderRadius="xl"
               overflow="hidden"
-              background="linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(37, 99, 235, 0.3))"
-              p="4px"
-              boxShadow="0 20px 60px 0 rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(59, 130, 246, 0.2) inset"
-              _hover={{
-                transform: "translateY(-4px) scale(1.02)",
-                boxShadow: "0 30px 80px 0 rgba(59, 130, 246, 0.5), 0 0 0 1px rgba(59, 130, 246, 0.3) inset"
-              }}
-              transition="all 0.4s ease"
+              bg="rgba(255, 255, 255, 0.05)"
+              border="1px solid rgba(255, 255, 255, 0.1)"
             >
-              <Box
+              <Image
+                src={image}
+                alt={typeof name === 'string' ? name : 'Founder'}
                 w="full"
                 h="full"
-                borderRadius="xl"
-                overflow="hidden"
-                position="relative"
-              >
-                <Image
-                  src={image}
-                  alt={name as string}
-                  w="full"
-                  h="full"
-                  objectFit="cover"
-                />
-              </Box>
+                objectFit="cover"
+              />
             </Box>
           </VStack>
 
-          <VStack align="start" gap={6} maxW="lg" w="full">
-            <Box>
-              <Text 
-                color="blue.500" 
-                fontWeight="bold" 
-                fontSize="sm" 
-                textTransform="uppercase" 
-                letterSpacing="wider"
-              >
-                {subtitle}
-              </Text>
-            </Box>
+          {/* Content */}
+          <VStack align={{ base: "center", lg: "start" }} gap={6} flex={1} maxW={{ base: "full", lg: "600px" }}>
+            {/* Subtitle */}
+            <Text 
+              color="gray.400" 
+              fontWeight="medium" 
+              fontSize="sm" 
+              textTransform="uppercase" 
+              letterSpacing="wider"
+              textAlign={{ base: "center", lg: "left" }}
+            >
+              {subtitle}
+            </Text>
             
+            {/* Name */}
             <Text 
               as="h2" 
               fontWeight="bold" 
-              fontSize={{ base: "2xl", md: "4xl" }} 
+              fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }} 
               color="white"
               lineHeight="tight"
+              textAlign={{ base: "center", lg: "left" }}
             >
               {name}
             </Text>
             
+            {/* Description - Cleaner */}
             <Box 
               fontSize="md" 
-              color="white" 
+              color="gray.300" 
               lineHeight="1.7"
-              bg="rgba(59, 130, 246, 0.08)"
-              p={6}
-              borderRadius="xl"
-              border="1px solid rgba(59, 130, 246, 0.2)"
+              textAlign={{ base: "center", lg: "left" }}
             >
               {description}
             </Box>
             
-            <VStack align="start" gap={3} mt={6} w="full">
-              <Text 
-                fontSize="lg" 
-                fontWeight="bold" 
-                color="blue.500" 
-                mb={2}
-              >
-                Expertise & Erfolge:
-              </Text>
-              {checklist.map((item, idx) => (
-                <HStack key={idx} gap={3} fontSize="md" align="start" w="full">
-                  <Box mt={1} flexShrink={0}>
-                    <BlueCheckIcon />
-                  </Box>
-                  <Text 
-                    color="gray.200" 
-                    lineHeight="1.6"
-                    _hover={{ color: "white" }}
-                    transition="color 0.2s ease"
-                    fontSize="md"
+            {/* Checklist - Simplified */}
+            {checklist.length > 0 && (
+              <VStack align={{ base: "center", lg: "start" }} gap={2.5} w="full" mt={2}>
+                <Text 
+                  fontSize="md" 
+                  fontWeight="bold" 
+                  color="white" 
+                  mb={2}
+                  textAlign={{ base: "center", lg: "left" }}
+                >
+                  Expertise & Erfolge:
+                </Text>
+                {checklist.map((item, idx) => (
+                  <HStack key={idx} gap={3} align="center" w="full" justify={{ base: "center", lg: "flex-start" }}>
+                    <CheckCircle size={18} color="white" weight="fill" />
+                    <Text 
+                      color="gray.300" 
+                      lineHeight="1.6"
+                      fontSize="sm"
+                      textAlign={{ base: "center", lg: "left" }}
+                    >
+                      {item}
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            )}
+
+            {/* Social Media Links */}
+            <HStack gap={4} mt={4} justify={{ base: "center", lg: "flex-start" }}>
+              {socialLinks.map(({ href, icon: Icon, label }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  _hover={{ opacity: 0.7 }}
+                  transition="opacity 0.2s ease"
+                >
+                  <Box
+                    w="44px"
+                    h="44px"
+                    borderRadius="full"
+                    bg="rgba(255, 255, 255, 0.1)"
+                    border="1px solid rgba(255, 255, 255, 0.2)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    _hover={{
+                      bg: "rgba(255, 255, 255, 0.15)",
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                    }}
+                    transition="all 0.2s ease"
                   >
-                    {item}
-                  </Text>
-                </HStack>
+                    <Icon size={22} color="white" />
+                  </Box>
+                </Link>
               ))}
-            </VStack>
+            </HStack>
           </VStack>
         </Stack>
       </Box>
@@ -182,4 +204,4 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
   );
 };
 
-export default FounderSection; 
+export default FounderSection;

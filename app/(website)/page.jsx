@@ -1,33 +1,32 @@
-import { Heading, Stack, VStack, HStack, Text, SimpleGrid, Box, } from "@chakra-ui/react";
+import { Heading, Stack, VStack, HStack, Text, SimpleGrid, Box, Image } from "@chakra-ui/react";
 import { Section } from "@/components/layout/section";
 import { generateMetadata } from "@/utils/metadata";
-import { UserCircle, CreditCard, Palette, EnvelopeSimple, Lifebuoy, Cube, HandWaving, Lightning, RocketLaunch, Money, DeviceMobile, UsersThree, Target, Sparkle, } from "@phosphor-icons/react/dist/ssr";
+import { UserCircle, CreditCard, Palette, EnvelopeSimple, Lifebuoy, Cube, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { ReviewMarquee } from "@/components/ui/ReviewMarquee";
 import { ResultsMarquee } from "@/components/ui/ResultsMarquee";
 import { FounderSection } from "@/components/ui/FounderSection";
 import { CourseOverviewSection } from "@/components/ui/CourseOverviewSection";
 import { SntPremiumPricing } from "@/components/ui/snt-premium-pricing";
-import { LandingHeroWithVideo } from "@/components/hero/landing-hero-with-video";
-// Removed BrandedVimeoPlayer usage from this page; available in landing-hero-with-video
-// import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
+import { MobilePricingFooter } from "@/components/ui/mobile-pricing-footer";
+import { ProductPageSection } from "@/components/ui/product-page-section";
 export const metadata = generateMetadata({
     title: "Home",
     description: "Deserunt veniam voluptate aliqua consectetur laboris voluptate est labore qui commodo.",
 });
 export default async function Page() {
     return (<>
-      <LandingHeroWithVideo />
+      {/* Product Page Section - Neue Hero-Section */}
+      <ProductPageSection />
       
-      <ResultsMarquee />
+      {/* Mobile Pricing Footer */}
+      <MobilePricingFooter />
+      
       
       {/* Glow Trenner */}
-      
       <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
       
       {/* Project 30 Pricing Section - Direkt unter Community Stats */}
-      <Box id="project30-pricing">
-      <SntPremiumPricing />
-      </Box>
+    
       
       {/* Glow Trenner */}
       <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
@@ -37,83 +36,109 @@ export default async function Page() {
       {/* Glow Trenner */}
       <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
       
-      <FounderSection image="/personal/emre-2.jpg" name={<>Hi, Ich bin Emre <HandWaving size={32} style={{ display: 'inline-block', verticalAlign: 'middle' }}/></>} subtitle="MEET THE FOUNDER" description={<Box fontSize="md" color="white">
+      <FounderSection image="/personal/emre-2.jpg" name={<Box
+        as="span"
+        background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+        color="white"
+        px={2}
+        py={1}
+        borderRadius="md"
+        fontWeight="bold"
+        display="inline-block"
+        border="1px solid rgba(59, 130, 246, 0.35)"
+        boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+        backdropFilter="blur(6px)"
+      >
+        Hi, Ich bin Emre
+      </Box>} subtitle="MEET THE FOUNDER" description={<Box fontSize="md" color="white">
             <Text mb={4} lineHeight="1.6">
-              Meine Reise begann nach dem <Text as="span" fontWeight="semibold" color="#3b82f6">Abitur</Text> – ursprünglich wollte ich eine eigene <Text as="span" fontWeight="semibold" color="#3b82f6">Brand aufbauen</Text>. Doch als ich das enorme <Text as="span" fontWeight="semibold" color="#3b82f6">Potenzial im Trading</Text> erkannt habe, habe ich alles andere losgelassen und mich zu <Text as="span" fontWeight="semibold" color="#3b82f6">100 % dem Trading</Text> gewidmet.
+              Meine Reise begann nach dem Abitur – ursprünglich wollte ich eine eigene Brand aufbauen. Doch als ich das enorme Potenzial im Trading erkannt habe, habe ich alles andere losgelassen und mich zu 100 % dem Trading gewidmet.
             </Text>
             
             <Text mb={6} lineHeight="1.6">
-              Die ersten Jahre waren intensiv. Ich habe nicht nur die <Text as="span" fontWeight="semibold" color="#3b82f6">Märkte studiert</Text>, sondern auch mich selbst – <Text as="span" fontWeight="semibold" color="#3b82f6">mentale Stärke, Disziplin und Unternehmertum</Text> wurden zu Schlüsselkomponenten auf meinem Weg.
+              Die ersten Jahre waren intensiv. Ich habe nicht nur die Märkte studiert, sondern auch mich selbst – mentale Stärke, Disziplin und Unternehmertum wurden zu Schlüsselkomponenten auf meinem Weg.
             </Text>
             
-            {/* Cooler "3 Jahre später" Bereich */}
-            <Box position="relative" my={8} p={6} bg="rgba(59, 130, 246, 0.1)" borderRadius="xl" border="2px solid rgba(59, 130, 246, 0.3)" boxShadow="0 8px 32px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(59, 130, 246, 0.1)" _before={{
-                content: '""',
-                position: "absolute",
-                top: "-1px",
-                left: "20px",
-                right: "20px",
-                height: "2px",
-                background: "linear-gradient(90deg, transparent, #3b82f6, transparent)",
-                borderRadius: "full"
-            }}>
-              <HStack justify="center" mb={4}>
-                <Lightning size={32} color="#3b82f6"/>
-                <Text fontSize="xl" fontWeight="bold" color="#3b82f6" textAlign="center" textShadow="0 0 15px rgba(59, 130, 246, 0.6)" mx={4}>
-                3 Jahre später...
-                </Text>
-                <Lightning size={32} color="#3b82f6"/>
-              </HStack>
+            {/* "3 Jahre später" Bereich - Dezenter */}
+            <Box my={6} p={5} bg="rgba(255, 255, 255, 0.03)" borderRadius="lg" border="1px solid rgba(255, 255, 255, 0.1)">
+              <Text fontSize="md" fontWeight="medium" color="white" mb={4} textAlign="center">
+                <Box
+                  as="span"
+                  background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+                  color="white"
+                  px={2}
+                  py={1}
+                  borderRadius="md"
+                  fontWeight="bold"
+                  display="inline-block"
+                  border="1px solid rgba(59, 130, 246, 0.35)"
+                  boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+                  backdropFilter="blur(6px)"
+                >
+                  3 Jahre später...
+                </Box>
+              </Text>
             
-              <VStack align="start" gap={3}>
+              <VStack align="start" gap={2.5}>
                 <HStack align="center" gap={3}>
-                  <RocketLaunch size={24} color="#3b82f6"/>
-                  <Text color="white" fontSize="md">
-                    Vollzeit <Text as="span" fontWeight="bold" color="#3b82f6">Daytrader, Scalper & Investor</Text>
+                  <CheckCircle size={18} color="white" weight="fill" />
+                  <Text color="gray.300" fontSize="sm">
+                    Vollzeit Daytrader, Scalper & Investor
                   </Text>
                 </HStack>
                 <HStack align="center" gap={3}>
-                  <Money size={24} color="#3b82f6"/>
-                  <Text color="white" fontSize="md">
-                    <Text as="span" fontWeight="bold" color="#3b82f6">Mehrfach funded</Text> bei verschiedenen Propfirms mit <Text as="span" fontWeight="bold" color="#3b82f6">mehreren tausenden $ von Auszahlungen</Text>
+                  <CheckCircle size={18} color="white" weight="fill" />
+                  <Text color="gray.300" fontSize="sm">
+                    Mehrfach funded bei verschiedenen Propfirms mit mehreren tausenden $ von Auszahlungen
                   </Text>
                 </HStack>
                 <HStack align="center" gap={3}>
-                  <DeviceMobile size={24} color="#3b82f6"/>
-                  <Text color="white" fontSize="md">
-                    Über <Text as="span" fontWeight="bold" color="#3b82f6">10.000 Follower</Text> auf Social Media
+                  <CheckCircle size={18} color="white" weight="fill" />
+                  <Text color="gray.300" fontSize="sm">
+                    Über 10.000 Follower auf Social Media
                   </Text>
                 </HStack>
                 <HStack align="center" gap={3}>
-                  <UsersThree size={24} color="#3b82f6"/>
-                  <Text color="white" fontSize="md">
-                    Aufbau einer <Text as="span" fontWeight="bold" color="#3b82f6">großen geschlossenen Community</Text> mit echten Gleichgesinnten
+                  <CheckCircle size={18} color="white" weight="fill" />
+                  <Text color="gray.300" fontSize="sm">
+                    Aufbau einer großen geschlossenen Community mit echten Gleichgesinnten
                   </Text>
                 </HStack>
                 <HStack align="center" gap={3}>
-                  <Target size={24} color="#3b82f6"/>
-                  <Text color="white" fontSize="md">
-                    Gemeinsam mit Ali über <Text as="span" fontWeight="bold" color="#3b82f6">1.000 Menschen im Trading ausgebildet</Text>
+                  <CheckCircle size={18} color="white" weight="fill" />
+                  <Text color="gray.300" fontSize="sm">
+                    Gemeinsam mit Ali über 1.000 Menschen im Trading ausgebildet
                   </Text>
                 </HStack>
-                <HStack align="center" gap={3}>
-                  <Sparkle size={24} color="#3b82f6"/>
-                  <Text color="white" fontSize="md" fontStyle="italic">
-                    Unsere Mission: anderen zeigen, wie sie strukturiert und professionell ihre eigene Trading-Reise starten können
-                  </Text>
-                </HStack>
+                 <Text color="white" fontSize="sm" fontWeight="bold" textAlign="left">
+                   <Box
+                     as="span"
+                     background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+                     color="white"
+                     px={2}
+                     py={1}
+                     borderRadius="md"
+                     fontWeight="bold"
+                     display="inline-block"
+                     border="1px solid rgba(59, 130, 246, 0.35)"
+                     boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+                     backdropFilter="blur(6px)"
+                   >
+                     UNSERE MISSION : anderen zeigen, wie sie strukturiert und professionell ihre eigene Trading-Reise starten können !
+                   </Box>
+                 </Text>
             </VStack>
             </Box>
             
             <Text mb={4} lineHeight="1.6">
-              Wenn du das Ganze ernst meinst und bereit bist, <Text as="span" fontWeight="semibold" color="#3b82f6">in dich selbst zu investieren</Text> – dann bist du hier genau richtig.
+              Wenn du das Ganze ernst meinst und bereit bist, in dich selbst zu investieren – dann bist du hier genau richtig.
             </Text>
             
             <Text mb={4} lineHeight="1.6">
-              Hier findest du kein Bla-Bla, sondern <Text as="span" fontWeight="semibold" color="#3b82f6">echte Ergebnisse, echte Strategien und ein echtes Netzwerk</Text>.
+              Hier findest du kein Bla-Bla, sondern echte Ergebnisse, echte Strategien und ein echtes Netzwerk.
             </Text>
             
-            <Text fontWeight="bold" fontSize="lg" color="#3b82f6" textShadow="0 0 10px rgba(59, 130, 246, 0.4)">
+            <Text fontWeight="bold" fontSize="lg" color="white">
               Starte jetzt – dein Trading-Weg beginnt hier.
             </Text>
           </Box>} checklist={[
@@ -138,7 +163,7 @@ export default async function Page() {
             </Text>
             <Heading fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold" color="white" textShadow="0 2px 4px rgba(0,0,0,0.3)">
               Bring dein Trading aufs{' '}
-              <Box as="span" background="linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent 95%)" color="#3b82f6" px={3} py={1} borderRadius="md" fontWeight="bold" display="inline-block" border="1px solid rgba(59, 130, 246, 0.4)" boxShadow="0 0 20px rgba(59, 130, 246, 0.3)" textShadow="0 0 15px rgba(59, 130, 246, 0.6)">
+              <Box as="span" background="linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent 95%)" color="white" px={3} py={1} borderRadius="md" fontWeight="bold" display="inline-block" border="1px solid rgba(59, 130, 246, 0.4)" boxShadow="0 0 20px rgba(59, 130, 246, 0.3)" textShadow="0 0 15px rgba(59, 130, 246, 0.6)">
                 nächste Level.
               </Box>
             </Heading>
@@ -177,8 +202,14 @@ export default async function Page() {
                   </VStack>
                 </Box>
                 <Box flexShrink={0} display={{ base: "none", md: "block" }}>
-                  <Box w="120px" h="120px" bg="rgba(59, 130, 246, 0.1)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.3)" display="flex" alignItems="center" justifyContent="center">
-                    <Text fontSize="3xl">📚</Text>
+                  <Box w="180px" h="180px" borderRadius="xl" overflow="hidden">
+                    <Image
+                      src="/assets/VORTEILE/V1.png"
+                      alt="Phase 1"
+                      w="100%"
+                      h="100%"
+                      objectFit="cover"
+                    />
                   </Box>
                 </Box>
               </Stack>
@@ -216,8 +247,14 @@ export default async function Page() {
                   </VStack>
                 </Box>
                 <Box flexShrink={0} display={{ base: "none", md: "block" }}>
-                  <Box w="120px" h="120px" bg="rgba(59, 130, 246, 0.1)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.3)" display="flex" alignItems="center" justifyContent="center">
-                    <Text fontSize="3xl">🎯</Text>
+                  <Box w="180px" h="180px" borderRadius="xl" overflow="hidden">
+                    <Image
+                      src="/assets/VORTEILE/V2.png"
+                      alt="Phase 2"
+                      w="100%"
+                      h="100%"
+                      objectFit="cover"
+                    />
                   </Box>
                 </Box>
               </Stack>
@@ -255,8 +292,14 @@ export default async function Page() {
                   </VStack>
                 </Box>
                 <Box flexShrink={0} display={{ base: "none", md: "block" }}>
-                  <Box w="120px" h="120px" bg="rgba(59, 130, 246, 0.15)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.4)" display="flex" alignItems="center" justifyContent="center" boxShadow="0 8px 24px rgba(59, 130, 246, 0.2)">
-                    <Text fontSize="3xl">🚀</Text>
+                  <Box w="180px" h="180px" borderRadius="xl" overflow="hidden">
+                    <Image
+                      src="/assets/VORTEILE/V3.png"
+                      alt="Phase 3"
+                      w="100%"
+                      h="100%"
+                      objectFit="cover"
+                    />
                   </Box>
                 </Box>
               </Stack>
@@ -265,128 +308,11 @@ export default async function Page() {
         </VStack>
       </Section>
       
-      {/* Was alles beinhaltet ist Section */}
-      <Section size="lg" py={{ base: 16, md: 20 }}>
-        <VStack gap={12} maxW="6xl" mx="auto" position="relative" zIndex={1}>
-          <VStack gap={4} textAlign="center">
-            <Text color="#3b82f6" fontWeight="bold" fontSize="sm" textTransform="uppercase" letterSpacing="wider" textShadow="0 0 10px rgba(59, 130, 246, 0.5)">
-              Alles inklusive
-            </Text>
-            <Heading fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold" color="white" textShadow="0 2px 4px rgba(0,0,0,0.3)" textAlign="center">
-              Das ist alles in der{' '}
-              <Box as="span" background="linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent 95%)" color="#3b82f6" px={3} py={1} borderRadius="md" fontWeight="bold" display="inline-block" border="1px solid rgba(59, 130, 246, 0.4)" boxShadow="0 0 20px rgba(59, 130, 246, 0.3)" textShadow="0 0 15px rgba(59, 130, 246, 0.6)">
-                Ausbildung
-              </Box>{' '}
-              enthalten
-            </Heading>
-          </VStack>
-          
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={6} w="full">
-            {/* Community */}
-            <Box bg="rgba(10, 14, 10, 0.7)" backdropFilter="blur(16px)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.3)" boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)" p={6} textAlign="center" _hover={{
-            transform: "translateY(-4px)",
-            boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
-            borderColor: "rgba(59, 130, 246, 0.4)"
-        }} transition="all 0.3s ease">
-              <Box w="60px" h="60px" bg="rgba(59, 130, 246, 0.15)" borderRadius="full" display="flex" alignItems="center" justifyContent="center" mx="auto" mb={4} border="1px solid rgba(59, 130, 246, 0.3)">
-                <Text fontSize="2xl">👥</Text>
-              </Box>
-              <Text fontWeight="bold" fontSize="lg" color="#3b82f6" mb={2} textShadow="0 0 8px rgba(59, 130, 246, 0.4)">
-                Community
-              </Text>
-              <Text fontSize="sm" color="gray.200" lineHeight="1.5">
-                Direkter Austausch mit Mentoren & Teilnehmern in einer starken Gemeinschaft
-              </Text>
-            </Box>
-            
-            {/* Trading Tools */}
-            <Box bg="rgba(10, 14, 10, 0.7)" backdropFilter="blur(16px)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.3)" boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)" p={6} textAlign="center" _hover={{
-            transform: "translateY(-4px)",
-            boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
-            borderColor: "rgba(59, 130, 246, 0.4)"
-        }} transition="all 0.3s ease">
-              <Box w="60px" h="60px" bg="rgba(59, 130, 246, 0.15)" borderRadius="full" display="flex" alignItems="center" justifyContent="center" mx="auto" mb={4} border="1px solid rgba(59, 130, 246, 0.3)">
-                <Text fontSize="2xl">🛠️</Text>
-              </Box>
-              <Text fontWeight="bold" fontSize="lg" color="#3b82f6" mb={2} textShadow="0 0 8px rgba(59, 130, 246, 0.4)">
-                Trading Tools
-              </Text>
-              <Text fontSize="sm" color="gray.200" lineHeight="1.5">
-                Exklusive Profi-Tools, Tracker & individuelle Indikatoren für deinen Vorteil
-              </Text>
-            </Box>
-            
-            {/* Lernplattform */}
-            <Box bg="rgba(10, 14, 10, 0.7)" backdropFilter="blur(16px)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.3)" boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)" p={6} textAlign="center" _hover={{
-            transform: "translateY(-4px)",
-            boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
-            borderColor: "rgba(59, 130, 246, 0.4)"
-        }} transition="all 0.3s ease">
-              <Box w="60px" h="60px" bg="rgba(59, 130, 246, 0.15)" borderRadius="full" display="flex" alignItems="center" justifyContent="center" mx="auto" mb={4} border="1px solid rgba(59, 130, 246, 0.3)">
-                <Text fontSize="2xl">🎓</Text>
-              </Box>
-              <Text fontWeight="bold" fontSize="lg" color="#3b82f6" mb={2} textShadow="0 0 8px rgba(59, 130, 246, 0.4)">
-                Lernplattform
-              </Text>
-              <Text fontSize="sm" color="gray.200" lineHeight="1.5">
-                Strukturiertes Video-Training von Grundlagen bis zu Profi-Strategien
-              </Text>
-            </Box>
-            
-            {/* Live Mentoring */}
-            <Box bg="rgba(10, 14, 10, 0.7)" backdropFilter="blur(16px)" borderRadius="xl" border="1px solid rgba(59, 130, 246, 0.3)" boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.15)" p={6} textAlign="center" _hover={{
-            transform: "translateY(-4px)",
-            boxShadow: "0 12px 40px 0 rgba(59, 130, 246, 0.25)",
-            borderColor: "rgba(59, 130, 246, 0.4)"
-        }} transition="all 0.3s ease">
-              <Box w="60px" h="60px" bg="rgba(59, 130, 246, 0.15)" borderRadius="full" display="flex" alignItems="center" justifyContent="center" mx="auto" mb={4} border="1px solid rgba(59, 130, 246, 0.3)">
-                <Text fontSize="2xl">🎥</Text>
-              </Box>
-              <Text fontWeight="bold" fontSize="lg" color="#3b82f6" mb={2} textShadow="0 0 8px rgba(59, 130, 246, 0.4)">
-                Live-Mentoring
-              </Text>
-              <Text fontSize="sm" color="gray.200" lineHeight="1.5">
-                Exklusive Live-Sessions mit erfolgreichen Tradern für persönliche Betreuung
-              </Text>
-            </Box>
-          </SimpleGrid>
-        </VStack>
-      </Section>
+      
       
 
 
       
     </>);
 }
-const features = [
-    {
-        icon: <UserCircle />,
-        title: "Authentication",
-        description: "Securly login in users and protect pages and elements",
-    },
-    {
-        icon: <CreditCard />,
-        title: "Payments",
-        description: "Setup one-time, subscription or usage billing for individual or teams",
-    },
-    {
-        icon: <Palette />,
-        title: "Theming",
-        description: "Customizable theme to quickly change the look and feel of your app",
-    },
-    {
-        icon: <EnvelopeSimple />,
-        title: "Email Marketing",
-        description: "Automated emails, broadcasts and drip campaigns to nurture users and drive sales",
-    },
-    {
-        icon: <Lifebuoy />,
-        title: "Support Desk",
-        description: "Build-in support ticket system to make customers smile and keep them engaged",
-    },
-    {
-        icon: <Cube />,
-        title: "Design System",
-        description: "Component library by Chakra UI to build anything you want",
-    },
-];
+

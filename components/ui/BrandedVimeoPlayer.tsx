@@ -48,7 +48,10 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
     const player = new Player(containerRef.current.querySelector("iframe"));
     playerRef.current = player;
 
-    player.on("play", () => setPlaying(true));
+    player.on("play", () => {
+      setPlaying(true);
+      handleUserInteraction();
+    });
     player.on("pause", () => {
       setPlaying(false);
       setShowControls(true); // Always show controls when paused
@@ -62,9 +65,28 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
     });
     player.getDuration().then((d: number) => setDuration(d));
 
-    // Initial Setup
+    // Initial Setup - Video starts with autoplay=1 in iframe
     player.setVolume(0);
-    player.play().catch(() => {});
+    
+    // Check initial playing state after iframe loads
+    // Since autoplay=1 is set, video should be playing
+    setTimeout(() => {
+      player.getPaused().then((paused: boolean) => {
+        if (!paused) {
+          // Video is playing (autoplay worked)
+          setPlaying(true);
+          setShowControls(false);
+        } else {
+          // Video is paused (autoplay blocked or failed)
+          setPlaying(false);
+          setShowControls(true);
+        }
+      }).catch(() => {
+        // If check fails, assume video is playing (autoplay)
+        setPlaying(true);
+        setShowControls(false);
+      });
+    }, 1000);
 
     return () => {
       player.unload();
@@ -72,13 +94,21 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
     };
   }, []);
 
-  const handlePlayPause = (e?: React.MouseEvent) => {
+  const handlePlayPause = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (!playerRef.current) return;
-    if (playing) {
-      playerRef.current.pause();
-    } else {
-      playerRef.current.play();
+    try {
+      if (playing) {
+        await playerRef.current.pause();
+        setPlaying(false);
+        setShowControls(true);
+      } else {
+        await playerRef.current.play();
+        setPlaying(true);
+        handleUserInteraction();
+      }
+    } catch (error) {
+      console.error("Error toggling play/pause:", error);
     }
   };
 
@@ -165,10 +195,11 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
         right="0"
         bg="linear-gradient(to top, rgba(0,0,0,0.9), transparent)"
         p={4}
-        opacity={showControls ? 1 : 0}
+        opacity={showControls || !playing ? 1 : 0}
         transition="opacity 0.3s"
         zIndex={10}
         onClick={(e) => e.stopPropagation()} // Keep controls active when clicked
+        pointerEvents={showControls || !playing ? "auto" : "none"}
       >
         <HStack gap={4} align="center" mb={2}>
           {/* Play/Pause Button */}
@@ -228,7 +259,7 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
       </Box>
 
       {/* Centered Play Button (Paused State) */}
-      {(!playing || !showControls && !playing) && (
+      {!playing && (
         <Button
           onClick={handlePlayPause}
           position="absolute"
