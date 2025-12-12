@@ -519,7 +519,7 @@ export function ProductPageSection() {
                 objectFit="cover"
               />
             ) : (
-              <BrandedVimeoPlayer videoId="1139395784" />
+              <BrandedVimeoPlayer videoId="1104311683" />
             )}
           </Box>
 
