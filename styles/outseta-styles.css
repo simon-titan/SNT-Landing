@@ -1,3 +1,7 @@
 .o--Trigger--trigger {
 display: none !important;
 }
+
+.o--text-sm.o--text-secondary {
+ display: none !important;
+}

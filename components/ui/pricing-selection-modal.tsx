@@ -756,7 +756,7 @@ export function PricingSelectionModal({
             <Box w="32px" /> // Spacer for alignment
           )}
           <Heading fontSize="xl" color="white" fontWeight="bold" flex={1} textAlign="center">
-          {currentView === "checkout" ? "Checkout" : "WÄHLE DEINEN PLAN"}
+          {currentView === "checkout" ? "" : "WÄHLE DEINEN PLAN"}
           </Heading>
           <IconButton
             aria-label="Schließen"
