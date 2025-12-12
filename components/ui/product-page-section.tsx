@@ -505,7 +505,7 @@ export function ProductPageSection() {
                 objectFit="cover"
               />
             ) : (
-              <BrandedVimeoPlayer videoId="1104311683" />
+              <BrandedVimeoPlayer videoId="1104311683" autoplay={true} muted={true} />
             )}
           </Box>
 
@@ -836,7 +836,7 @@ export function ProductPageSection() {
                   objectFit="cover"
                 />
               ) : (
-                <BrandedVimeoPlayer videoId="1139395784" />
+                <BrandedVimeoPlayer videoId="1139395784" autoplay={true} muted={true} />
               )}
             </Box>
 

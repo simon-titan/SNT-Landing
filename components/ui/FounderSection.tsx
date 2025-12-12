@@ -140,24 +140,26 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
             
             {/* Checklist - Simplified */}
             {checklist.length > 0 && (
-              <VStack align={{ base: "center", lg: "start" }} gap={2.5} w="full" mt={2}>
+              <VStack align={{ base: "start", lg: "start" }} gap={2.5} w="full" mt={2}>
                 <Text 
                   fontSize="md" 
                   fontWeight="bold" 
                   color="white" 
                   mb={2}
-                  textAlign={{ base: "center", lg: "left" }}
+                  textAlign={{ base: "left", lg: "left" }}
                 >
                   Expertise & Erfolge:
                 </Text>
                 {checklist.map((item, idx) => (
-                  <HStack key={idx} gap={3} align="center" w="full" justify={{ base: "center", lg: "flex-start" }}>
-                    <CheckCircle size={18} color="white" weight="fill" />
+                  <HStack key={idx} gap={3} align="start" w="full" justify={{ base: "flex-start", lg: "flex-start" }}>
+                    <Box flexShrink={0} pt={1}>
+                      <CheckCircle size={18} color="white" weight="fill" />
+                    </Box>
                     <Text 
                       color="gray.300" 
                       lineHeight="1.6"
                       fontSize="sm"
-                      textAlign={{ base: "center", lg: "left" }}
+                      textAlign={{ base: "left", lg: "left" }}
                     >
                       {item}
                     </Text>

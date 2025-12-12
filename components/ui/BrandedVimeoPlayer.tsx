@@ -9,14 +9,20 @@ import Player from "@vimeo/player";
 
 interface BrandedVimeoPlayerProps {
   videoId: string;
+  autoplay?: boolean;
+  muted?: boolean;
 }
 
-export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId }) => {
-  const [playing, setPlaying] = useState(false);
+export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ 
+  videoId, 
+  autoplay = true, 
+  muted: initialMuted = true 
+}) => {
+  const [playing, setPlaying] = useState(autoplay);
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showControls, setShowControls] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(initialMuted);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0);
@@ -65,26 +71,39 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
     });
     player.getDuration().then((d: number) => setDuration(d));
 
-    // Initial Setup - Video starts with autoplay=1 in iframe
-    player.setVolume(0);
+    // Initial Setup
+    if (initialMuted) {
+      player.setVolume(0);
+    } else {
+      player.setVolume(1);
+    }
     
     // Check initial playing state after iframe loads
-    // Since autoplay=1 is set, video should be playing
     setTimeout(() => {
+      if (autoplay) {
+        player.play().catch(() => {
+          // Autoplay might be blocked by browser policy
+          setPlaying(false);
+          setShowControls(true);
+        });
+      }
+      
       player.getPaused().then((paused: boolean) => {
         if (!paused) {
-          // Video is playing (autoplay worked)
+          // Video is playing
           setPlaying(true);
           setShowControls(false);
         } else {
-          // Video is paused (autoplay blocked or failed)
+          // Video is paused
           setPlaying(false);
           setShowControls(true);
         }
       }).catch(() => {
-        // If check fails, assume video is playing (autoplay)
-        setPlaying(true);
-        setShowControls(false);
+        // If check fails
+        if (autoplay) {
+          setPlaying(true);
+          setShowControls(false);
+        }
       });
     }, 1000);
 
@@ -155,7 +174,7 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({ videoId 
       bg="black"
     >
       <iframe
-        src={`https://player.vimeo.com/video/${videoId}?controls=0&background=1&autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0&transparent=0`}
+        src={`https://player.vimeo.com/video/${videoId}?controls=0&background=1&autoplay=${autoplay ? 1 : 0}&muted=${initialMuted ? 1 : 0}&loop=1&title=0&byline=0&portrait=0&transparent=0`}
         width="100%"
         height="100%"
         style={{ 
