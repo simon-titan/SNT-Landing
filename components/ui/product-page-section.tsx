@@ -17,7 +17,6 @@ import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
 import { CheckCircle, Star, Users, Lock } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { PricingSelectionModal } from "@/components/ui/pricing-selection-modal";
-import { RegistrationModal } from "@/components/ui/registration-modal";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 import { keyframes } from "@emotion/react";
 import { ApprovedIcon } from "@/components/ui/approved-icon";
@@ -50,7 +49,6 @@ export function ProductPageSection() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedPricing, setSelectedPricing] = useState<string>("lifetime");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
@@ -86,14 +84,6 @@ export function ProductPageSection() {
       
       // Load appropriate SDK
       loadPayPalSDK();
-    } else if (selectedPricing === "free") {
-      // Clear containers when free is selected
-      const monthlyContainer = document.getElementById("paypal-product-container-monthly");
-      const lifetimeContainer = document.getElementById("paypal-product-container-lifetime");
-      if (monthlyContainer) monthlyContainer.innerHTML = "";
-      if (lifetimeContainer) lifetimeContainer.innerHTML = "";
-      setPaypalLoaded(false);
-      setPaypalButtonRendered(false);
     }
   }, [isClient, selectedPricing]);
 
@@ -296,7 +286,7 @@ export function ProductPageSection() {
   };
 
   const renderPayPalButton = () => {
-    if (!selectedPricing || selectedPricing === "free") {
+    if (!selectedPricing) {
       setPaypalButtonRendered(false);
       return;
     }
@@ -464,11 +454,7 @@ export function ProductPageSection() {
   };
 
   const handleJoin = () => {
-    if (selectedPricing === "free") {
-      setIsRegistrationModalOpen(true);
-    } else {
-      setIsModalOpen(true);
-    }
+    setIsModalOpen(true);
   };
 
   const handleImageClick = (img: string) => {
@@ -1137,61 +1123,6 @@ export function ProductPageSection() {
 
             {/* Pricing Options */}
             <VStack gap={3} align="stretch">
-              {/* Free Bootcamp */}
-              <Box
-                as="button"
-                onClick={() => setSelectedPricing("free")}
-                p={4}
-                borderRadius="lg"
-                border={
-                  selectedPricing === "free"
-                    ? "2px solid"
-                    : "1px solid rgba(59, 130, 246, 0.15)"
-                }
-                borderColor={
-                  selectedPricing === "free"
-                    ? SNT_BLUE
-                    : "rgba(59, 130, 246, 0.15)"
-                }
-                bg={
-                  selectedPricing === "free"
-                    ? "rgba(59, 130, 246, 0.1)"
-                    : "rgba(10, 14, 10, 0.6)"
-                }
-                _hover={{
-                  borderColor: SNT_BLUE,
-                  bg: "rgba(59, 130, 246, 0.1)",
-                }}
-                transition="all 0.2s"
-                textAlign="left"
-                w="full"
-              >
-                <HStack gap={3}>
-                  <Box
-                    w={5}
-                    h={5}
-                    borderRadius="full"
-                    border={
-                      selectedPricing === "free"
-                        ? "2px solid"
-                        : "2px solid rgba(59, 130, 246, 0.3)"
-                    }
-                    borderColor={SNT_BLUE}
-                    bg={selectedPricing === "free" ? SNT_BLUE : "transparent"}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    {selectedPricing === "free" && (
-                      <Box w={2.5} h={2.5} borderRadius="full" bg="white" />
-                    )}
-                  </Box>
-                  <Text color="white" fontSize="sm" fontWeight="medium">
-                    Free Bootcamp
-                  </Text>
-                </HStack>
-              </Box>
-
               {/* SNT-PREMIUM Monatlich */}
               <Box
                 as="button"
@@ -1646,14 +1577,6 @@ export function ProductPageSection() {
         }}
         initialPlan={selectedPricing === "monthly" ? "monthly" : selectedPricing === "lifetime" ? "lifetime" : null}
         skipToCheckout={isDesktop} // Desktop: direkt zum Checkout
-      />
-
-      {/* Registration Modal */}
-      <RegistrationModal
-        isOpen={isRegistrationModalOpen}
-        onClose={() => {
-          setIsRegistrationModalOpen(false);
-        }}
       />
     </Box>
   );

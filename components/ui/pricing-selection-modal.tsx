@@ -14,7 +14,6 @@ import {
 import { X, ArrowLeft, CheckCircle, CreditCard, GoogleLogo, AppleLogo, Lock } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
-import { RegistrationModal } from "@/components/ui/registration-modal";
 
 const SNT_BLUE = "#068CEF";
 const MODAL_BG = "rgba(40, 40, 40, 0.98)";
@@ -22,7 +21,7 @@ const MODAL_BG = "rgba(40, 40, 40, 0.98)";
 interface PricingSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialPlan?: "free" | "monthly" | "lifetime" | null;
+  initialPlan?: "monthly" | "lifetime" | null;
   skipToCheckout?: boolean; // Direkt zum Checkout springen
 }
 
@@ -40,7 +39,6 @@ export function PricingSelectionModal({
   const [isClient, setIsClient] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [paypalButtonRendered, setPaypalButtonRendered] = useState(false);
-  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
 
   const discountActive = isDiscountActive();
   const pricing = discountActive ? pricingConfig.discount : pricingConfig.standard;
@@ -52,9 +50,7 @@ export function PricingSelectionModal({
   useEffect(() => {
     if (isOpen && isClient) {
       // Set initial selection based on initialPlan
-      if (initialPlan === "free") {
-        setSelectedOption("free");
-      } else if (initialPlan === "monthly") {
+      if (initialPlan === "monthly") {
         setSelectedOption("monthly");
       } else if (initialPlan === "lifetime") {
         setSelectedOption("lifetime");
@@ -64,7 +60,7 @@ export function PricingSelectionModal({
       }
 
       // Wenn skipToCheckout true ist, direkt zum Checkout springen
-      if (skipToCheckout && initialPlan && initialPlan !== "free") {
+      if (skipToCheckout && initialPlan) {
         setCurrentView("checkout");
       } else {
         // Reset to selection view when modal opens
@@ -221,12 +217,6 @@ export function PricingSelectionModal({
     }
 
     container.innerHTML = "";
-
-    if (selectedOption === "free") {
-      // Free plan - no PayPal
-      setPaypalButtonRendered(false);
-      return;
-    }
 
     const buttonConfig = {
       style: {
@@ -529,15 +519,13 @@ export function PricingSelectionModal({
   };
 
   useEffect(() => {
-    if (selectedOption && isOpen && selectedOption !== "free") {
+    if (selectedOption && isOpen) {
       setPaypalButtonRendered(false);
       // Wait longer to ensure SDK cleanup/loading is complete
       // renderPayPalButton will handle loading the correct SDK
       setTimeout(() => {
         renderPayPalButton();
       }, 500);
-    } else if (selectedOption === "free") {
-      setPaypalButtonRendered(false);
     }
   }, [selectedOption, isOpen]);
 
@@ -655,10 +643,7 @@ export function PricingSelectionModal({
   };
 
   const handleJoin = () => {
-    if (selectedOption === "free") {
-      setIsRegistrationModalOpen(true);
-      handleClose();
-    } else if (selectedOption === "monthly" || selectedOption === "lifetime") {
+    if (selectedOption === "monthly" || selectedOption === "lifetime") {
       setCurrentView("checkout");
     }
   };
@@ -794,45 +779,6 @@ export function PricingSelectionModal({
                 onValueChange={(e) => setSelectedOption(e.value)}
               >
                 <VStack gap={3} align="stretch">
-                  {/* Free Option */}
-                  <Box
-                    as="label"
-                    cursor="pointer"
-                    p={4}
-                    borderRadius="lg"
-                    border="1px solid"
-                    borderColor={
-                      selectedOption === "free"
-                        ? SNT_BLUE
-                        : "rgba(255, 255, 255, 0.1)"
-                    }
-                    bg={
-                      selectedOption === "free"
-                        ? "rgba(6, 140, 239, 0.1)"
-                        : "rgba(255, 255, 255, 0.02)"
-                    }
-                    transition="all 0.2s"
-                    _hover={{
-                      borderColor: "rgba(6, 140, 239, 0.5)",
-                      bg: "rgba(6, 140, 239, 0.05)",
-                    }}
-                  >
-                    <HStack gap={3}>
-                      <RadioGroup.Item value="free">
-                        <RadioGroup.ItemHiddenInput />
-                        <RadioGroup.ItemIndicator />
-                      </RadioGroup.Item>
-                      <VStack align="start" gap={0} flex={1}>
-                        <Text color="white" fontWeight="medium">
-                          FREE Bootcamp
-                        </Text>
-                        <Text color="gray.400" fontSize="sm">
-                          Kostenloser Test-Zugang
-                        </Text>
-                      </VStack>
-                    </HStack>
-                  </Box>
-
                   {/* Monthly Option */}
                   <Box
                     as="label"
@@ -931,7 +877,7 @@ export function PricingSelectionModal({
               </RadioGroup.Root>
 
               {/* PayPal Express Button */}
-              {selectedOption && selectedOption !== "free" && (
+              {selectedOption && (
                 <VStack gap={3} mt={4}>
                   {/* PayPal Button mit Overlay */}
                   <Box
@@ -1048,17 +994,11 @@ export function PricingSelectionModal({
               )}
 
               {/* Payment Icons - unter beiden Buttons */}
-              <HStack gap={3} align="center" w="full">
-                {/* Platzhalter für PayPal Button - gleiche Breite wie PayPal Button */}
-                <Box flex={1} display="flex" alignItems="center" justifyContent="center">
-                  <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} />
-                </Box>
-                
-                {/* Payment Icons - unter Join Button */}
-                <Box flex={1} display="flex" alignItems="center" justifyContent="center">
+              <HStack gap={3} align="center" justify="center" w="full">
+                <Box display="flex" alignItems="center" justifyContent="center">
                   <HStack gap={3} align="center" justify="center">
-                <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} display="flex" alignItems="center" justifyContent="center">
-                  <svg viewBox="0 -11 70 70" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="30" style={{ width: '100%', height: '100%' }}>
+                    <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} display="flex" alignItems="center" justifyContent="center">
+                      <svg viewBox="0 -11 70 70" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="30" style={{ width: '100%', height: '100%' }}>
                         <rect x="0.5" y="0.5" width="69" height="47" rx="5.5" fill="white" stroke="#D9D9D9"></rect>
                         <path fillRule="evenodd" clipRule="evenodd" d="M19.1601 16.6863C18.5726 17.3901 17.6325 17.9452 16.6924 17.8659C16.5749 16.9143 17.0352 15.9032 17.5737 15.2787C18.1613 14.5551 19.1895 14.0397 20.0219 14C20.1198 14.9913 19.7379 15.9627 19.1601 16.6863ZM20.012 18.0542C19.1838 18.006 18.4281 18.3064 17.8177 18.549C17.4249 18.7051 17.0923 18.8373 16.8392 18.8373C16.5552 18.8373 16.2089 18.6981 15.82 18.5417L15.82 18.5417L15.82 18.5417L15.82 18.5417C15.3104 18.3368 14.7278 18.1025 14.1169 18.1137C12.7166 18.1335 11.4142 18.9365 10.6993 20.2152C9.23044 22.7726 10.3174 26.5593 11.7373 28.6409C12.4326 29.6718 13.265 30.8018 14.3617 30.7622C14.8442 30.7438 15.1913 30.5947 15.5505 30.4404C15.9641 30.2628 16.3937 30.0782 17.0645 30.0782C17.712 30.0782 18.1228 30.2579 18.5172 30.4305C18.8921 30.5945 19.2522 30.752 19.7868 30.7424C20.9227 30.7225 21.6376 29.7115 22.3328 28.6806C23.0831 27.5741 23.4129 26.4943 23.4629 26.3304L23.4688 26.3114C23.4676 26.3102 23.4583 26.3059 23.4419 26.2984C23.1911 26.1821 21.274 25.2937 21.2557 22.9114C21.2372 20.9118 22.7762 19.8987 23.0185 19.7392C23.0332 19.7295 23.0432 19.723 23.0477 19.7196C22.0684 18.2525 20.5408 18.0939 20.012 18.0542ZM27.8755 30.6333V15.1796H33.6041C36.5615 15.1796 38.6277 17.2414 38.6277 20.2548C38.6277 23.2683 36.5223 25.3499 33.5258 25.3499H30.2453V30.6333H27.8755ZM30.2451 17.2018H32.9772C35.0336 17.2018 36.2087 18.312 36.2087 20.2648C36.2087 22.2175 35.0336 23.3377 32.9674 23.3377H30.2451V17.2018ZM46.452 28.7797C45.8253 29.989 44.4445 30.7523 42.9561 30.7523C40.7527 30.7523 39.2153 29.424 39.2153 27.4217C39.2153 25.4391 40.7038 24.2992 43.4555 24.1307L46.4128 23.9522V23.0998C46.4128 21.8409 45.6 21.1569 44.1508 21.1569C42.9561 21.1569 42.0845 21.7814 41.9083 22.733H39.7735C39.842 20.7307 41.7026 19.2735 44.2193 19.2735C46.9318 19.2735 48.6945 20.7108 48.6945 22.9412V30.6333H46.501V28.7797H46.452ZM43.5924 28.9185C42.3292 28.9185 41.5262 28.3039 41.5262 27.3622C41.5262 26.3908 42.2998 25.8257 43.7785 25.7365L46.4127 25.568V26.4403C46.4127 27.8876 45.1984 28.9185 43.5924 28.9185ZM55.9702 31.238C55.0204 33.9442 53.9334 34.8363 51.6224 34.8363C51.4461 34.8363 50.8585 34.8165 50.7214 34.7768V32.9232C50.8683 32.943 51.2307 32.9628 51.4167 32.9628C52.4645 32.9628 53.0521 32.5167 53.4144 31.357L53.6298 30.673L49.6149 19.4222H52.0924L54.8833 28.5517H54.9322L57.7231 19.4222H60.1321L55.9702 31.238Z" fill="#000000"></path>
                       </svg>
@@ -1137,12 +1077,6 @@ export function PricingSelectionModal({
       </Box>
 
       {/* Registration Modal */}
-      <RegistrationModal
-        isOpen={isRegistrationModalOpen}
-        onClose={() => {
-          setIsRegistrationModalOpen(false);
-        }}
-      />
     </>
   );
 }

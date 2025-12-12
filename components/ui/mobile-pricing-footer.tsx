@@ -10,7 +10,7 @@ const SNT_BLUE = "#068CEF";
 
 export function MobilePricingFooter() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<"free" | "monthly" | "lifetime" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "lifetime" | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [paypalButtonRendered, setPaypalButtonRendered] = useState(false);
@@ -217,7 +217,7 @@ export function MobilePricingFooter() {
               {formatPrice(pricing.monthly.price)} / monatlich
             </Text>
 
-            {/* 3 Optionen Rechts */}
+            {/* 2 Optionen Rechts */}
             <Box
               as="button"
               onClick={handleOptionsClick}
@@ -230,7 +230,7 @@ export function MobilePricingFooter() {
               cursor="pointer"
               _hover={{ opacity: 0.8 }}
             >
-              <Text>3 Optionen</Text>
+              <Text>2 Optionen</Text>
               <CaretDown size={16} weight="bold" />
             </Box>
           </HStack>
