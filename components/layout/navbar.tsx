@@ -330,10 +330,10 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   aria-label="Support"
                   variant="ghost"
                   size="md"
-                  color={SNT_BLUE}
+                  color="white"
                   _hover={{ 
                     bg: "rgba(6,140,239,0.1)",
-                    color: SNT_BLUE
+                    color: "SNT_BLUE"
                   }}
                 >
                   <Icon>
@@ -357,7 +357,7 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   fontWeight="800"
                   fontFamily="var(--font-horizon), Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
                   lineHeight="0.9"
-                  color={SNT_BLUE}
+                  color="white"
                   transition="all 0.3s ease"
                   whiteSpace="nowrap"
                 >
@@ -380,8 +380,8 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
                   height="28px"
                   fontSize="xs"
                   bg="rgba(6,140,239,0.08)"
-                  color={SNT_BLUE}
-                  border="1px solid rgba(6,140,239,0.45)"
+                  color="white"
+                  border="1px solid white"
                   backdropFilter="blur(10px) saturate(160%)"
                   boxShadow="0 0 20px rgba(6,140,239,0.35), inset 0 0 12px rgba(6,140,239,0.15)"
                   _hover={{ 

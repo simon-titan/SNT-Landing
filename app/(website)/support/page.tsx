@@ -136,7 +136,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 50% 0%, rgba(6, 140, 239, 0.15) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(5, 114, 194, 0.1) 0px, transparent 50%)",
+          background: "radial-gradient(at 50% 0%, rgba(6, 140, 239, 0.05) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -147,9 +147,9 @@ export default function SupportPage() {
                 <Box
                   p={3}
                   borderRadius="full"
-                  bg="rgba(6, 140, 239, 0.15)"
-                  border="1px solid rgba(6, 140, 239, 0.3)"
-                  boxShadow="0 4px 12px rgba(6, 140, 239, 0.2)"
+                  bg="rgba(6, 140, 239, 0.1)"
+                  border="1px solid rgba(6, 140, 239, 0.2)"
+                  boxShadow="0 2px 8px rgba(6, 140, 239, 0.1)"
                 >
                   <Icon as={Lifebuoy} boxSize={8} color={SNT_BLUE} />
                 </Box>
@@ -186,7 +186,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 30% 70%, rgba(6, 140, 239, 0.1) 0px, transparent 50%), radial-gradient(at 70% 30%, rgba(5, 114, 194, 0.08) 0px, transparent 50%)",
+          background: "radial-gradient(at 30% 70%, rgba(6, 140, 239, 0.04) 0px, transparent 50%), radial-gradient(at 70% 30%, rgba(5, 114, 194, 0.03) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -208,13 +208,13 @@ export default function SupportPage() {
                   p="6" 
                   bg="rgba(5, 10, 20, 0.7)"
                   backdropFilter="blur(16px)"
-                  border="1px solid rgba(6, 140, 239, 0.25)" 
+                  border="1px solid rgba(6, 140, 239, 0.15)" 
                   borderRadius="xl"
                   cursor="pointer" 
                   _hover={{ 
                     transform: "translateY(-4px)", 
-                    boxShadow: "0 12px 40px 0 rgba(6, 140, 239, 0.25)",
-                    borderColor: "rgba(6, 140, 239, 0.4)"
+                    boxShadow: "0 8px 24px 0 rgba(6, 140, 239, 0.15)",
+                    borderColor: "rgba(6, 140, 239, 0.25)"
                   }} 
                   transition="all 0.3s ease"
                   onClick={scrollToTicket}
@@ -256,7 +256,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 20% 80%, rgba(6, 140, 239, 0.08) 0px, transparent 50%), radial-gradient(at 80% 20%, rgba(5, 114, 194, 0.06) 0px, transparent 50%)",
+          background: "radial-gradient(at 20% 80%, rgba(6, 140, 239, 0.03) 0px, transparent 50%), radial-gradient(at 80% 20%, rgba(5, 114, 194, 0.02) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >
@@ -292,12 +292,12 @@ export default function SupportPage() {
                   w="full" 
                   bg="rgba(5, 10, 20, 0.7)"
                   backdropFilter="blur(16px)"
-                  border="1px solid rgba(6, 140, 239, 0.25)" 
+                  border="1px solid rgba(6, 140, 239, 0.15)" 
                   borderRadius="xl" 
                   p="6"
                   _hover={{
                     borderColor: "rgba(6, 140, 239, 0.4)",
-                    boxShadow: "0 8px 32px 0 rgba(6, 140, 239, 0.15)"
+                    boxShadow: "0 4px 16px 0 rgba(6, 140, 239, 0.08)"
                   }}
                   transition="all 0.3s ease"
                 >
@@ -323,7 +323,7 @@ export default function SupportPage() {
                           _hover={{ bg: "#0572c2" }}
                           transition="background-color 0.2s"
                           onClick={scrollToTicket}
-                          boxShadow="0 4px 12px rgba(6, 140, 239, 0.3)"
+                          boxShadow="0 2px 8px rgba(6, 140, 239, 0.2)"
                         >
                           Ticket öffnen
                         </Box>
@@ -348,7 +348,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 50% 50%, rgba(6, 140, 239, 0.1) 0px, transparent 60%)",
+          background: "radial-gradient(at 50% 50%, rgba(6, 140, 239, 0.04) 0px, transparent 60%)",
           pointerEvents: "none"
         }}
       >
@@ -380,11 +380,11 @@ export default function SupportPage() {
             <Box 
               bg="rgba(5, 10, 20, 0.8)"
               backdropFilter="blur(20px)"
-              border="1px solid rgba(6, 140, 239, 0.3)" 
+              border="1px solid rgba(6, 140, 239, 0.2)" 
               borderRadius="xl" 
               p="8" 
               w="full"
-              boxShadow="0 20px 60px 0 rgba(6, 140, 239, 0.2)"
+              boxShadow="0 8px 32px 0 rgba(6, 140, 239, 0.1)"
             >
               <Support />
             </Box>
@@ -403,7 +403,7 @@ export default function SupportPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(at 80% 20%, rgba(6, 140, 239, 0.08) 0px, transparent 50%), radial-gradient(at 20% 80%, rgba(5, 114, 194, 0.06) 0px, transparent 50%)",
+          background: "radial-gradient(at 80% 20%, rgba(6, 140, 239, 0.03) 0px, transparent 50%), radial-gradient(at 20% 80%, rgba(5, 114, 194, 0.02) 0px, transparent 50%)",
           pointerEvents: "none"
         }}
       >

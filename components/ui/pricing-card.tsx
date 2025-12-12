@@ -19,7 +19,24 @@ import {
   LuPackage,
   LuUser,
 } from "react-icons/lu";
-import type { PlanData } from "../../app/(website)/Produkte/data";
+
+export interface PlanData {
+  title: string;
+  priceSymbol: string;
+  monthlyPrice: {
+    price: number;
+  };
+  yearlyPrice: {
+    price: number;
+  };
+  description: string;
+  recommended: boolean;
+  uid: string;
+  features: {
+    title: string;
+    icon: string;
+  }[];
+}
 
 const iconMap: Record<string, React.ReactNode> = {
   team: <LuBuilding />,
