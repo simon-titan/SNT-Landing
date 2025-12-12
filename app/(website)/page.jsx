@@ -10,8 +10,8 @@ import { SntPremiumPricing } from "@/components/ui/snt-premium-pricing";
 import { MobilePricingFooter } from "@/components/ui/mobile-pricing-footer";
 import { ProductPageSection } from "@/components/ui/product-page-section";
 export const metadata = generateMetadata({
-    title: "Home",
-    description: "Deserunt veniam voluptate aliqua consectetur laboris voluptate est labore qui commodo.",
+    title: "SNTTRADES - DEIN WEG ZUM PROFITABLEN TRADER",
+    description: "Über 6+ Jahre Markterfahrung gebündelt in einem klar strukturierten Kurs – für deinen Weg zum selbstbestimmten Trader.",
 });
 export default async function Page() {
     return (<>
