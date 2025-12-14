@@ -33,15 +33,11 @@ const productImages = [
 
 // Features-Liste
 const features = [
-  "Umfassendes Video-Training auf Abruf",
-  "Live-Mentoring mit erfahrenen Tradern",
-  "Exklusive Trading-Tools & Software",
-  "Interaktive Community mit Gleichgesinnten",
-  "Persönliche Betreuung & Feedback",
-  "Strukturierte NEFS Trading-Strategie",
-  "Wöchentliche Live-Marktanalysen",
-  "24/7 Community-Support",
-  "Aufgezeichnete Sessions zum Nachschauen",
+  "3-5 Wöchentliche Zoom Calls (Livetrading, Mindset, Anfängercalls)",
+  "Strukturierter Videokurs",
+  "Über 10h+ Lernmaterial",
+  "Exklusive Community mit gleichgesinnten (-1000 member)",
+  "Tägliche Marktanalysen",
 ];
 
 export function ProductPageSection() {
@@ -61,11 +57,11 @@ export function ProductPageSection() {
     setIsClient(true);
     // Prüfe ob Desktop
     setIsDesktop(window.innerWidth >= 768);
-    
+
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -75,13 +71,13 @@ export function ProductPageSection() {
       // Reset state FIRST
       setPaypalLoaded(false);
       setPaypalButtonRendered(false);
-      
+
       // Clear existing buttons if containers exist
       const monthlyContainer = document.getElementById("paypal-product-container-monthly");
       const lifetimeContainer = document.getElementById("paypal-product-container-lifetime");
       if (monthlyContainer) monthlyContainer.innerHTML = "";
       if (lifetimeContainer) lifetimeContainer.innerHTML = "";
-      
+
       // Load appropriate SDK
       loadPayPalSDK();
     }
@@ -107,16 +103,16 @@ export function ProductPageSection() {
       const orderScript = document.getElementById("paypal-sdk-product-lifetime");
       if (orderScript) {
         console.log("Product Page: Order SDK gefunden, entferne es...");
-        
+
         // Clear containers FIRST
         const monthlyContainer = document.getElementById("paypal-product-container-monthly");
         const lifetimeContainer = document.getElementById("paypal-product-container-lifetime");
         if (monthlyContainer) monthlyContainer.innerHTML = "";
         if (lifetimeContainer) lifetimeContainer.innerHTML = "";
-        
+
         // Remove script
         orderScript.remove();
-        
+
         // Clear PayPal object and all related globals completely
         try {
           if ((window as any).paypal) {
@@ -136,7 +132,7 @@ export function ProductPageSection() {
         } catch (e) {
           // Ignore
         }
-        
+
         // Wait longer for zoid cleanup - need more time for complete cleanup
         setTimeout(() => {
           if (selectedPricing === "monthly") {
@@ -161,16 +157,16 @@ export function ProductPageSection() {
       const subscriptionScript = document.getElementById("paypal-sdk-product-monthly");
       if (subscriptionScript) {
         console.log("Product Page: Subscription SDK gefunden, entferne es...");
-        
+
         // Clear containers FIRST
         const monthlyContainer = document.getElementById("paypal-product-container-monthly");
         const lifetimeContainer = document.getElementById("paypal-product-container-lifetime");
         if (monthlyContainer) monthlyContainer.innerHTML = "";
         if (lifetimeContainer) lifetimeContainer.innerHTML = "";
-        
+
         // Remove script
         subscriptionScript.remove();
-        
+
         // Clear PayPal object and all related globals completely
         try {
           if ((window as any).paypal) {
@@ -190,7 +186,7 @@ export function ProductPageSection() {
         } catch (e) {
           // Ignore
         }
-        
+
         // Wait longer for zoid cleanup - need more time for complete cleanup
         setTimeout(() => {
           if (selectedPricing === "lifetime") {
@@ -313,7 +309,7 @@ export function ProductPageSection() {
 
     const containerId = `paypal-product-container-${selectedPricing}`;
     const container = document.getElementById(containerId);
-    
+
     if (!container) {
       console.log("Product Page: Container nicht gefunden:", containerId);
       return;
@@ -523,60 +519,8 @@ export function ProductPageSection() {
             }}
           >
             <HStack gap={2} w="max-content">
-            {/* Video Thumbnail */}
-            <Box
-              flexShrink={0}
-              w="80px"
-              h="60px"
-              borderRadius="md"
-              overflow="hidden"
-              cursor="pointer"
-              border={
-                selectedImage === null
-                  ? "2px solid"
-                  : "1px solid rgba(59, 130, 246, 0.15)"
-              }
-              borderColor={
-                selectedImage === null ? SNT_BLUE : "rgba(59, 130, 246, 0.15)"
-              }
-              onClick={handleVideoClick}
-              _hover={{ borderColor: SNT_BLUE }}
-              transition="all 0.2s"
-              position="relative"
-              bg="black"
-            >
+              {/* Video Thumbnail */}
               <Box
-                position="absolute"
-                inset={0}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                bg="rgba(0,0,0,0.5)"
-                zIndex={1}
-              >
-                <Box
-                  w="24px"
-                  h="24px"
-                  borderRadius="full"
-                  bg="rgba(255,255,255,0.9)"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Box
-                    w={0}
-                    h={0}
-                    borderLeft="8px solid black"
-                    borderTop="6px solid transparent"
-                    borderBottom="6px solid transparent"
-                    ml="2px"
-                  />
-                </Box>
-              </Box>
-            </Box>
-            {productImages.map((img, idx) => (
-              <Box
-                key={idx}
                 flexShrink={0}
                 w="80px"
                 h="60px"
@@ -584,30 +528,82 @@ export function ProductPageSection() {
                 overflow="hidden"
                 cursor="pointer"
                 border={
-                  selectedImage === img
+                  selectedImage === null
                     ? "2px solid"
                     : "1px solid rgba(59, 130, 246, 0.15)"
                 }
                 borderColor={
-                  selectedImage === img ? SNT_BLUE : "rgba(59, 130, 246, 0.15)"
+                  selectedImage === null ? SNT_BLUE : "rgba(59, 130, 246, 0.15)"
                 }
-                onClick={() => handleImageClick(img)}
+                onClick={handleVideoClick}
                 _hover={{ borderColor: SNT_BLUE }}
                 transition="all 0.2s"
+                position="relative"
+                bg="black"
               >
-                <Image
-                  src={img}
-                  alt={`Produktbild ${idx + 1}`}
-                  w="100%"
-                  h="100%"
-                  objectFit="cover"
-                />
+                <Box
+                  position="absolute"
+                  inset={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bg="rgba(0,0,0,0.5)"
+                  zIndex={1}
+                >
+                  <Box
+                    w="24px"
+                    h="24px"
+                    borderRadius="full"
+                    bg="rgba(255,255,255,0.9)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Box
+                      w={0}
+                      h={0}
+                      borderLeft="8px solid black"
+                      borderTop="6px solid transparent"
+                      borderBottom="6px solid transparent"
+                      ml="2px"
+                    />
+                  </Box>
+                </Box>
+              </Box>
+              {productImages.map((img, idx) => (
+                <Box
+                  key={idx}
+                  flexShrink={0}
+                  w="80px"
+                  h="60px"
+                  borderRadius="md"
+                  overflow="hidden"
+                  cursor="pointer"
+                  border={
+                    selectedImage === img
+                      ? "2px solid"
+                      : "1px solid rgba(59, 130, 246, 0.15)"
+                  }
+                  borderColor={
+                    selectedImage === img ? SNT_BLUE : "rgba(59, 130, 246, 0.15)"
+                  }
+                  onClick={() => handleImageClick(img)}
+                  _hover={{ borderColor: SNT_BLUE }}
+                  transition="all 0.2s"
+                >
+                  <Image
+                    src={img}
+                    alt={`Produktbild ${idx + 1}`}
+                    w="100%"
+                    h="100%"
+                    objectFit="cover"
+                  />
                 </Box>
               ))}
-              </HStack>
-            </Box>
+            </HStack>
+          </Box>
 
-            {/* Community Stats Banner - direkt unter Galerie */}
+          {/* Community Stats Banner - direkt unter Galerie */}
           <Box
             p={3}
             w="full"
@@ -704,17 +700,18 @@ export function ProductPageSection() {
             </HStack>
             <Heading
               as="h1"
+              px={1}
               fontSize={{ base: "2xl", md: "3xl" }}
               fontWeight="bold"
               color="white"
-              
               lineHeight="tight"
             >
-              DEIN WEG ZUM
+              LERNE WIE DU{" "}
               <Box
                 as="span"
                 background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
                 color="white"
+                px={1}
                 py={1}
                 borderRadius="md"
                 fontWeight="bold"
@@ -722,7 +719,8 @@ export function ProductPageSection() {
                 border="1px solid rgba(59, 130, 246, 0.2)"
                 boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
                 backdropFilter="blur(6px)"
-              >PROFITABLEN TRADER
+              >
+                PROFITABEL TRADEST
               </Box>
             </Heading>
 
@@ -750,23 +748,13 @@ export function ProductPageSection() {
             {/* Description */}
             <VStack align="start" gap={3} fontSize="sm" color="gray.300" lineHeight="1.6">
               <Text>
-                Über 6+ Jahre Markterfahrung gebündelt in einem klar strukturierten Kurs – für deinen Weg zum selbstbestimmten Trader.
+                Ich zeige dir, wie du mit einem klaren System, sauberer Struktur und echtem Marktverständnis eine stabile Basis im Trading aufbaust –
+                Schritt für Schritt.
               </Text>
-              
-              <Text>
-                Wir zeigen dir, was im Trading wirklich zählt: mit einer praxisbewährten Strategie, die wir selbst täglich anwenden.
-              </Text>
-              
-              <Text fontWeight="semibold" color="white" mb={1}>
-                Dein Zugang zur Trading-Community:
-              </Text>
-              
-              
-              
-              <Text>
-                Entscheide selbst, wann und wie du lernen willst – aber nie ohne echtes Insider-Wissen. Starte jetzt durch und handle mit Klarheit und System. 🔑
-              </Text>
-              
+
+
+
+
               <Box
                 as="span"
                 background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
@@ -781,7 +769,7 @@ export function ProductPageSection() {
                 backdropFilter="blur(6px)"
               >
                 <Text fontSize="sm" color="white" lineHeight="1.6" px={2}>
-                  Werde der Trader, der nicht nur reagiert, sondern versteht!
+                  Mache 2026 zu deinem Jahr!
                 </Text>
               </Box>
             </VStack>
@@ -791,14 +779,16 @@ export function ProductPageSection() {
           <VStack gap={3} w="full" align="stretch" mt={4}>
             {/* Trennstrich */}
             <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={2} />
-            
+
             <Text fontSize="sm" fontWeight="semibold" color="white" mb={2} textAlign="left">
-              Features
+              Was du bekommst
             </Text>
             {features.map((feature, idx) => (
               <HStack key={idx} align="start" gap={3} justify="flex-start">
-                <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
-                <Text fontSize="sm" color="gray.300" textAlign="left">
+                <Box flexShrink={0} w="20px" h="20px" display="flex" alignItems="flex-start" justifyContent="flex-start" pt="2px">
+                  <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
+                </Box>
+                <Text fontSize="sm" color="gray.300" textAlign="left" flex={1}>
                   {feature}
                 </Text>
               </HStack>
@@ -853,60 +843,8 @@ export function ProductPageSection() {
               }}
             >
               <HStack gap={3} w="max-content">
-              {/* Video Thumbnail */}
-              <Box
-                w="120px"
-                h="80px"
-                flexShrink={0}
-                borderRadius="md"
-                overflow="hidden"
-                cursor="pointer"
-                border={
-                  selectedImage === null
-                    ? "2px solid"
-                    : "1px solid rgba(59, 130, 246, 0.3)"
-                }
-                borderColor={
-                  selectedImage === null ? SNT_BLUE : "rgba(59, 130, 246, 0.3)"
-                }
-                onClick={handleVideoClick}
-                _hover={{ borderColor: SNT_BLUE }}
-                transition="all 0.2s"
-                position="relative"
-                bg="black"
-              >
+                {/* Video Thumbnail */}
                 <Box
-                  position="absolute"
-                  inset={0}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  bg="rgba(0,0,0,0.5)"
-                  zIndex={1}
-                >
-                  <Box
-                    w="32px"
-                    h="32px"
-                    borderRadius="full"
-                    bg="rgba(255,255,255,0.9)"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Box
-                      w={0}
-                      h={0}
-                      borderLeft="10px solid black"
-                      borderTop="8px solid transparent"
-                      borderBottom="8px solid transparent"
-                      ml="3px"
-                    />
-                  </Box>
-                </Box>
-              </Box>
-              {productImages.map((img, idx) => (
-                <Box
-                  key={idx}
                   w="120px"
                   h="80px"
                   flexShrink={0}
@@ -914,26 +852,78 @@ export function ProductPageSection() {
                   overflow="hidden"
                   cursor="pointer"
                   border={
-                    selectedImage === img
+                    selectedImage === null
                       ? "2px solid"
                       : "1px solid rgba(59, 130, 246, 0.3)"
                   }
                   borderColor={
-                    selectedImage === img ? SNT_BLUE : "rgba(59, 130, 246, 0.3)"
+                    selectedImage === null ? SNT_BLUE : "rgba(59, 130, 246, 0.3)"
                   }
-                  onClick={() => handleImageClick(img)}
+                  onClick={handleVideoClick}
                   _hover={{ borderColor: SNT_BLUE }}
                   transition="all 0.2s"
+                  position="relative"
+                  bg="black"
                 >
-                  <Image
-                    src={img}
-                    alt={`Produktbild ${idx + 1}`}
-                    w="100%"
-                    h="100%"
-                    objectFit="cover"
-                  />
+                  <Box
+                    position="absolute"
+                    inset={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    bg="rgba(0,0,0,0.5)"
+                    zIndex={1}
+                  >
+                    <Box
+                      w="32px"
+                      h="32px"
+                      borderRadius="full"
+                      bg="rgba(255,255,255,0.9)"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Box
+                        w={0}
+                        h={0}
+                        borderLeft="10px solid black"
+                        borderTop="8px solid transparent"
+                        borderBottom="8px solid transparent"
+                        ml="3px"
+                      />
+                    </Box>
+                  </Box>
                 </Box>
-              ))}
+                {productImages.map((img, idx) => (
+                  <Box
+                    key={idx}
+                    w="120px"
+                    h="80px"
+                    flexShrink={0}
+                    borderRadius="md"
+                    overflow="hidden"
+                    cursor="pointer"
+                    border={
+                      selectedImage === img
+                        ? "2px solid"
+                        : "1px solid rgba(59, 130, 246, 0.3)"
+                    }
+                    borderColor={
+                      selectedImage === img ? SNT_BLUE : "rgba(59, 130, 246, 0.3)"
+                    }
+                    onClick={() => handleImageClick(img)}
+                    _hover={{ borderColor: SNT_BLUE }}
+                    transition="all 0.2s"
+                  >
+                    <Image
+                      src={img}
+                      alt={`Produktbild ${idx + 1}`}
+                      w="100%"
+                      h="100%"
+                      objectFit="cover"
+                    />
+                  </Box>
+                ))}
               </HStack>
             </Box>
 
@@ -1041,12 +1031,12 @@ export function ProductPageSection() {
                 color="white"
                 lineHeight="tight"
               >
-              DER WEG ZUM{" "}
+                LERNE WIE DU{" "}
                 <Box
                   as="span"
                   background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
                   color="white"
-                  px={2}
+                  px={1}
                   py={1}
                   borderRadius="md"
                   fontWeight="bold"
@@ -1055,7 +1045,7 @@ export function ProductPageSection() {
                   boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
                   backdropFilter="blur(6px)"
                 >
-                  PROFITABLEN TRADER
+                  PROFITABEL TRADEST
                 </Box>
               </Heading>
 
@@ -1083,41 +1073,30 @@ export function ProductPageSection() {
               {/* Description */}
               <VStack align="start" gap={3} fontSize="sm" color="gray.300" lineHeight="1.6">
                 <Text>
-                  Über 6+ Jahre Markterfahrung gebündelt in einem klar strukturierten Kurs – für deinen Weg zum selbstbestimmten Trader.
+                  Ich zeige dir, wie du mit einem klaren System, sauberer Struktur und echtem Marktverständnis eine stabile Basis im Trading aufbaust –
+                  Schritt für Schritt.
                 </Text>
-                
-                <Text>
-                  Wir zeigen dir, was im Trading wirklich zählt: mit einer praxisbewährten Strategie, die wir selbst täglich anwenden.
-                </Text>
-                
-                <Text fontWeight="semibold" color="white" mb={1}>
-                  Dein Zugang zur Trading-Community:
-                </Text>
-                
-                
-                
-                <Text>
-                  Entscheide selbst, wann und wie du lernen willst – aber nie ohne echtes Insider-Wissen. Starte jetzt durch und handle mit Klarheit und System. 🔑
-                </Text>
-                
-                  <Box
-                    as="span"
-                    background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-                    color="white"
-                    px={0}
-                    py={1}
-                    borderRadius="md"
-                    fontWeight="bold"
-                    display="inline-block"
-                    border="1px solid rgba(59, 130, 246, 0.2)"
-                    boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-                    backdropFilter="blur(6px)"
-                  ><Text fontSize="sm" color="white" lineHeight="1.6" px={2}>
-                    Werde der Trader, der nicht nur reagiert, sondern versteht!
 
 
+
+
+
+                <Box
+                  as="span"
+                  background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+                  color="white"
+                  px={0}
+                  py={0}
+                  borderRadius="md"
+                  fontWeight="bold"
+                  display="inline-block"
+                  border="1px solid rgba(59, 130, 246, 0.2)"
+                  boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+                  backdropFilter="blur(6px)"
+                ><Text fontSize="sm" color="white" lineHeight="1.6" px={2}>
+                    Mache 2026 zu deinem Jahr!
                   </Text>
-                  </Box>
+                </Box>
               </VStack>
             </VStack>
 
@@ -1274,7 +1253,7 @@ export function ProductPageSection() {
                     pointerEvents="auto"
                     zIndex={1}
                   />
-                  
+
                   {/* Custom Overlay Button */}
                   <Box
                     position="absolute"
@@ -1295,8 +1274,8 @@ export function ProductPageSection() {
                     _hover={
                       paypalButtonRendered
                         ? {
-                            bg: "#f5f5f5",
-                          }
+                          bg: "#f5f5f5",
+                        }
                         : {}
                     }
                     onClick={() => {
@@ -1388,7 +1367,7 @@ export function ProductPageSection() {
                     pointerEvents="auto"
                     zIndex={1}
                   />
-                  
+
                   {/* Custom Overlay Button - wie im Mobile Footer */}
                   <Box
                     position="absolute"
@@ -1409,8 +1388,8 @@ export function ProductPageSection() {
                     _hover={
                       paypalButtonRendered
                         ? {
-                            bg: "#f5f5f5",
-                          }
+                          bg: "#f5f5f5",
+                        }
                         : {}
                     }
                     onClick={() => {
@@ -1473,27 +1452,27 @@ export function ProductPageSection() {
                 </HStack>
               </Button>
             </VStack>
-            
+
             {/* Payment Icons - unter beiden Buttons */}
             <HStack gap={3} align="center" justify="center" w="full">
               {/* Platzhalter für PayPal Button */}
               <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} />
-              
+
               {/* Payment Icons */}
               <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} display="flex" alignItems="center" justifyContent="center">
                 <svg viewBox="0 -11 70 70" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="30" style={{ width: '100%', height: '100%' }}>
-                      <rect x="0.5" y="0.5" width="69" height="47" rx="5.5" fill="white" stroke="#D9D9D9"></rect>
-                      <path fillRule="evenodd" clipRule="evenodd" d="M19.1601 16.6863C18.5726 17.3901 17.6325 17.9452 16.6924 17.8659C16.5749 16.9143 17.0352 15.9032 17.5737 15.2787C18.1613 14.5551 19.1895 14.0397 20.0219 14C20.1198 14.9913 19.7379 15.9627 19.1601 16.6863ZM20.012 18.0542C19.1838 18.006 18.4281 18.3064 17.8177 18.549C17.4249 18.7051 17.0923 18.8373 16.8392 18.8373C16.5552 18.8373 16.2089 18.6981 15.82 18.5417L15.82 18.5417L15.82 18.5417L15.82 18.5417C15.3104 18.3368 14.7278 18.1025 14.1169 18.1137C12.7166 18.1335 11.4142 18.9365 10.6993 20.2152C9.23044 22.7726 10.3174 26.5593 11.7373 28.6409C12.4326 29.6718 13.265 30.8018 14.3617 30.7622C14.8442 30.7438 15.1913 30.5947 15.5505 30.4404C15.9641 30.2628 16.3937 30.0782 17.0645 30.0782C17.712 30.0782 18.1228 30.2579 18.5172 30.4305C18.8921 30.5945 19.2522 30.752 19.7868 30.7424C20.9227 30.7225 21.6376 29.7115 22.3328 28.6806C23.0831 27.5741 23.4129 26.4943 23.4629 26.3304L23.4688 26.3114C23.4676 26.3102 23.4583 26.3059 23.4419 26.2984C23.1911 26.1821 21.274 25.2937 21.2557 22.9114C21.2372 20.9118 22.7762 19.8987 23.0185 19.7392C23.0332 19.7295 23.0432 19.723 23.0477 19.7196C22.0684 18.2525 20.5408 18.0939 20.012 18.0542ZM27.8755 30.6333V15.1796H33.6041C36.5615 15.1796 38.6277 17.2414 38.6277 20.2548C38.6277 23.2683 36.5223 25.3499 33.5258 25.3499H30.2453V30.6333H27.8755ZM30.2451 17.2018H32.9772C35.0336 17.2018 36.2087 18.312 36.2087 20.2648C36.2087 22.2175 35.0336 23.3377 32.9674 23.3377H30.2451V17.2018ZM46.452 28.7797C45.8253 29.989 44.4445 30.7523 42.9561 30.7523C40.7527 30.7523 39.2153 29.424 39.2153 27.4217C39.2153 25.4391 40.7038 24.2992 43.4555 24.1307L46.4128 23.9522V23.0998C46.4128 21.8409 45.6 21.1569 44.1508 21.1569C42.9561 21.1569 42.0845 21.7814 41.9083 22.733H39.7735C39.842 20.7307 41.7026 19.2735 44.2193 19.2735C46.9318 19.2735 48.6945 20.7108 48.6945 22.9412V30.6333H46.501V28.7797H46.452ZM43.5924 28.9185C42.3292 28.9185 41.5262 28.3039 41.5262 27.3622C41.5262 26.3908 42.2998 25.8257 43.7785 25.7365L46.4127 25.568V26.4403C46.4127 27.8876 45.1984 28.9185 43.5924 28.9185ZM55.9702 31.238C55.0204 33.9442 53.9334 34.8363 51.6224 34.8363C51.4461 34.8363 50.8585 34.8165 50.7214 34.7768V32.9232C50.8683 32.943 51.2307 32.9628 51.4167 32.9628C52.4645 32.9628 53.0521 32.5167 53.4144 31.357L53.6298 30.673L49.6149 19.4222H52.0924L54.8833 28.5517H54.9322L57.7231 19.4222H60.1321L55.9702 31.238Z" fill="#000000"></path>
-                    </svg>
-                  </Box>
+                  <rect x="0.5" y="0.5" width="69" height="47" rx="5.5" fill="white" stroke="#D9D9D9"></rect>
+                  <path fillRule="evenodd" clipRule="evenodd" d="M19.1601 16.6863C18.5726 17.3901 17.6325 17.9452 16.6924 17.8659C16.5749 16.9143 17.0352 15.9032 17.5737 15.2787C18.1613 14.5551 19.1895 14.0397 20.0219 14C20.1198 14.9913 19.7379 15.9627 19.1601 16.6863ZM20.012 18.0542C19.1838 18.006 18.4281 18.3064 17.8177 18.549C17.4249 18.7051 17.0923 18.8373 16.8392 18.8373C16.5552 18.8373 16.2089 18.6981 15.82 18.5417L15.82 18.5417L15.82 18.5417L15.82 18.5417C15.3104 18.3368 14.7278 18.1025 14.1169 18.1137C12.7166 18.1335 11.4142 18.9365 10.6993 20.2152C9.23044 22.7726 10.3174 26.5593 11.7373 28.6409C12.4326 29.6718 13.265 30.8018 14.3617 30.7622C14.8442 30.7438 15.1913 30.5947 15.5505 30.4404C15.9641 30.2628 16.3937 30.0782 17.0645 30.0782C17.712 30.0782 18.1228 30.2579 18.5172 30.4305C18.8921 30.5945 19.2522 30.752 19.7868 30.7424C20.9227 30.7225 21.6376 29.7115 22.3328 28.6806C23.0831 27.5741 23.4129 26.4943 23.4629 26.3304L23.4688 26.3114C23.4676 26.3102 23.4583 26.3059 23.4419 26.2984C23.1911 26.1821 21.274 25.2937 21.2557 22.9114C21.2372 20.9118 22.7762 19.8987 23.0185 19.7392C23.0332 19.7295 23.0432 19.723 23.0477 19.7196C22.0684 18.2525 20.5408 18.0939 20.012 18.0542ZM27.8755 30.6333V15.1796H33.6041C36.5615 15.1796 38.6277 17.2414 38.6277 20.2548C38.6277 23.2683 36.5223 25.3499 33.5258 25.3499H30.2453V30.6333H27.8755ZM30.2451 17.2018H32.9772C35.0336 17.2018 36.2087 18.312 36.2087 20.2648C36.2087 22.2175 35.0336 23.3377 32.9674 23.3377H30.2451V17.2018ZM46.452 28.7797C45.8253 29.989 44.4445 30.7523 42.9561 30.7523C40.7527 30.7523 39.2153 29.424 39.2153 27.4217C39.2153 25.4391 40.7038 24.2992 43.4555 24.1307L46.4128 23.9522V23.0998C46.4128 21.8409 45.6 21.1569 44.1508 21.1569C42.9561 21.1569 42.0845 21.7814 41.9083 22.733H39.7735C39.842 20.7307 41.7026 19.2735 44.2193 19.2735C46.9318 19.2735 48.6945 20.7108 48.6945 22.9412V30.6333H46.501V28.7797H46.452ZM43.5924 28.9185C42.3292 28.9185 41.5262 28.3039 41.5262 27.3622C41.5262 26.3908 42.2998 25.8257 43.7785 25.7365L46.4127 25.568V26.4403C46.4127 27.8876 45.1984 28.9185 43.5924 28.9185ZM55.9702 31.238C55.0204 33.9442 53.9334 34.8363 51.6224 34.8363C51.4461 34.8363 50.8585 34.8165 50.7214 34.7768V32.9232C50.8683 32.943 51.2307 32.9628 51.4167 32.9628C52.4645 32.9628 53.0521 32.5167 53.4144 31.357L53.6298 30.673L49.6149 19.4222H52.0924L54.8833 28.5517H54.9322L57.7231 19.4222H60.1321L55.9702 31.238Z" fill="#000000"></path>
+                </svg>
+              </Box>
               <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} display="flex" alignItems="center" justifyContent="center">
                 <svg viewBox="0 -9 58 58" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="30" style={{ width: '100%', height: '100%' }}>
-                      <rect x="0.5" y="0.5" width="57" height="39" rx="3.5" fill="white" stroke="#F3F3F3"></rect>
-                      <path d="M34.3102 28.9765H23.9591V10.5122H34.3102V28.9765Z" fill="#FF5F00"></path>
-                      <path d="M24.6223 19.7429C24.6223 15.9973 26.3891 12.6608 29.1406 10.5107C27.1285 8.93843 24.5892 7.99998 21.8294 7.99998C15.2961 7.99998 10 13.2574 10 19.7429C10 26.2283 15.2961 31.4857 21.8294 31.4857C24.5892 31.4857 27.1285 30.5473 29.1406 28.975C26.3891 26.8249 24.6223 23.4884 24.6223 19.7429" fill="#EB001B"></path>
-                      <path d="M48.2706 19.7429C48.2706 26.2283 42.9745 31.4857 36.4412 31.4857C33.6814 31.4857 31.1421 30.5473 29.1293 28.975C31.8815 26.8249 33.6483 23.4884 33.6483 19.7429C33.6483 15.9973 31.8815 12.6608 29.1293 10.5107C31.1421 8.93843 33.6814 7.99998 36.4412 7.99998C42.9745 7.99998 48.2706 13.2574 48.2706 19.7429" fill="#F79E1B"></path>
-                    </svg>
-                  </Box>
+                  <rect x="0.5" y="0.5" width="57" height="39" rx="3.5" fill="white" stroke="#F3F3F3"></rect>
+                  <path d="M34.3102 28.9765H23.9591V10.5122H34.3102V28.9765Z" fill="#FF5F00"></path>
+                  <path d="M24.6223 19.7429C24.6223 15.9973 26.3891 12.6608 29.1406 10.5107C27.1285 8.93843 24.5892 7.99998 21.8294 7.99998C15.2961 7.99998 10 13.2574 10 19.7429C10 26.2283 15.2961 31.4857 21.8294 31.4857C24.5892 31.4857 27.1285 30.5473 29.1406 28.975C26.3891 26.8249 24.6223 23.4884 24.6223 19.7429" fill="#EB001B"></path>
+                  <path d="M48.2706 19.7429C48.2706 26.2283 42.9745 31.4857 36.4412 31.4857C33.6814 31.4857 31.1421 30.5473 29.1293 28.975C31.8815 26.8249 33.6483 23.4884 33.6483 19.7429C33.6483 15.9973 31.8815 12.6608 29.1293 10.5107C31.1421 8.93843 33.6814 7.99998 36.4412 7.99998C42.9745 7.99998 48.2706 13.2574 48.2706 19.7429" fill="#F79E1B"></path>
+                </svg>
+              </Box>
               <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} display="flex" alignItems="center" justifyContent="center">
                 <svg viewBox="0 -11 70 70" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="30" style={{ width: '100%', height: '100%' }}>
                   <rect x="0.5" y="0.5" width="69" height="47" rx="5.5" fill="white" stroke="#D9D9D9"></rect>
@@ -1539,7 +1518,7 @@ export function ProductPageSection() {
         >
           {/* Trennstrich - volle Breite */}
           <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={6} />
-          
+
           <Stack direction="row" gap={8} align="start">
             {/* Links: Features Überschrift */}
             <Box flex="0 0 200px">
@@ -1547,7 +1526,7 @@ export function ProductPageSection() {
                 WAS DU BEKOMMST
               </Text>
             </Box>
-            
+
             {/* Rechts: Features Liste */}
             <VStack gap={0} align="stretch" flex={1}>
               {features.map((feature, idx) => (
