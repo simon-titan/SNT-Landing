@@ -4,6 +4,7 @@ import { ChakraProvider, Box } from "@chakra-ui/react";
 import { system } from "@/theme/theme";
 import AuthProvider from "@/components/provider/auth-provider";
 import { ColorModeProvider } from "./color-mode-provider";
+import AffiliateTracker from "@/components/affiliate/affiliate-tracker";
 import { projectConfig } from "@/config";
 
 export default function Provider(props: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export default function Provider(props: { children: React.ReactNode }) {
           forcedTheme: projectConfig.theme.colorMode,
         })}
       >
+        <AffiliateTracker />
         <AuthProvider>
           <Box colorPalette="primary">{props.children}</Box>
         </AuthProvider>

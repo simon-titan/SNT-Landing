@@ -328,6 +328,7 @@ async function createOutsetaAccount(accountData: OutsetaAccountRequest): Promise
       debugLog('Benutzer existiert bereits (Duplicate Email). Versuche Subscription hinzuzufügen.');
       
       // 1. Person suchen um UIDs zu bekommen
+      debugLog(`Suche nach existierender Person mit Email: ${accountData.Person.Email}`);
       const personResponse = await fetch(`https://${outsetaDomain}/api/v1/crm/people?Email=${encodeURIComponent(accountData.Person.Email)}`, {
         method: 'GET',
         headers: {
@@ -338,6 +339,12 @@ async function createOutsetaAccount(accountData: OutsetaAccountRequest): Promise
       
       if (personResponse.ok) {
         const personData = await personResponse.json();
+        debugLog('Person Such-Ergebnis', { 
+            count: personData.items?.length, 
+            firstUid: personData.items?.[0]?.Uid,
+            hasAccount: !!personData.items?.[0]?.Account
+        });
+
         const existingPerson = personData.items?.[0];
         
         if (existingPerson && existingPerson.Account?.Uid) {
@@ -388,9 +395,14 @@ async function createOutsetaAccount(accountData: OutsetaAccountRequest): Promise
             subscriptionUid: subscriptionResult?.Uid || null,
             isExistingUser: true
           };
+        } else {
+            debugLog('Person gefunden aber hat keinen Account oder keine Items zurückgegeben', { existingPerson });
         }
+      } else {
+        const pError = await personResponse.text();
+        debugLog('Konnte existierenden Benutzer nicht abrufen (API Error)', { status: personResponse.status, error: pError });
       }
-      debugLog('Konnte existierenden Benutzer nicht abrufen trotz Duplicate Fehler');
+      debugLog('Konnte existierenden Benutzer nicht abrufen trotz Duplicate Fehler (Fallback fehlgeschlagen)');
     }
 
     debugLog('FEHLER bei Outseta Registration', { 

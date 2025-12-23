@@ -4,6 +4,11 @@ import { EnvelopeOpen, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 import { Link } from "@/components/ui/link";
 import Confetti from "@/components/ui/confetti";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getCurrentPricing } from "@/config/pricing-config";
+import {
+  extractAffiliateCodeFromQuery,
+  getPersistedAffiliateCode,
+} from "@/lib/affiliate/affiliate-storage";
 import { useEffect } from "react";
 
 const SNT_BLUE = "#068CEF";
@@ -158,6 +163,81 @@ export default function ThankYouPage() {
     };
     
     processEmailListSubscription();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const affiliateCodeFromQuery = extractAffiliateCodeFromQuery(urlParams);
+    const affiliateCode = affiliateCodeFromQuery || getPersistedAffiliateCode();
+    if (!affiliateCode) return;
+
+    const sessionKey = `snt_affiliate_sale_${affiliateCode}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+
+    const source = urlParams.get("source") || "";
+    const explicitProvider = urlParams.get("provider") || "";
+    const explicitProduct = urlParams.get("product") || "";
+
+    const provider =
+      explicitProvider ||
+      (source.toLowerCase().includes("paypal") ? "paypal" : "outseta");
+    const product =
+      explicitProduct === "lifetime"
+        ? "lifetime"
+        : explicitProduct === "monthly"
+        ? "monthly"
+        : source.toLowerCase().includes("lifetime")
+        ? "lifetime"
+        : "monthly";
+
+    const pricing = getCurrentPricing();
+    const amount =
+      product === "lifetime" ? pricing.lifetime.price : pricing.monthly.price;
+
+    const metadata = {
+      source,
+      transactionId:
+        urlParams.get("transaction_id") ||
+        urlParams.get("subscription_id") ||
+        urlParams.get("order_id") ||
+        null,
+    };
+
+    const saleDate = urlParams.get("sale_date") ?? undefined;
+
+    (async () => {
+      try {
+        const response = await fetch("/api/affiliates/track", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            affiliateCode,
+            provider,
+            product,
+            amount,
+            currency: "EUR",
+            metadata,
+            saleDate,
+          }),
+        });
+
+        if (response.ok) {
+          sessionStorage.setItem(sessionKey, new Date().toISOString());
+        } else {
+          console.error(
+            "Affiliate tracking failed",
+            response.status,
+            await response.text()
+          );
+        }
+      } catch (error) {
+        console.error("Affiliate tracking error", error);
+      }
+    })();
   }, []);
 
   return (

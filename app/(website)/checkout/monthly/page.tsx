@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
 import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
+import { getPersistedAffiliateCode } from "@/lib/affiliate/affiliate-storage";
 
 const SNT_BLUE = "#068CEF";
 
@@ -11,6 +12,29 @@ export default function MonthlyCheckoutPage() {
     const [isClient, setIsClient] = useState(false);
     const discountActive = isDiscountActive();
     const pricing = discountActive ? pricingConfig.discount.monthly : pricingConfig.standard.monthly;
+
+    const buildThankYouUrl = (base: string, telegramUserId: string | null) => {
+        if (typeof window === "undefined") return base;
+        const url = new URL(base, window.location.origin);
+        const affiliateCode = getPersistedAffiliateCode();
+        if (affiliateCode) {
+            url.searchParams.set("aff", affiliateCode);
+        }
+        if (telegramUserId) {
+            url.searchParams.set("telegram_user_id", telegramUserId);
+        }
+        return `${url.pathname}${url.search}`;
+    };
+
+    const buildCustomId = (telegramUserId: string | null) => {
+        const affiliateCode = getPersistedAffiliateCode();
+        const suffix = affiliateCode ? `|AFF_${affiliateCode}` : "";
+        const base = `SNTTRADES_MONTHLY_PLAN${suffix}`;
+        if (telegramUserId) {
+            return `TG_USER_${telegramUserId}|${base}`;
+        }
+        return base;
+    };
 
     useEffect(() => {
         setIsClient(true);
@@ -38,11 +62,10 @@ export default function MonthlyCheckoutPage() {
                     console.log('✅ Outseta Registrierung erfolgreich:', event.data);
                     
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-3?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
-                    
-                    if (telegramUserId) {
-                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                    }
+                    const redirectUrl = buildThankYouUrl(
+                        `/thank-you-3?source=outseta&provider=outseta&product=monthly&transaction_id=${encodeURIComponent(event.data.transactionId || 'unknown')}`,
+                        telegramUserId
+                    );
 
                     window.location.href = redirectUrl;
                 }
@@ -53,10 +76,10 @@ export default function MonthlyCheckoutPage() {
                 if (currentUrl.includes('success') || currentUrl.includes('completed')) {
                     console.log('✅ Outseta Success URL erkannt');
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-3?source=outseta_url';
-                    if (telegramUserId) {
-                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                    }
+                    const redirectUrl = buildThankYouUrl(
+                        '/thank-you-3?source=outseta_url&provider=outseta&product=monthly',
+                        telegramUserId
+                    );
                     window.location.href = redirectUrl;
                 }
             };
@@ -72,10 +95,10 @@ export default function MonthlyCheckoutPage() {
                         console.log('✅ Outseta Success Text erkannt');
                         setTimeout(() => {
                             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                            let redirectUrl = '/thank-you-3?source=outseta_text';
-                            if (telegramUserId) {
-                                redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                            }
+                            const redirectUrl = buildThankYouUrl(
+                                '/thank-you-3?source=outseta_text&provider=outseta&product=monthly',
+                                telegramUserId
+                            );
                             window.location.href = redirectUrl;
                         }, 2000);
                     }
@@ -113,11 +136,10 @@ export default function MonthlyCheckoutPage() {
                     },
                     createSubscription: function(data: any, actions: any) {
                         const telegramUserId = localStorage.getItem('telegram_user_id');
-                        const customId = telegramUserId ? `TG_USER_${telegramUserId}|SNTTRADES_MONTHLY_PLAN` : 'SNTTRADES_MONTHLY_PLAN';
                         
                         return actions.subscription.create({
                             plan_id: pricing.paypal.planId,
-                            custom_id: customId,
+                            custom_id: buildCustomId(telegramUserId),
                             application_context: {
                                 brand_name: 'SNTTRADES',
                                 shipping_preference: 'NO_SHIPPING',
@@ -132,12 +154,10 @@ export default function MonthlyCheckoutPage() {
                         console.log('PayPal Subscription genehmigt:', data.subscriptionID);
                         
                         const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                        let redirectUrl = '/thank-you-3?subscription_id=' + data.subscriptionID;
-                        
-                        if (telegramUserId) {
-                            redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                            console.log('Redirecting with Telegram ID:', telegramUserId);
-                        }
+                        const redirectUrl = buildThankYouUrl(
+                            '/thank-you-3?source=paypal_subscription&provider=paypal&product=monthly&subscription_id=' + (data.subscriptionID || 'unknown'),
+                            telegramUserId
+                        );
                         
                         window.location.href = redirectUrl;
                     },

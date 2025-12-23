@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
 import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
+import { getPersistedAffiliateCode } from "@/lib/affiliate/affiliate-storage";
 
 const SNT_BLUE = "#068CEF";
 
@@ -17,6 +18,19 @@ export default function LifetimeCheckoutPage() {
     const [isClient, setIsClient] = useState(false);
     const discountActive = isDiscountActive();
     const pricing = discountActive ? pricingConfig.discount.lifetime : pricingConfig.standard.lifetime;
+
+    const buildThankYouUrl = (base: string, telegramUserId: string | null) => {
+        if (typeof window === "undefined") return base;
+        const url = new URL(base, window.location.origin);
+        const affiliateCode = getPersistedAffiliateCode();
+        if (affiliateCode) {
+            url.searchParams.set("aff", affiliateCode);
+        }
+        if (telegramUserId) {
+            url.searchParams.set("telegram_user_id", telegramUserId);
+        }
+        return `${url.pathname}${url.search}`;
+    };
 
     useEffect(() => {
         setIsClient(true);
@@ -44,11 +58,10 @@ export default function LifetimeCheckoutPage() {
                     console.log('✅ Outseta Registrierung erfolgreich:', event.data);
                     
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-3?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
-                    
-                    if (telegramUserId) {
-                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                    }
+                    const redirectUrl = buildThankYouUrl(
+                        `/thank-you-3?source=outseta&provider=outseta&product=lifetime&transaction_id=${encodeURIComponent(event.data.transactionId || 'unknown')}`,
+                        telegramUserId
+                    );
                     
                     window.location.href = redirectUrl;
                 }
@@ -60,11 +73,10 @@ export default function LifetimeCheckoutPage() {
                     console.log('✅ Outseta Success URL erkannt');
                     
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                    let redirectUrl = '/thank-you-3?source=outseta_url';
-                    
-                    if (telegramUserId) {
-                        redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                    }
+                    const redirectUrl = buildThankYouUrl(
+                        '/thank-you-3?source=outseta_url&provider=outseta&product=lifetime',
+                        telegramUserId
+                    );
                     
                     window.location.href = redirectUrl;
                 }
@@ -81,10 +93,10 @@ export default function LifetimeCheckoutPage() {
                         console.log('✅ Outseta Success Text erkannt');
                         setTimeout(() => {
                             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                            let redirectUrl = '/thank-you-3?source=outseta_text';
-                            if (telegramUserId) {
-                                redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                            }
+                            const redirectUrl = buildThankYouUrl(
+                                '/thank-you-3?source=outseta_text&provider=outseta&product=lifetime',
+                                telegramUserId
+                            );
                             window.location.href = redirectUrl;
                         }, 2000);
                     }
@@ -117,17 +129,15 @@ export default function LifetimeCheckoutPage() {
                 window.paypal
                     .HostedButtons({
                         hostedButtonId: pricing.paypal.hostedButtonId,
-                        onApprove: function(data: any) {
-                            console.log('PayPal Lifetime genehmigt:', data);
-                            const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                            let redirectUrl = '/thank-you-3?source=paypal_lifetime&order_id=' + (data.orderID || 'unknown');
-                            
-                            if (telegramUserId) {
-                                redirectUrl += `&telegram_user_id=${telegramUserId}`;
-                            }
-                            
-                            window.location.href = redirectUrl;
-                        }
+                    onApprove: function(data: any) {
+                        console.log('PayPal Lifetime genehmigt:', data);
+                        const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
+                        const redirectUrl = buildThankYouUrl(
+                            '/thank-you-3?source=paypal_lifetime&provider=paypal&product=lifetime&order_id=' + (data.orderID || 'unknown'),
+                            telegramUserId
+                        );
+                        window.location.href = redirectUrl;
+                    }
                     })
                     .render(`#${containerId}`);
             }
