@@ -6,6 +6,7 @@ import AuthProvider from "@/components/provider/auth-provider";
 import { ColorModeProvider } from "./color-mode-provider";
 import AffiliateTracker from "@/components/affiliate/affiliate-tracker";
 import { projectConfig } from "@/config";
+import { Suspense } from "react";
 
 export default function Provider(props: { children: React.ReactNode }) {
   return (
@@ -15,7 +16,9 @@ export default function Provider(props: { children: React.ReactNode }) {
           forcedTheme: projectConfig.theme.colorMode,
         })}
       >
-        <AffiliateTracker />
+        <Suspense fallback={null}>
+          <AffiliateTracker />
+        </Suspense>
         <AuthProvider>
           <Box colorPalette="primary">{props.children}</Box>
         </AuthProvider>
