@@ -121,11 +121,11 @@ export function ConfigurableProductPageSection({
         return;
       }
 
-      // Load order SDK (needed for lifetime)
+      // Load order SDK (needed for lifetime) - with vault=true to support both orders and subscriptions
       const script = document.createElement("script");
       script.id = "paypal-sdk-product-lifetime";
       script.src =
-        "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&currency=EUR";
+        "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&currency=EUR";
       script.setAttribute("data-sdk-integration-source", "button-factory");
       script.async = true;
       script.onload = () => {

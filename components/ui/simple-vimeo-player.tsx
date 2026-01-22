@@ -22,7 +22,7 @@ export const SimpleVimeoPlayer: React.FC<SimpleVimeoPlayerProps> = ({
       bg="black"
     >
       <iframe
-        src={`https://player.vimeo.com/video/${videoId}?autoplay=${autoplay ? 1 : 0}&muted=${muted ? 1 : 0}&loop=1&title=0&byline=0&portrait=0&transparent=0`}
+        src={`https://player.vimeo.com/video/${videoId}?autoplay=${autoplay ? 1 : 0}&muted=${muted ? 1 : 0}&loop=1&title=0&byline=0&portrait=0&transparent=0&playsinline=1`}
         width="100%"
         height="100%"
         style={{ 
@@ -36,6 +36,7 @@ export const SimpleVimeoPlayer: React.FC<SimpleVimeoPlayerProps> = ({
         }}
         allow="autoplay; fullscreen; picture-in-picture"
         allowFullScreen
+        playsInline
         title="Vimeo Video"
       />
     </Box>

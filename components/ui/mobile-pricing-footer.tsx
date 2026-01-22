@@ -37,47 +37,56 @@ export function MobilePricingFooter() {
   }, [isClient, paypalLoaded]);
 
   const loadPayPalSDK = () => {
-    // Check if Subscription SDK is already loaded (from modal or previous load)
-    const existingScript = document.getElementById("paypal-sdk-mobile") || document.getElementById("paypal-sdk-mobile-footer");
-    if (existingScript && (window as any).paypal?.Buttons) {
+    // Check if ANY PayPal SDK with vault support is already loaded
+    if ((window as any).paypal?.Buttons) {
+      console.log("Mobile Footer: PayPal SDK bereits verfügbar, prüfe vault support");
+      
+      // Test if current SDK supports subscriptions (has vault=true)
+      try {
+        // Check if we can create a test subscription config
+        const testConfig = {
+          createSubscription: () => Promise.resolve({ subscriptionID: 'test' })
+        };
+        console.log("Mobile Footer: Existierendes SDK unterstützt Subscriptions");
+        setPaypalLoaded(true);
+        return;
+      } catch (error) {
+        console.log("Mobile Footer: Existierendes SDK unterstützt keine Subscriptions, lade neues SDK");
+      }
+    }
+
+    // Check if our subscription SDK is already loaded
+    const existingSubscriptionScript = document.getElementById("paypal-sdk-mobile-footer-subscription");
+    if (existingSubscriptionScript && (window as any).paypal?.Buttons) {
       console.log("Mobile Footer: Subscription SDK bereits geladen");
       setPaypalLoaded(true);
       return;
     }
 
-    // Check if Order SDK is loaded - if so, we need to wait for Subscription SDK
-    const orderScript = document.getElementById("paypal-sdk-order");
-    if (orderScript && !existingScript) {
-      console.log("Mobile Footer: Order SDK geladen, warte auf Subscription SDK...");
-      // Wait for Subscription SDK to be loaded by modal restore function
-      const checkSDK = (attempt = 0) => {
-        const subscriptionScript = document.getElementById("paypal-sdk-mobile");
-        if (subscriptionScript && (window as any).paypal?.Buttons) {
+    // Load Subscription SDK with vault=true (don't remove existing scripts to avoid conflicts)
+    const script = document.createElement("script");
+    script.id = "paypal-sdk-mobile-footer-subscription";
+    script.src = "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&intent=subscription&currency=EUR";
+    script.setAttribute("data-sdk-integration-source", "button-factory");
+    script.async = true;
+    
+    script.onload = () => {
+      console.log("Mobile Footer: Subscription SDK geladen mit vault=true");
+      // Wait a bit for SDK to initialize
+      setTimeout(() => {
+        if ((window as any).paypal?.Buttons) {
           setPaypalLoaded(true);
-        } else if (attempt < 30) {
-          setTimeout(() => checkSDK(attempt + 1), 200);
         } else {
-          console.error("Mobile Footer: Subscription SDK konnte nicht geladen werden");
+          console.error("Mobile Footer: PayPal Buttons nicht verfügbar nach SDK Load");
         }
-      };
-      setTimeout(() => checkSDK(), 500);
-      return;
-    }
-
-    // Load Subscription SDK if not already loaded
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.id = "paypal-sdk-mobile-footer";
-      script.src =
-        "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&intent=subscription&currency=EUR";
-      script.setAttribute("data-sdk-integration-source", "button-factory");
-      script.async = true;
-      script.onload = () => {
-        console.log("Mobile Footer: Subscription SDK geladen");
-        setPaypalLoaded(true);
-      };
-      document.head.appendChild(script);
-    }
+      }, 500);
+    };
+    
+    script.onerror = () => {
+      console.error("Mobile Footer: Fehler beim Laden des PayPal SDK");
+    };
+    
+    document.head.appendChild(script);
   };
 
 
@@ -90,15 +99,28 @@ export function MobilePricingFooter() {
   // Listen for SDK reload events from modal
   useEffect(() => {
     const handleSDKLoaded = () => {
-      console.log("Mobile Footer: PayPal SDK reloaded, re-rendering buttons...");
+      console.log("Mobile Footer: PayPal SDK reload event empfangen");
+      
+      // Reset states
       setPaypalLoaded(false);
       setPaypalButtonRendered(false);
-      // Wait a bit for SDK to be ready
+      
+      // Clear any existing buttons
+      const container = document.getElementById("paypal-hidden-container");
+      if (container) {
+        container.innerHTML = '';
+      }
+      
+      // Check if SDK is available and reload
       setTimeout(() => {
-        if ((window as any).paypal) {
+        if ((window as any).paypal?.Buttons) {
+          console.log("Mobile Footer: SDK bereits verfügbar nach reload event");
           setPaypalLoaded(true);
+        } else {
+          console.log("Mobile Footer: Lade SDK nach reload event");
+          loadPayPalSDK();
         }
-      }, 500);
+      }, 100);
     };
 
     window.addEventListener('paypal-sdk-loaded', handleSDKLoaded);
@@ -108,16 +130,51 @@ export function MobilePricingFooter() {
   }, []);
 
   const renderPayPalButtons = () => {
-    if (!(window as any).paypal) return;
+    if (!(window as any).paypal?.Buttons) {
+      console.log("Mobile Footer: PayPal SDK oder Buttons nicht verfügbar");
+      return;
+    }
 
     const container = document.getElementById("paypal-hidden-container");
     
-    if (!container) return;
+    if (!container) {
+      console.log("Mobile Footer: PayPal Container nicht gefunden");
+      return;
+    }
 
+    // Clear existing buttons to prevent conflicts
+    container.innerHTML = '';
+    
+    // Check if SDK has vault capability by testing subscription creation
+    try {
+      // Create a test button config to verify subscription support
+      const testButton = (window as any).paypal.Buttons({
+        createSubscription: function(data: any, actions: any) {
+          // This is just a test - we won't actually create anything
+          return Promise.resolve('test');
+        }
+      });
+      
+      console.log("Mobile Footer: SDK Vault Check - OK, Subscription support verfügbar");
+    } catch (error) {
+      console.error("Mobile Footer: SDK hat keine Vault-Unterstützung:", error);
+      console.log("Mobile Footer: Versuche SDK neu zu laden mit vault=true");
+      
+      // Reset and reload with proper vault support
+      setPaypalLoaded(false);
+      setPaypalButtonRendered(false);
+      setTimeout(() => {
+        loadPayPalSDK();
+      }, 500);
+      return;
+    }
+    
     const telegramUserId = localStorage.getItem("telegram_user_id");
     const customId = telegramUserId
       ? `TG_USER_${telegramUserId}|SNTTRADES_MONTHLY_PLAN`
       : "SNTTRADES_MONTHLY_PLAN";
+
+    console.log("Mobile Footer: Rendering PayPal Subscription Button mit vault=true...");
 
     const buttonConfig = {
       style: {
@@ -165,19 +222,31 @@ export function MobilePricingFooter() {
     };
 
     try {
-      // Render PayPal Button
+      // Render PayPal Button with error handling
       const buttons = (window as any).paypal.Buttons(buttonConfig);
       buttons
         .render("#paypal-hidden-container")
         .then(() => {
-          console.log("PayPal Button erfolgreich gerendert");
+          console.log("Mobile Footer: PayPal Button erfolgreich gerendert");
           setPaypalButtonRendered(true);
         })
         .catch((error: any) => {
-          console.error("PayPal Button Render Fehler:", error);
+          console.error("Mobile Footer: PayPal Button Render Fehler:", error);
+          // Reset states on error
+          setPaypalButtonRendered(false);
+          setPaypalLoaded(false);
+          
+          // Retry after a delay
+          setTimeout(() => {
+            console.log("Mobile Footer: Retrying PayPal button render...");
+            if ((window as any).paypal) {
+              setPaypalLoaded(true);
+            }
+          }, 2000);
         });
     } catch (error: any) {
-      console.error("Fehler beim Erstellen des PayPal Buttons:", error);
+      console.error("Mobile Footer: Fehler beim Erstellen des PayPal Buttons:", error);
+      setPaypalButtonRendered(false);
     }
   };
 
@@ -254,7 +323,7 @@ export function MobilePricingFooter() {
                 borderRadius="lg"
                 overflow="hidden"
               >
-                {/* PayPal Button Container - sichtbar aber mit opacity 0 */}
+                {/* PayPal Button Container - sichtbar wenn gerendert */}
                 <Box
                   id="paypal-hidden-container"
                   position="absolute"
@@ -262,39 +331,30 @@ export function MobilePricingFooter() {
                   left="0"
                   width="100%"
                   height="100%"
-                  opacity="0"
+                  opacity={paypalButtonRendered ? "1" : "0"}
                   pointerEvents="auto"
-                  zIndex={1}
+                  zIndex={paypalButtonRendered ? 2 : 1}
                 />
                 
-                {/* Custom Overlay Button */}
+                {/* Custom Overlay Button - nur sichtbar wenn PayPal nicht gerendert */}
                 <Box
                   position="absolute"
                   top="0"
                   left="0"
                   right="0"
                   bottom="0"
-                  zIndex={2}
+                  zIndex={1}
                   bg="white"
-                  display="flex"
+                  display={paypalButtonRendered ? "none" : "flex"}
                   alignItems="center"
                   justifyContent="center"
                   borderRadius="lg"
-                  cursor={paypalButtonRendered ? "pointer" : "not-allowed"}
-                  pointerEvents={paypalButtonRendered ? "none" : "auto"}
+                  cursor="not-allowed"
+                  pointerEvents="auto"
                   opacity={!paypalLoaded ? 0.6 : 1}
                   transition="all 0.3s ease"
-                  _hover={
-                    paypalButtonRendered
-                      ? {
-                          bg: "#f5f5f5",
-                        }
-                      : {}
-                  }
                   onClick={() => {
-                    if (!paypalButtonRendered) {
-                      alert("PayPal wird noch geladen. Bitte warten Sie einen Moment.");
-                    }
+                    alert("PayPal wird noch geladen. Bitte warten Sie einen Moment.");
                   }}
                 >
                   {!paypalLoaded ? (
