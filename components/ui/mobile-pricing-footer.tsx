@@ -28,6 +28,14 @@ export function MobilePricingFooter() {
     }
   }, [isClient]);
 
+  // Check if PayPal is already loaded on mount
+  useEffect(() => {
+    if (isClient && (window as any).paypal && !paypalLoaded) {
+      console.log("Mobile Footer: PayPal already loaded, setting state");
+      setPaypalLoaded(true);
+    }
+  }, [isClient, paypalLoaded]);
+
   const loadPayPalSDK = () => {
     // Check if Subscription SDK is already loaded (from modal or previous load)
     const existingScript = document.getElementById("paypal-sdk-mobile") || document.getElementById("paypal-sdk-mobile-footer");
@@ -77,7 +85,7 @@ export function MobilePricingFooter() {
     if (paypalLoaded && !paypalButtonRendered) {
       renderPayPalButtons();
     }
-  }, [paypalLoaded]);
+  }, [paypalLoaded, paypalButtonRendered]);
 
   // Listen for SDK reload events from modal
   useEffect(() => {
@@ -199,7 +207,7 @@ export function MobilePricingFooter() {
         bottom={0}
         left={0}
         right={0}
-        zIndex={999999}
+        zIndex={1000}
         display={{ base: "block", md: "none" }}
         bg="rgba(40, 40, 40, 0.98)"
         backdropFilter="blur(20px)"

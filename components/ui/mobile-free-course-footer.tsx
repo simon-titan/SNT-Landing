@@ -22,7 +22,7 @@ export function MobileFreeCourseFooter() {
         bottom="0"
         left="0"
         right="0"
-        zIndex={999999}
+        zIndex={1000}
         bg="rgba(0, 0, 0, 0.95)"
         backdropFilter="blur(20px)"
         borderTop="1px solid rgba(59, 130, 246, 0.3)"

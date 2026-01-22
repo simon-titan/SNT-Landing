@@ -13,7 +13,7 @@ import {
   Image,
   Flex,
 } from "@chakra-ui/react";
-import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
+import { SimpleVimeoPlayer } from "@/components/ui/simple-vimeo-player";
 import { CheckCircle, Star, Users, Lock } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { PricingSelectionModal } from "@/components/ui/pricing-selection-modal";
@@ -521,7 +521,7 @@ export function ConfigurableProductPageSection({
             boxShadow="0 8px 32px rgba(59, 130, 246, 0.08)"
             mb={6}
           >
-            <BrandedVimeoPlayer videoId={vimeoVideoId} autoplay={true} muted={true} />
+            <SimpleVimeoPlayer videoId={vimeoVideoId} autoplay={true} muted={true} />
           </Box>
 
           {/* Community Stats Banner - direkt unter Video - nur für Paid Course */}
@@ -714,7 +714,7 @@ export function ConfigurableProductPageSection({
               border="1px solid rgba(59, 130, 246, 0.3)"
               boxShadow="0 8px 32px rgba(59, 130, 246, 0.2)"
             >
-              <BrandedVimeoPlayer videoId={vimeoVideoId} autoplay={true} muted={true} />
+              <SimpleVimeoPlayer videoId={vimeoVideoId} autoplay={true} muted={true} />
             </Box>
 
             {/* Community Stats Banner - direkt unter Video - nur für Paid Course */}

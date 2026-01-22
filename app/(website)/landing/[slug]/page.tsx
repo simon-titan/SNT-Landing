@@ -187,13 +187,13 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
            margin-top: 0 !important;
            padding-top: 2rem !important;
            position: relative;
-           z-index: 1000;
+           z-index: 1;
          }
          
          /* Verstecke alle Elemente vor der ersten Section */
          #configurable-product-page-section ~ * {
            position: relative;
-           z-index: 999;
+           z-index: 10;
          }
          
          /* Stelle sicher dass Mobile Footer sichtbar bleibt und fixiert ist */
@@ -206,7 +206,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
            bottom: 0 !important;
            left: 0 !important;
            right: 0 !important;
-           z-index: 999999 !important;
+           z-index: 1000 !important;
            background: rgba(0, 0, 0, 0.95) !important;
            backdrop-filter: blur(20px) !important;
          }
