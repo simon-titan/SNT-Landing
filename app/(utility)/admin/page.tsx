@@ -569,11 +569,12 @@ export default function AffiliateAdminPage() {
               </Text>
               <IconButton
                 aria-label="Toggle Affiliate Section"
-                icon={isAffiliateCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsAffiliateCollapsed(!isAffiliateCollapsed)}
-              />
+              >
+                {isAffiliateCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
+              </IconButton>
             </HStack>
             
             <Collapsible.Root open={!isAffiliateCollapsed}>
@@ -762,11 +763,12 @@ export default function AffiliateAdminPage() {
               </Text>
               <IconButton
                 aria-label="Toggle Landing Page Section"
-                icon={isLandingPageCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsLandingPageCollapsed(!isLandingPageCollapsed)}
-              />
+              >
+                {isLandingPageCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
+              </IconButton>
             </HStack>
             
             <Collapsible.Root open={!isLandingPageCollapsed}>
