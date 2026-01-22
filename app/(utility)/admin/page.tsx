@@ -852,12 +852,6 @@ export default function AffiliateAdminPage() {
                       color="gray.800"
                       borderColor="gray.300"
                       _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                      sx={{
-                        '& option': {
-                          backgroundColor: 'white',
-                          color: 'gray.800'
-                        }
-                      }}
                     >
                       <option value="paid" style={{ backgroundColor: 'white', color: '#2D3748' }}>Paid (zeigt Pricing)</option>
                       <option value="free" style={{ backgroundColor: 'white', color: '#2D3748' }}>Free (zeigt Registration Modal)</option>
