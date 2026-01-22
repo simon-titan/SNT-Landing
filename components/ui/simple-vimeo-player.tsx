@@ -36,7 +36,6 @@ export const SimpleVimeoPlayer: React.FC<SimpleVimeoPlayerProps> = ({
         }}
         allow="autoplay; fullscreen; picture-in-picture"
         allowFullScreen
-        playsInline
         title="Vimeo Video"
       />
     </Box>
