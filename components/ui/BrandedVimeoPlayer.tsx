@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Box, HStack, Text } from "@chakra-ui/react";
 import { Slider } from "@/components/ui/slider";
 import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
-import { MdReplay, MdPlayArrow, MdPause } from "react-icons/md";
+import { MdReplay, MdPlayArrow, MdPause, MdFullscreen, MdFullscreenExit } from "react-icons/md";
 // @ts-ignore
 import Player from "@vimeo/player";
 
@@ -26,6 +26,7 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const formatTime = (seconds: number) => {
@@ -160,6 +161,52 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({
     handleUserInteraction();
   };
 
+  const handleFullscreen = () => {
+    if (!containerRef.current) return;
+    
+    if (!isFullscreen) {
+      // Enter fullscreen
+      if (containerRef.current.requestFullscreen) {
+        containerRef.current.requestFullscreen();
+      } else if ((containerRef.current as any).webkitRequestFullscreen) {
+        (containerRef.current as any).webkitRequestFullscreen();
+      } else if ((containerRef.current as any).msRequestFullscreen) {
+        (containerRef.current as any).msRequestFullscreen();
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) {
+        (document as any).webkitExitFullscreen();
+      } else if ((document as any).msExitFullscreen) {
+        (document as any).msExitFullscreen();
+      }
+    }
+  };
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).msFullscreenElement
+      );
+      setIsFullscreen(isCurrentlyFullscreen);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   return (
     <Box
       width="100%"
@@ -274,6 +321,19 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({
               />
             </Box>
           </HStack>
+
+          {/* Fullscreen Button */}
+          <Button
+            onClick={handleFullscreen}
+            variant="ghost"
+            color="white"
+            _hover={{ bg: "whiteAlpha.200" }}
+            size="sm"
+            p={0}
+            minW="auto"
+          >
+            {isFullscreen ? <MdFullscreenExit size={20} /> : <MdFullscreen size={20} />}
+          </Button>
         </HStack>
       </Box>
 

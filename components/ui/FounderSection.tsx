@@ -152,8 +152,26 @@ export const FounderSection: React.FC<FounderSectionProps> = ({
                 </Text>
                 {checklist.map((item, idx) => (
                   <HStack key={idx} gap={3} align="start" w="full" justify={{ base: "flex-start", lg: "flex-start" }}>
-                    <Box flexShrink={0} pt={1} width="18px" height="auto">
-                      <CheckCircle size={18} color="white" weight="fill" style={{ minWidth: "18px", minHeight: "18px" }} />
+                    <Box 
+                      flexShrink={0} 
+                      pt={1} 
+                      width={{ base: "20px", lg: "18px" }} 
+                      height={{ base: "20px", lg: "18px" }}
+                      display="flex"
+                      alignItems="flex-start"
+                      justifyContent="center"
+                    >
+                      <CheckCircle 
+                        size={20} 
+                        color="white" 
+                        weight="fill" 
+                        style={{ 
+                          minWidth: "20px", 
+                          minHeight: "20px",
+                          width: "20px",
+                          height: "20px"
+                        }} 
+                      />
                     </Box>
                     <Text 
                       color="gray.300" 

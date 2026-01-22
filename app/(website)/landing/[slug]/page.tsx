@@ -1,32 +1,216 @@
-import { Heading, Stack, VStack, HStack, Text, SimpleGrid, Box, Image } from "@chakra-ui/react";
+import { notFound } from "next/navigation";
+import { supabaseAnon } from "@/lib/supabase/client";
+import { ConfigurableProductPageSection } from "@/components/ui/configurable-product-page-section";
 import { Section } from "@/components/layout/section";
-import { generateMetadata } from "@/utils/metadata";
-import { UserCircle, CreditCard, Palette, EnvelopeSimple, Lifebuoy, Cube, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { generateMetadata as generateMetadataUtil } from "@/utils/metadata";
+import { Box } from "@chakra-ui/react";
 import { ReviewMarquee } from "@/components/ui/ReviewMarquee";
 import { ResultsMarquee } from "@/components/ui/ResultsMarquee";
 import { FounderSection } from "@/components/ui/FounderSection";
 import { CourseOverviewSection } from "@/components/ui/CourseOverviewSection";
-import { SntPremiumPricing } from "@/components/ui/snt-premium-pricing";
+import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { Text, VStack, HStack, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
 import { MobilePricingFooter } from "@/components/ui/mobile-pricing-footer";
-import { ProductPageSection } from "@/components/ui/product-page-section";
-export const metadata = generateMetadata({
-    title: "SNTTRADES - DEIN WEG ZUM PROFITABLEN TRADER",
-    description: "Über 6+ Jahre Markterfahrung gebündelt in einem klar strukturierten Kurs – für deinen Weg zum selbstbestimmten Trader.",
-});
-export default async function Page() {
-    return (<>
-      {/* Product Page Section - Neue Hero-Section */}
-      <ProductPageSection />
-      
-      {/* Mobile Pricing Footer */}
-      <MobilePricingFooter />
-      
-      
-      {/* Glow Trenner */}
-      <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
-      
-      {/* Project 30 Pricing Section - Direkt unter Community Stats */}
+import { MobileFreeCourseFooter } from "@/components/ui/mobile-free-course-footer";
+
+interface LandingPageVersion {
+  id: string;
+  name: string;
+  slug: string;
+  title: string;
+  vimeo_video_id: string;
+  course_type: 'paid' | 'free';
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+async function getLandingPageVersion(slug: string): Promise<LandingPageVersion | null> {
+  try {
+    console.log("Suche nach Landing Page Version mit Slug:", slug);
     
+    const { data, error } = await supabaseAnon
+      .from("landing_page_versions")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single();
+
+    console.log("Supabase Response:", { data, error });
+
+    if (error) {
+      console.error("Supabase Fehler:", error);
+      
+      // Fallback: Versuche ohne is_active Filter
+      const { data: fallbackData, error: fallbackError } = await supabaseAnon
+        .from("landing_page_versions")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+        
+      console.log("Fallback Response:", { fallbackData, fallbackError });
+      
+      if (fallbackError || !fallbackData) {
+        return null;
+      }
+      
+      return fallbackData as LandingPageVersion;
+    }
+
+    if (!data) {
+      console.error("Keine Daten gefunden für Slug:", slug);
+      return null;
+    }
+
+    console.log("Landing Page Version gefunden:", data);
+    return data as LandingPageVersion;
+  } catch (error) {
+    console.error("Unerwarteter Fehler beim Abrufen der Landing Page Version:", error);
+    return null;
+  }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const version = await getLandingPageVersion(slug);
+  
+  if (!version) {
+    return generateMetadataUtil({
+      title: "Seite nicht gefunden - SNTTRADES",
+      description: "Die angeforderte Seite wurde nicht gefunden.",
+    });
+  }
+
+  return generateMetadataUtil({
+    title: `${version.title} - SNTTRADES`,
+    description: version.course_type === 'paid' 
+      ? "Über 6+ Jahre Markterfahrung gebündelt in einem klar strukturierten Kurs – für deinen Weg zum selbstbestimmten Trader."
+      : "Starte deine Trading-Reise kostenlos mit unserem Einsteiger-Kurs und lerne die Grundlagen des profitablen Tradings.",
+  });
+}
+
+export default async function LandingPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const version = await getLandingPageVersion(slug);
+
+  if (!version) {
+    notFound();
+  }
+
+  return (
+    <>
+       {/* CSS um Navbar auf Slug-Seiten auszublenden */}
+       <style>{`
+         /* Verstecke alle möglichen Navbar/Header Elemente */
+         .navbar-container,
+         nav,
+         header,
+         [data-testid="navbar"],
+         .chakra-ui-navbar,
+         .navbar,
+         .header,
+         [role="banner"] {
+           display: none !important;
+         }
+         
+         /* Verstecke spezifische CSS-Klasse */
+         .css-xkj2dx {
+           display: none !important;
+         }
+         
+         /* Verstecke graue Balken und Container */
+         .chakra-ui-container:first-child,
+         .chakra-container:first-child,
+         body > div:first-child > div:first-child:not(#configurable-product-page-section),
+         body > div > div:first-child:not(#configurable-product-page-section) {
+           display: none !important;
+         }
+         
+         /* Entferne alle Top-Abstände */
+         body {
+           padding-top: 0 !important;
+           margin-top: 0 !important;
+           background: black !important;
+         }
+         
+         main {
+           padding-top: 0 !important;
+           margin-top: 0 !important;
+         }
+         
+         #__next {
+           padding-top: 0 !important;
+           margin-top: 0 !important;
+         }
+         
+         .chakra-container {
+           padding-top: 0 !important;
+           margin-top: 0 !important;
+         }
+         
+         /* Stelle sicher dass die erste Section ganz oben startet mit Top-Padding */
+         #configurable-product-page-section {
+           margin-top: 0 !important;
+           padding-top: 2rem !important;
+           position: relative;
+           z-index: 1000;
+         }
+         
+         /* Verstecke alle Elemente vor der ersten Section */
+         #configurable-product-page-section ~ * {
+           position: relative;
+           z-index: 999;
+         }
+         
+         /* Stelle sicher dass Mobile Footer sichtbar bleibt und fixiert ist */
+         [data-testid="mobile-footer"],
+         .mobile-footer,
+         .mobile-pricing-footer,
+         .mobile-free-course-footer {
+           display: block !important;
+           position: fixed !important;
+           bottom: 0 !important;
+           left: 0 !important;
+           right: 0 !important;
+           z-index: 99999 !important;
+           background: rgba(0, 0, 0, 0.95) !important;
+           backdrop-filter: blur(20px) !important;
+         }
+         
+         /* Stelle sicher dass der Footer über allem schwebt */
+         body {
+           padding-bottom: 120px !important;
+         }
+         
+         /* Mobile Footer spezifische Styles */
+         @media (max-width: 768px) {
+           body {
+             padding-bottom: 120px !important;
+           }
+         }
+         
+         /* Spezifische Selektoren für Layout-Container */
+         .layout-container,
+         .page-container,
+         .app-container {
+           padding-top: 0 !important;
+           margin-top: 0 !important;
+         }
+       `}</style>
+       
+       {/* Mobile Footer - je nach Course Type - ÜBER allem anderen */}
+       {version.course_type === 'paid' ? (
+         <MobilePricingFooter />
+       ) : (
+         <MobileFreeCourseFooter />
+       )}
+       
+       {/* Configurable Product Page Section */}
+       <ConfigurableProductPageSection 
+         title={version.title}
+         vimeoVideoId={version.vimeo_video_id}
+         courseType={version.course_type}
+       />
       
       {/* Glow Trenner */}
       <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
@@ -36,21 +220,29 @@ export default async function Page() {
       {/* Glow Trenner */}
       <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
       
-      <FounderSection image="/personal/emre-2.jpg" name={<Box
-        as="span"
-        background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-        color="white"
-        px={2}
-        py={1}
-        borderRadius="md"
-        fontWeight="bold"
-        display="inline-block"
-        border="1px solid rgba(59, 130, 246, 0.35)"
-        boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-        backdropFilter="blur(6px)"
-      >
-        Hi, Ich bin Emre
-      </Box>} subtitle="MEET THE FOUNDER" description={<Box fontSize="md" color="white">
+      {/* Emre Founder Section */}
+      <FounderSection 
+        image="/personal/emre-2.jpg" 
+        name={
+          <Box
+            as="span"
+            background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+            color="white"
+            px={2}
+            py={1}
+            borderRadius="md"
+            fontWeight="bold"
+            display="inline-block"
+            border="1px solid rgba(59, 130, 246, 0.35)"
+            boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+            backdropFilter="blur(6px)"
+          >
+            Hi, Ich bin Emre
+          </Box>
+        } 
+        subtitle="MEET THE FOUNDER" 
+        description={
+          <Box fontSize="md" color="white">
             <Text mb={4} lineHeight="1.6">
               Meine Reise begann nach dem Abitur – ursprünglich wollte ich eine eigene Brand aufbauen. Doch als ich das enorme Potenzial im Trading erkannt habe, habe ich alles andere losgelassen und mich zu 100 % dem Trading gewidmet.
             </Text>
@@ -236,31 +428,42 @@ export default async function Page() {
             <Text fontWeight="bold" fontSize="lg" color="white">
               Starte jetzt – dein Trading-Weg beginnt hier.
             </Text>
-          </Box>} checklist={[
-            'Spezialist für Scalping und Daytrading Strategien',
-            'Experte in Marktpsychologie und Risikomanagement',
-            'Gründer einer professionellen Trading-Community',
-            'Mentor für über 1.000 erfolgreiche Trader',
-            'Content Creator mit großer Social Media Reichweite',
-            'Fokus auf nachhaltige und profitable Trading-Systeme'
-        ]} highlights={["as seen in"]}/>
+          </Box>
+        } 
+        checklist={[
+          'Spezialist für Scalping und Daytrading Strategien',
+          'Experte in Marktpsychologie und Risikomanagement',
+          'Gründer einer professionellen Trading-Community',
+          'Mentor für über 1.000 erfolgreiche Trader',
+          'Content Creator mit großer Social Media Reichweite',
+          'Fokus auf nachhaltige und profitable Trading-Systeme'
+        ]} 
+        highlights={["as seen in"]}
+      />
       
       {/* Ali Founder Section */}
-      <FounderSection image="/personal/ali-2.jpeg" name={<Box
-        as="span"
-        background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-        color="white"
-        px={2}
-        py={1}
-        borderRadius="md"
-        fontWeight="bold"
-        display="inline-block"
-        border="1px solid rgba(59, 130, 246, 0.35)"
-        boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-        backdropFilter="blur(6px)"
-      >
-        Hi, ich bin Ali
-      </Box>} subtitle="CO-FOUNDER" description={<Box fontSize="md" color="white">
+      <FounderSection 
+        image="/personal/ali-2.jpeg" 
+        name={
+          <Box
+            as="span"
+            background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+            color="white"
+            px={2}
+            py={1}
+            borderRadius="md"
+            fontWeight="bold"
+            display="inline-block"
+            border="1px solid rgba(59, 130, 246, 0.35)"
+            boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+            backdropFilter="blur(6px)"
+          >
+            Hi, ich bin Ali
+          </Box>
+        } 
+        subtitle="CO-FOUNDER" 
+        description={
+          <Box fontSize="md" color="white">
             <Text mb={4} lineHeight="1.6">
               Meine Reise begann früh. Schon mit 16 war mir klar, dass ich mehr aus meinem Leben rausholen möchte als den klassischen Weg. Also habe ich angefangen zu suchen – und bin dabei oft gescheitert.
             </Text>
@@ -280,15 +483,20 @@ export default async function Page() {
             <Text fontWeight="bold" fontSize="lg" color="white">
               Ich kenne das Gefühl, keinen klaren Plan zu haben. Genau deshalb weiß ich, wie wichtig es ist, dranzubleiben – auch dann, wenn noch niemand an dich glaubt.
             </Text>
-          </Box>} checklist={[
-            'Experte für strukturierte Trading-Systeme',
-            'Spezialist in persönlicher Entwicklung & Mindset',
-            'Erfahrung in verschiedenen Business-Modellen',
-            'Fokus auf Disziplin und mentale Stärke',
-            'Mentor für zielstrebige Trader',
-            'Verfechter von Eigenverantwortung im Trading'
-        ]} highlights={["co-founder"]} reverse={true}/>
-        
+          </Box>
+        } 
+        checklist={[
+          'Experte für strukturierte Trading-Systeme',
+          'Spezialist in persönlicher Entwicklung & Mindset',
+          'Erfahrung in verschiedenen Business-Modellen',
+          'Fokus auf Disziplin und mentale Stärke',
+          'Mentor für zielstrebige Trader',
+          'Verfechter von Eigenverantwortung im Trading'
+        ]} 
+        highlights={["co-founder"]}
+        reverse={true}
+      />
+      
       <CourseOverviewSection />
       
       {/* Glow Trenner */}
@@ -343,12 +551,10 @@ export default async function Page() {
                 </Box>
                 <Box flexShrink={0} display={{ base: "none", md: "block" }}>
                   <Box w="180px" h="180px" borderRadius="xl" overflow="hidden">
-                    <Image
+                    <img
                       src="/assets/VORTEILE/V1.png"
                       alt="Phase 1"
-                      w="100%"
-                      h="100%"
-                      objectFit="cover"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   </Box>
                 </Box>
@@ -388,12 +594,10 @@ export default async function Page() {
                 </Box>
                 <Box flexShrink={0} display={{ base: "none", md: "block" }}>
                   <Box w="180px" h="180px" borderRadius="xl" overflow="hidden">
-                    <Image
+                    <img
                       src="/assets/VORTEILE/V2.png"
                       alt="Phase 2"
-                      w="100%"
-                      h="100%"
-                      objectFit="cover"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   </Box>
                 </Box>
@@ -433,12 +637,10 @@ export default async function Page() {
                 </Box>
                 <Box flexShrink={0} display={{ base: "none", md: "block" }}>
                   <Box w="180px" h="180px" borderRadius="xl" overflow="hidden">
-                    <Image
+                    <img
                       src="/assets/VORTEILE/V3.png"
                       alt="Phase 3"
-                      w="100%"
-                      h="100%"
-                      objectFit="cover"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   </Box>
                 </Box>
@@ -447,12 +649,6 @@ export default async function Page() {
           </VStack>
         </VStack>
       </Section>
-      
-      
-      
-
-
-      
-    </>);
+    </>
+  );
 }
-

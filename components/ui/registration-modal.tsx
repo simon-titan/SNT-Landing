@@ -94,6 +94,9 @@ export function RegistrationModal({ isOpen, onClose, planUid = "wmjBBxmV" }: Reg
         throw new Error(result.error || "Registrierung fehlgeschlagen");
       }
 
+      // E-Mail in localStorage speichern für Thank-You-Seite
+      localStorage.setItem('sntRegistrationEmail', formData.email);
+      
       // Erfolgreich registriert - weiterleiten zur Thank-You-Seite
       const thankYouUrl = `/thank-you-3?email=${encodeURIComponent(formData.email)}`;
       window.location.href = thankYouUrl;

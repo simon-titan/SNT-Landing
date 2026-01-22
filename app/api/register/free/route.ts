@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const OUTSETA_DOMAIN = process.env.OUTSETA_DOMAIN || "seitennull---fzco.outseta.com";
-const OUTSETA_API_KEY = process.env.OUTSETA_API_KEY;
+const OUTSETA_DOMAIN = process.env.NEXT_PUBLIC_OUTSETA_DOMAIN ?? "snttrades.outseta.com";
+const OUTSETA_API_KEY = process.env.NEXT_PUBLIC_OUTSETA_API_KEY;
 const OUTSETA_SECRET_KEY = process.env.OUTSETA_SECRET_KEY;
-const FREE_PLAN_UID = "wmjBBxmV";
 
-interface RegisterRequest {
+interface RegistrationRequest {
   firstName: string;
   lastName: string;
   email: string;
@@ -13,12 +12,22 @@ interface RegisterRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: RegisterRequest = await request.json();
+    const body: RegistrationRequest = await request.json();
     const { firstName, lastName, email } = body;
 
+    // Validierung
     if (!firstName || !lastName || !email) {
       return NextResponse.json(
-        { error: "Vorname, Nachname und E-Mail sind erforderlich" },
+        { error: "Alle Felder sind erforderlich" },
+        { status: 400 }
+      );
+    }
+
+    // E-Mail-Validierung
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Ungültige E-Mail-Adresse" },
         { status: 400 }
       );
     }
@@ -31,60 +40,102 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Erstelle Registrierung direkt über Outseta API
+    // E-Mail in localStorage speichern (wird vom Client gemacht)
+    // Hier erstellen wir den Account direkt über Outseta
+
+    const accountName = `${firstName} ${lastName}`;
+    
     const registrationData = {
-      Name: `${firstName} ${lastName}`,
+      Name: accountName,
       PersonAccount: [
         {
           IsPrimary: true,
           Person: {
-            Email: email,
-            FirstName: firstName,
-            LastName: lastName,
-            Language: "de",
-          },
-        },
+            Email: email.trim().toLowerCase(),
+            FirstName: firstName.trim(),
+            LastName: lastName.trim(),
+            Language: 'de'
+          }
+        }
       ],
+      // Free Course - Plan UID wmjBBxmV
       Subscriptions: [
         {
           BillingRenewalTerm: 1,
           Plan: {
-            Uid: FREE_PLAN_UID,
-          },
-        },
-      ],
+            Uid: "wmjBBxmV"
+          }
+        }
+      ]
     };
 
-    const response = await fetch(`https://${OUTSETA_DOMAIN}/api/v1/crm/registrations`, {
-      method: "POST",
+    console.log("Free Course Registrierung:", { email, firstName, lastName });
+
+    const registrationResponse = await fetch(`https://${OUTSETA_DOMAIN}/api/v1/crm/registrations`, {
+      method: 'POST',
       headers: {
-        Authorization: `Outseta ${OUTSETA_API_KEY}:${OUTSETA_SECRET_KEY}`,
-        "Content-Type": "application/json",
+        'Authorization': `Outseta ${OUTSETA_API_KEY}:${OUTSETA_SECRET_KEY}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(registrationData),
+      body: JSON.stringify(registrationData)
     });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error("Outseta Registrierungsfehler:", errorData);
+    const responseText = await registrationResponse.text();
+    console.log("Outseta Response Status:", registrationResponse.status);
+    console.log("Outseta Response Text:", responseText);
+
+    if (!registrationResponse.ok) {
+      let errorMessage = "Registrierung fehlgeschlagen";
+      
+      try {
+        const errorData = JSON.parse(responseText);
+        if (errorData.ErrorMessage) {
+          errorMessage = errorData.ErrorMessage;
+        }
+      } catch (e) {
+        // Ignore JSON parse errors
+      }
+
+      // Spezielle Behandlung für bereits existierende E-Mail
+      if (registrationResponse.status === 400 && responseText.includes("already exists")) {
+        errorMessage = "Ein Account mit dieser E-Mail-Adresse existiert bereits.";
+      }
+
+      console.error("Outseta Registrierung fehlgeschlagen:", errorMessage);
       return NextResponse.json(
-        { error: "Registrierung fehlgeschlagen. Bitte versuche es erneut." },
-        { status: response.status }
+        { error: errorMessage },
+        { status: registrationResponse.status }
       );
     }
 
-    const result = await response.json();
-    return NextResponse.json({
-      success: true,
-      message: "Registrierung erfolgreich",
-      data: result,
+    let registrationResult;
+    try {
+      registrationResult = JSON.parse(responseText);
+    } catch (e) {
+      console.error("Fehler beim Parsen der Outseta Response:", e);
+      return NextResponse.json(
+        { error: "Unerwartete Server-Antwort" },
+        { status: 500 }
+      );
+    }
+
+    console.log("Free Course Registrierung erfolgreich:", {
+      accountUid: registrationResult.Uid,
+      email: email
     });
-  } catch (error: any) {
-    console.error("Fehler bei der Registrierung:", error);
+
+    // E-Mail-Liste Subscription wird auf der Thank-You-Seite gemacht
+    return NextResponse.json({ 
+      success: true,
+      accountUid: registrationResult.Uid,
+      message: "Registrierung erfolgreich"
+    });
+
+  } catch (error) {
+    console.error("Unerwarteter Fehler bei Free Course Registrierung:", error);
     return NextResponse.json(
-      { error: "Ein Fehler ist aufgetreten. Bitte versuche es erneut." },
+      { error: "Ein unerwarteter Fehler ist aufgetreten" },
       { status: 500 }
     );
   }
 }
-
