@@ -27,8 +27,11 @@ interface LandingPageVersion {
 
 async function getLandingPageVersion(slug: string): Promise<LandingPageVersion | null> {
   try {
-    console.log("Suche nach Landing Page Version mit Slug:", slug);
+    console.log("🔍 Suche nach Landing Page Version mit Slug:", slug);
+    console.log("🔧 Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL ? "✅ Gesetzt" : "❌ Fehlt");
+    console.log("🔑 Supabase Anon Key:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "✅ Gesetzt" : "❌ Fehlt");
     
+    // Erste Abfrage: Nur aktive Versionen
     const { data, error } = await supabaseAnon
       .from("landing_page_versions")
       .select("*")
@@ -36,36 +39,67 @@ async function getLandingPageVersion(slug: string): Promise<LandingPageVersion |
       .eq("is_active", true)
       .single();
 
-    console.log("Supabase Response:", { data, error });
+    console.log("📊 Supabase Response (aktive):", { data, error });
 
     if (error) {
-      console.error("Supabase Fehler:", error);
+      console.error("❌ Supabase Fehler (aktive):", error);
       
-      // Fallback: Versuche ohne is_active Filter
+      // Fallback 1: Versuche ohne is_active Filter
+      console.log("🔄 Fallback: Versuche ohne is_active Filter...");
       const { data: fallbackData, error: fallbackError } = await supabaseAnon
         .from("landing_page_versions")
         .select("*")
         .eq("slug", slug)
         .single();
         
-      console.log("Fallback Response:", { fallbackData, fallbackError });
+      console.log("📊 Fallback Response:", { fallbackData, fallbackError });
       
-      if (fallbackError || !fallbackData) {
+      if (fallbackError) {
+        console.error("❌ Fallback Fehler:", fallbackError);
+        
+        // Fallback 2: Alle Versionen abrufen und filtern
+        console.log("🔄 Fallback 2: Alle Versionen abrufen...");
+        const { data: allData, error: allError } = await supabaseAnon
+          .from("landing_page_versions")
+          .select("*");
+          
+        console.log("📊 Alle Versionen Response:", { allData, allError });
+        
+        if (allError) {
+          console.error("❌ Fehler beim Abrufen aller Versionen:", allError);
+          return null;
+        }
+        
+        if (allData && allData.length > 0) {
+          console.log("📋 Verfügbare Slugs:", allData.map(v => v.slug));
+          const foundVersion = allData.find(v => v.slug === slug);
+          if (foundVersion) {
+            console.log("✅ Version gefunden in allen Daten:", foundVersion);
+            return foundVersion as LandingPageVersion;
+          }
+        }
+        
         return null;
       }
       
+      if (!fallbackData) {
+        console.error("❌ Keine Fallback-Daten gefunden für Slug:", slug);
+        return null;
+      }
+      
+      console.log("✅ Fallback erfolgreich:", fallbackData);
       return fallbackData as LandingPageVersion;
     }
 
     if (!data) {
-      console.error("Keine Daten gefunden für Slug:", slug);
+      console.error("❌ Keine Daten gefunden für Slug:", slug);
       return null;
     }
 
-    console.log("Landing Page Version gefunden:", data);
+    console.log("✅ Landing Page Version gefunden:", data);
     return data as LandingPageVersion;
   } catch (error) {
-    console.error("Unerwarteter Fehler beim Abrufen der Landing Page Version:", error);
+    console.error("💥 Unerwarteter Fehler beim Abrufen der Landing Page Version:", error);
     return null;
   }
 }
@@ -172,7 +206,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
            bottom: 0 !important;
            left: 0 !important;
            right: 0 !important;
-           z-index: 99999 !important;
+           z-index: 999999 !important;
            background: rgba(0, 0, 0, 0.95) !important;
            backdrop-filter: blur(20px) !important;
          }

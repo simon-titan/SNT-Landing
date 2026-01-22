@@ -199,7 +199,7 @@ export function MobilePricingFooter() {
         bottom={0}
         left={0}
         right={0}
-        zIndex={1000}
+        zIndex={999999}
         display={{ base: "block", md: "none" }}
         bg="rgba(40, 40, 40, 0.98)"
         backdropFilter="blur(20px)"

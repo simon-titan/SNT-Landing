@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Button, Box, HStack, Text } from "@chakra-ui/react";
+import { Button, Box, HStack, VStack, Text } from "@chakra-ui/react";
 import { Slider } from "@/components/ui/slider";
 import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
 import { MdReplay, MdPlayArrow, MdPause, MdFullscreen, MdFullscreenExit } from "react-icons/md";
@@ -267,7 +267,101 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({
         onClick={(e) => e.stopPropagation()} // Keep controls active when clicked
         pointerEvents={showControls || !playing ? "auto" : "none"}
       >
-        <HStack gap={4} align="center" mb={2}>
+        {/* Mobile Layout */}
+        <VStack gap={2} display={{ base: "flex", md: "none" }}>
+          {/* Progress Bar - Über allen anderen Elementen */}
+          <Box w="full" cursor="pointer" mb={-2}>
+            <Slider 
+              aria-label={["video-progress"]}
+              value={[progress]} 
+              onValueChange={({ value }) => handleSeek(value[0])}
+              min={0}
+              max={100}
+              step={0.1}
+              css={{
+                "& [data-part='thumb']": {
+                  width: "10px",
+                  height: "10px"
+                },
+                "& [data-part='track']": {
+                  height: "2px"
+                }
+              }}
+            />
+          </Box>
+          
+          {/* Controls Row - Kompakt */}
+          <HStack justify="space-between" w="full" align="center" gap={2}>
+            {/* Play/Pause + Time */}
+            <HStack gap={2} align="center">
+              <Button
+                onClick={handlePlayPause}
+                variant="ghost"
+                color="white"
+                _hover={{ bg: "whiteAlpha.200" }}
+                size="xs"
+                p={1}
+                minW="auto"
+              >
+                {playing ? <MdPause size={18} /> : <MdPlayArrow size={18} />}
+              </Button>
+              
+              <Text color="white" fontSize="xs" fontFamily="monospace" whiteSpace="nowrap">
+                {formatTime(duration * (progress / 100))} / {formatTime(duration)}
+              </Text>
+            </HStack>
+
+            {/* Volume Control - Horizontal */}
+            <HStack gap={1} flex={1} maxW="120px">
+              <Button
+                onClick={handleMuteToggle}
+                variant="ghost"
+                color="white"
+                _hover={{ bg: "whiteAlpha.200" }}
+                size="xs"
+                p={1}
+                minW="auto"
+              >
+                {muted ? <HiVolumeOff size={16} /> : <HiVolumeUp size={16} />}
+              </Button>
+              <Box flex={1} minW="60px">
+                <Slider 
+                  aria-label={["volume-slider"]} 
+                  value={[muted ? 0 : volume * 100]} 
+                  onValueChange={({ value }) => handleVolumeChange(value[0])}
+                  min={0}
+                  max={100}
+                  step={1}
+                  css={{
+                    "& [data-part='thumb']": {
+                      width: "12px",
+                      height: "12px"
+                    },
+                    "& [data-part='track']": {
+                      height: "3px"
+                    }
+                  }}
+                />
+              </Box>
+            </HStack>
+
+            {/* Fullscreen Button */}
+            <Button
+              onClick={handleFullscreen}
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "whiteAlpha.200" }}
+              size="xs"
+              p={1}
+              minW="auto"
+            >
+              {isFullscreen ? <MdFullscreenExit size={16} /> : <MdFullscreen size={16} />}
+            </Button>
+          </HStack>
+        </VStack>
+
+        {/* Desktop Layout */}
+        <HStack gap={4} align="center" mb={2} display={{ base: "none", md: "flex" }}>
           {/* Play/Pause Button */}
           <Button
             onClick={handlePlayPause}
@@ -298,7 +392,7 @@ export const BrandedVimeoPlayer: React.FC<BrandedVimeoPlayerProps> = ({
           </Text>
 
           {/* Volume Control */}
-          <HStack gap={2} w={{ base: "100px", md: "140px" }}>
+          <HStack gap={2} w="140px">
             <Button
               onClick={handleMuteToggle}
               variant="ghost"
