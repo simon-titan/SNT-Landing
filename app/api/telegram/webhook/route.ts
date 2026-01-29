@@ -11,15 +11,15 @@ function getWelcomeMessage() {
   const pricing = discountActive ? pricingConfig.discount : pricingConfig.standard;
   
   if (discountActive) {
-    return `🚨 *50% RABATT AUF ALLE PLÄNE - SPARE BIS ZU ${pricing.lifetime.savingsAmount}* 🚨
+    return `
 
-*SNT TRADING AUSBILDUNG* 📊
+SNT MENTORSHIP 📊
 
 HERZLICH WILLKOMMEN BEI SNTTRADES,
 
 Diese Entscheidung wird dein Leben verändern – das verspreche ich dir!
 
-*Warum?* Ganz einfach: Was du bei uns lernen wirst, ist unbezahlbar:
+Warum? Ganz einfach: Was du bei uns lernen wirst, ist unbezahlbar:
 
 Ausführlicher Video-Kurs übers Trading und unsere eigene Trading-Strategie! 👇
 
@@ -41,10 +41,10 @@ Ausführlicher Video-Kurs übers Trading und unsere eigene Trading-Strategie! �
 
 Mach jetzt den ersten Schritt in eine erfolgreiche Zukunft! Schließ dich uns an und werde Teil der SNT Family. Dein Erfolg wartet nicht auf dich 👇
 
-*DAS ABO IST JEDERZEIT KÜNDBAR. KEINE VERSTECKTEN FRISTEN.*`;
+DAS ABO IST JEDERZEIT KÜNDBAR. KEINE VERSTECKTEN FRISTEN.`;
   }
   
-  return `*SNT TRADING AUSBILDUNG* 📊
+return `*SNT MENTORSHIP* 📊
 
 HERZLICH WILLKOMMEN BEI SNTTRADES,
 
