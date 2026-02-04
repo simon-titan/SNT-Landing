@@ -612,7 +612,7 @@ function MessagesTab() {
                   {new Date(msg.scheduled_at).toLocaleString("de-DE")}
                 </Text>
               </HStack>
-              <Text fontSize="sm" noOfLines={2}>
+              <Text fontSize="sm" lineClamp={2}>
                 {msg.message_text}
               </Text>
             </Box>
@@ -685,7 +685,7 @@ function FaqTab() {
               <Text fontWeight="medium" mb={1}>
                 {faq.question}
               </Text>
-              <Text fontSize="sm" color="gray.600" noOfLines={2}>
+              <Text fontSize="sm" color="gray.600" lineClamp={2}>
                 {faq.answer}
               </Text>
               <HStack mt={2} gap={1} flexWrap="wrap">
