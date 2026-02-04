@@ -107,7 +107,7 @@ export default function TelegramThankYouPage() {
             >
                 {status === "loading" && (
                     <VStack gap={6}>
-                        <Spinner size="xl" color={TELEGRAM_BLUE} thickness="4px" />
+                        <Spinner size="xl" color={TELEGRAM_BLUE} borderWidth="4px" />
                         <VStack gap={2}>
                             <Heading size="lg" color="gray.800">
                                 Zahlung wird verarbeitet...
