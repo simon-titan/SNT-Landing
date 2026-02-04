@@ -5,12 +5,14 @@ import { Box, HStack, VStack, Button, Text } from "@chakra-ui/react";
 import { CaretDown, Lock } from "@phosphor-icons/react/dist/ssr";
 import { PricingSelectionModal } from "./pricing-selection-modal";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
+import { LifetimeCountdownBanner } from "./lifetime-countdown-banner";
 
 const SNT_BLUE = "#068CEF";
 
 export function MobilePricingFooter() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "lifetime" | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "lifetime" | null>("lifetime");
+  const [skipToCheckout, setSkipToCheckout] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [paypalButtonRendered, setPaypalButtonRendered] = useState(false);
@@ -37,41 +39,30 @@ export function MobilePricingFooter() {
   }, [isClient, paypalLoaded]);
 
   const loadPayPalSDK = () => {
-    // Check if ANY PayPal SDK with vault support is already loaded
-    if ((window as any).paypal?.Buttons) {
-      console.log("Mobile Footer: PayPal SDK bereits verfügbar, prüfe vault support");
-      
-      // Test if current SDK supports subscriptions (has vault=true)
-      try {
-        // Check if we can create a test subscription config
-        const testConfig = {
-          createSubscription: () => Promise.resolve({ subscriptionID: 'test' })
-        };
-        console.log("Mobile Footer: Existierendes SDK unterstützt Subscriptions");
-        setPaypalLoaded(true);
-        return;
-      } catch (error) {
-        console.log("Mobile Footer: Existierendes SDK unterstützt keine Subscriptions, lade neues SDK");
-      }
-    }
-
-    // Check if our subscription SDK is already loaded
-    const existingSubscriptionScript = document.getElementById("paypal-sdk-mobile-footer-subscription");
-    if (existingSubscriptionScript && (window as any).paypal?.Buttons) {
-      console.log("Mobile Footer: Subscription SDK bereits geladen");
+    // Check if Order SDK (for Lifetime) is already loaded
+    const existingOrderScript = document.getElementById("paypal-sdk-mobile-footer-order");
+    if (existingOrderScript && (window as any).paypal?.Buttons) {
+      console.log("Mobile Footer: Order SDK bereits geladen");
       setPaypalLoaded(true);
       return;
     }
 
-    // Load Subscription SDK with vault=true (don't remove existing scripts to avoid conflicts)
+    // Check if ANY PayPal SDK is already loaded
+    if ((window as any).paypal?.Buttons) {
+      console.log("Mobile Footer: PayPal SDK bereits verfügbar");
+      setPaypalLoaded(true);
+      return;
+    }
+
+    // Load Order SDK for Lifetime payments (vault=true supports both orders and subscriptions)
     const script = document.createElement("script");
-    script.id = "paypal-sdk-mobile-footer-subscription";
-    script.src = "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&intent=subscription&currency=EUR";
+    script.id = "paypal-sdk-mobile-footer-order";
+    script.src = "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&currency=EUR";
     script.setAttribute("data-sdk-integration-source", "button-factory");
     script.async = true;
     
     script.onload = () => {
-      console.log("Mobile Footer: Subscription SDK geladen mit vault=true");
+      console.log("Mobile Footer: Order SDK geladen für Lifetime");
       // Wait a bit for SDK to initialize
       setTimeout(() => {
         if ((window as any).paypal?.Buttons) {
@@ -145,36 +136,12 @@ export function MobilePricingFooter() {
     // Clear existing buttons to prevent conflicts
     container.innerHTML = '';
     
-    // Check if SDK has vault capability by testing subscription creation
-    try {
-      // Create a test button config to verify subscription support
-      const testButton = (window as any).paypal.Buttons({
-        createSubscription: function(data: any, actions: any) {
-          // This is just a test - we won't actually create anything
-          return Promise.resolve('test');
-        }
-      });
-      
-      console.log("Mobile Footer: SDK Vault Check - OK, Subscription support verfügbar");
-    } catch (error) {
-      console.error("Mobile Footer: SDK hat keine Vault-Unterstützung:", error);
-      console.log("Mobile Footer: Versuche SDK neu zu laden mit vault=true");
-      
-      // Reset and reload with proper vault support
-      setPaypalLoaded(false);
-      setPaypalButtonRendered(false);
-      setTimeout(() => {
-        loadPayPalSDK();
-      }, 500);
-      return;
-    }
-    
     const telegramUserId = localStorage.getItem("telegram_user_id");
     const customId = telegramUserId
-      ? `TG_USER_${telegramUserId}|SNTTRADES_MONTHLY_PLAN`
-      : "SNTTRADES_MONTHLY_PLAN";
+      ? `TG_USER_${telegramUserId}|SNTTRADES_LIFETIME_PLAN`
+      : "SNTTRADES_LIFETIME_PLAN";
 
-    console.log("Mobile Footer: Rendering PayPal Subscription Button mit vault=true...");
+    console.log("Mobile Footer: Rendering PayPal Lifetime Order Button...");
 
     const buttonConfig = {
       style: {
@@ -185,27 +152,31 @@ export function MobilePricingFooter() {
         height: 48,
         tagline: false,
       },
-      createSubscription: function (data: any, actions: any) {
-        console.log("PayPal createSubscription aufgerufen");
-        return actions.subscription.create({
-          plan_id: pricing.monthly.paypal.planId,
-          custom_id: customId,
+      createOrder: function (data: any, actions: any) {
+        console.log("PayPal createOrder aufgerufen für Lifetime");
+        return actions.order.create({
+          purchase_units: [
+            {
+              amount: {
+                value: pricing.lifetime.price.toString(),
+                currency_code: "EUR",
+              },
+              description: "SNTTRADES Lifetime Access",
+              custom_id: customId,
+            },
+          ],
           application_context: {
             brand_name: "SNTTRADES",
             shipping_preference: "NO_SHIPPING",
-            payment_method: {
-              payer_selected: "PAYPAL",
-              payee_preferred: "IMMEDIATE_PAYMENT_REQUIRED",
-            },
           },
         });
       },
       onApprove: function (data: any) {
-        console.log("PayPal Subscription genehmigt:", data.subscriptionID);
+        console.log("PayPal Lifetime Order genehmigt:", data.orderID);
         const telegramUserId =
           localStorage.getItem("telegram_user_id") ||
           sessionStorage.getItem("telegram_user_id");
-        let redirectUrl = `/thank-you-3?subscription_id=${data.subscriptionID}`;
+        let redirectUrl = `/thank-you-3?source=paypal_lifetime&order_id=${data.orderID || "unknown"}`;
 
         if (telegramUserId) {
           redirectUrl += `&telegram_user_id=${telegramUserId}`;
@@ -214,9 +185,9 @@ export function MobilePricingFooter() {
         window.location.href = redirectUrl;
       },
       onError: function (err: any) {
-        console.error("PayPal Subscription Fehler:", err);
+        console.error("PayPal Lifetime Order Fehler:", err);
         alert(
-          "Es gab einen Fehler beim Erstellen des Abonnements. Bitte versuchen Sie es erneut."
+          "Es gab einen Fehler beim Erstellen der Zahlung. Bitte versuchen Sie es erneut."
         );
       },
     };
@@ -227,7 +198,7 @@ export function MobilePricingFooter() {
       buttons
         .render("#paypal-hidden-container")
         .then(() => {
-          console.log("Mobile Footer: PayPal Button erfolgreich gerendert");
+          console.log("Mobile Footer: PayPal Lifetime Button erfolgreich gerendert");
           setPaypalButtonRendered(true);
         })
         .catch((error: any) => {
@@ -255,17 +226,15 @@ export function MobilePricingFooter() {
   };
 
   const handleOptionsClick = () => {
+    setSkipToCheckout(false); // Show selection view when clicking options
     setIsModalOpen(true);
   };
 
   const handleJoin = () => {
-    if (selectedPlan) {
-      setIsModalOpen(true);
-    } else {
-      // Default to monthly if no plan selected
-      setSelectedPlan("monthly");
-      setIsModalOpen(true);
-    }
+    // Always use lifetime plan and open modal with checkout view
+    setSelectedPlan("lifetime");
+    setSkipToCheckout(true);
+    setIsModalOpen(true);
   };
 
   return (
@@ -283,15 +252,17 @@ export function MobilePricingFooter() {
         borderTop="1px solid rgba(255, 255, 255, 0.1)"
         boxShadow="0 -4px 20px rgba(0, 0, 0, 0.3)"
         borderBottomRadius={0}
-        px={4}
-        py={4}
       >
-        <VStack gap={3} align="stretch">
+        {/* Countdown Banner - bündig oben */}
+        <LifetimeCountdownBanner />
+        
+        <Box px={4} py={4}>
+          <VStack gap={3} align="stretch">
           {/* Pricing Row */}
           <HStack justify="space-between" align="center" w="full">
-            {/* Monatlicher Preis Links */}
+            {/* Lifetime Preis Links */}
             <Text color="white" fontSize="md" fontWeight="medium">
-              {formatPrice(pricing.monthly.price)} / monatlich
+              {formatPrice(pricing.lifetime.price)} / einmalig
             </Text>
 
             {/* 2 Optionen Rechts */}
@@ -460,7 +431,8 @@ export function MobilePricingFooter() {
               </Box>
             </HStack>
           </VStack>
-        </VStack>
+          </VStack>
+        </Box>
       </Box>
 
       {/* Pricing Selection Modal */}
@@ -468,9 +440,11 @@ export function MobilePricingFooter() {
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setSelectedPlan(null);
+          setSkipToCheckout(false);
+          setSelectedPlan("lifetime"); // Keep lifetime as default
         }}
-        initialPlan={selectedPlan}
+        initialPlan={selectedPlan || "lifetime"}
+        skipToCheckout={skipToCheckout}
       />
     </>
   );
