@@ -113,6 +113,7 @@ export type ConversationState =
   | "awaiting_media"
   | "awaiting_schedule_time"
   | "awaiting_recurring_config"
+  | "awaiting_delay_config"
   | "awaiting_confirmation";
 
 export interface ConversationData {
@@ -122,8 +123,11 @@ export interface ConversationData {
   pending_text?: string;
   schedule_type?: "once" | "recurring";
   scheduled_time?: string;
+  scheduled_date?: Date;
   recurring_pattern?: RecurringPattern;
   recurring_days?: number[];
+  use_random_delay?: boolean;
+  random_delay_minutes?: number;
 }
 
 export type MediaType = "photo" | "video" | "voice" | "document" | "animation" | "text";
@@ -521,6 +525,8 @@ async function handleList(chatId: number, session: BotSession): Promise<void> {
     response += `   ${scheduleInfo}\n`;
     if (msg.random_delay_minutes > 0) {
       response += `   ⏱ +0-${msg.random_delay_minutes} Min Zufall\n`;
+    } else {
+      response += `   ⏱ Exakte Zeit (keine Verzögerung)\n`;
     }
     response += `\n`;
   }
@@ -784,48 +790,25 @@ async function handleScheduleTimeInput(
     return;
   }
 
-  // Nachricht in DB speichern
-  const messageData: ScheduledMessage = {
-    message_text: data.pending_media_type === "text" ? data.pending_text : undefined,
-    media_type: data.pending_media_type !== "text" ? data.pending_media_type : undefined,
-    media_file_id: data.pending_file_id || undefined,
-    caption: data.pending_caption,
-    target_channel_id: TARGET_CHANNEL || "",
-    scheduled_at: scheduledTime.toISOString(),
-    timezone: "Europe/Berlin",
-    is_recurring: false,
-    next_run_at: scheduledTime.toISOString(),
-    random_delay_minutes: 10,
-    is_active: true,
-    is_sent: false,
-    bot_type: "channel_bot",
-    created_by: user.id.toString(),
-  };
-
-  const { data: saved, error } = await supabaseAdmin
-    .from("telegram_scheduled_messages")
-    .insert(messageData)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error saving message:", error);
-    await sendTextMessage(chatId, "❌ Fehler beim Speichern der Nachricht.");
-    return;
-  }
-
-  await resetConversation(user.id);
-
-  const shortId = saved.id.substring(0, 8);
-  const formattedDate = scheduledTime.toLocaleDateString("de-DE");
-  const formattedTime = scheduledTime.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  // Speichere Zeit und frage nach Verzögerung
+  await updateSession(user.id, {
+    conversation_state: "awaiting_delay_config",
+    conversation_data: {
+      ...data,
+      scheduled_date: scheduledTime,
+    },
+  });
 
   await sendTextMessage(chatId,
-    `✅ <b>Nachricht geplant!</b>\n\n` +
-    `📅 ${formattedDate} um ${formattedTime}\n` +
-    `⏱ +0-10 Min. Zufallsverzögerung\n` +
-    `🆔 <code>${shortId}</code>\n\n` +
-    `<i>Nutze /list um alle geplanten Nachrichten zu sehen.</i>`
+    `⏱ <b>Zufällige Verzögerung?</b>\n\n` +
+    `Soll die Nachricht mit einer zufälligen Verzögerung gepostet werden?\n` +
+    `(Die Nachricht wird dann nicht exakt zur geplanten Zeit, sondern innerhalb eines Zeitfensters gesendet)\n\n` +
+    `Antworte mit:\n` +
+    `• <code>nein</code> - Exakt zur geplanten Zeit\n` +
+    `• <code>ja</code> - Mit 0-10 Min. Verzögerung (Standard)\n` +
+    `• <code>5</code> - Mit 0-5 Min. Verzögerung\n` +
+    `• <code>15</code> - Mit 0-15 Min. Verzögerung\n\n` +
+    `<i>Zum Abbrechen: /cancel_action</i>`
   );
 }
 
@@ -851,65 +834,175 @@ async function handleRecurringConfigInput(
     return;
   }
 
-  // Nächste Ausführungszeit berechnen
-  const nextRun = calculateNextRecurringRun(pattern);
-
-  // Nachricht in DB speichern
-  const messageData: ScheduledMessage = {
-    message_text: data.pending_media_type === "text" ? data.pending_text : undefined,
-    media_type: data.pending_media_type !== "text" ? data.pending_media_type : undefined,
-    media_file_id: data.pending_file_id || undefined,
-    caption: data.pending_caption,
-    target_channel_id: TARGET_CHANNEL || "",
-    scheduled_at: nextRun.toISOString(),
-    timezone: "Europe/Berlin",
-    is_recurring: true,
-    recurring_pattern: pattern.type,
-    recurring_time: pattern.time,
-    recurring_days: pattern.days,
-    next_run_at: nextRun.toISOString(),
-    random_delay_minutes: 10,
-    is_active: true,
-    is_sent: false,
-    bot_type: "channel_bot",
-    created_by: user.id.toString(),
-  };
-
-  const { data: saved, error } = await supabaseAdmin
-    .from("telegram_scheduled_messages")
-    .insert(messageData)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error saving message:", error);
-    await sendTextMessage(chatId, "❌ Fehler beim Speichern der Nachricht.");
-    return;
-  }
-
-  await resetConversation(user.id);
-
-  const shortId = saved.id.substring(0, 8);
-  const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-  
-  let scheduleDescription = "";
-  if (pattern.type === "daily") {
-    scheduleDescription = `Täglich um ${pattern.time}`;
-  } else if (pattern.days && pattern.days.length > 0) {
-    const days = pattern.days.map(d => dayNames[d]).join(", ");
-    scheduleDescription = `${days} um ${pattern.time}`;
-  } else {
-    scheduleDescription = `${pattern.type} um ${pattern.time}`;
-  }
+  // Speichere Pattern und frage nach Verzögerung
+  await updateSession(user.id, {
+    conversation_state: "awaiting_delay_config",
+    conversation_data: {
+      ...data,
+      recurring_pattern: pattern,
+    },
+  });
 
   await sendTextMessage(chatId,
-    `✅ <b>Wiederkehrende Nachricht erstellt!</b>\n\n` +
-    `🔄 ${scheduleDescription}\n` +
-    `⏱ +0-10 Min. Zufallsverzögerung\n` +
-    `🆔 <code>${shortId}</code>\n\n` +
-    `<i>Nächste Ausführung: ${nextRun.toLocaleDateString("de-DE")} um ${nextRun.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</i>\n\n` +
-    `<i>Nutze /list um alle geplanten Nachrichten zu sehen.</i>`
+    `⏱ <b>Zufällige Verzögerung?</b>\n\n` +
+    `Soll die Nachricht mit einer zufälligen Verzögerung gepostet werden?\n` +
+    `(Die Nachricht wird dann nicht exakt zur geplanten Zeit, sondern innerhalb eines Zeitfensters gesendet)\n\n` +
+    `Antworte mit:\n` +
+    `• <code>nein</code> - Exakt zur geplanten Zeit\n` +
+    `• <code>ja</code> - Mit 0-10 Min. Verzögerung (Standard)\n` +
+    `• <code>5</code> - Mit 0-5 Min. Verzögerung\n` +
+    `• <code>15</code> - Mit 0-15 Min. Verzögerung\n\n` +
+    `<i>Zum Abbrechen: /cancel_action</i>`
   );
+}
+
+async function handleDelayConfigInput(
+  chatId: number,
+  user: TelegramUser,
+  text: string,
+  session: BotSession
+): Promise<void> {
+  const data = session.conversation_data;
+  const input = text.toLowerCase().trim();
+  
+  let randomDelayMinutes = 0;
+  
+  // Parse Eingabe
+  if (input === "nein" || input === "no" || input === "n" || input === "0") {
+    randomDelayMinutes = 0;
+  } else if (input === "ja" || input === "yes" || input === "j") {
+    randomDelayMinutes = 10; // Standard
+  } else {
+    const minutes = parseInt(input);
+    if (isNaN(minutes) || minutes < 0 || minutes > 60) {
+      await sendTextMessage(chatId,
+        `❌ Ungültige Eingabe.\n\n` +
+        `Bitte antworte mit:\n` +
+        `• <code>nein</code> - Keine Verzögerung\n` +
+        `• <code>ja</code> - 10 Min. Verzögerung\n` +
+        `• Eine Zahl (1-60) für individuelle Minuten`
+      );
+      return;
+    }
+    randomDelayMinutes = minutes;
+  }
+
+  // Unterscheide zwischen einmaliger und wiederkehrender Nachricht
+  if (data.schedule_type === "recurring" && data.recurring_pattern) {
+    // Wiederkehrende Nachricht speichern
+    const pattern = data.recurring_pattern;
+    const nextRun = calculateNextRecurringRun(pattern);
+
+    const messageData: ScheduledMessage = {
+      message_text: data.pending_media_type === "text" ? data.pending_text : undefined,
+      media_type: data.pending_media_type !== "text" ? data.pending_media_type : undefined,
+      media_file_id: data.pending_file_id || undefined,
+      caption: data.pending_caption,
+      target_channel_id: TARGET_CHANNEL || "",
+      scheduled_at: nextRun.toISOString(),
+      timezone: "Europe/Berlin",
+      is_recurring: true,
+      recurring_pattern: pattern.type,
+      recurring_time: pattern.time,
+      recurring_days: pattern.days,
+      next_run_at: nextRun.toISOString(),
+      random_delay_minutes: randomDelayMinutes,
+      is_active: true,
+      is_sent: false,
+      bot_type: "channel_bot",
+      created_by: user.id.toString(),
+    };
+
+    const { data: saved, error } = await supabaseAdmin
+      .from("telegram_scheduled_messages")
+      .insert(messageData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error saving message:", error);
+      await sendTextMessage(chatId, "❌ Fehler beim Speichern der Nachricht.");
+      return;
+    }
+
+    await resetConversation(user.id);
+
+    const shortId = saved.id.substring(0, 8);
+    const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+    
+    let scheduleDescription = "";
+    if (pattern.type === "daily") {
+      scheduleDescription = `Täglich um ${pattern.time}`;
+    } else if (pattern.days && pattern.days.length > 0) {
+      const days = pattern.days.map(d => dayNames[d]).join(", ");
+      scheduleDescription = `${days} um ${pattern.time}`;
+    } else {
+      scheduleDescription = `${pattern.type} um ${pattern.time}`;
+    }
+
+    const delayInfo = randomDelayMinutes > 0 
+      ? `⏱ +0-${randomDelayMinutes} Min. Zufallsverzögerung` 
+      : `⏱ Keine Verzögerung (exakte Zeit)`;
+
+    await sendTextMessage(chatId,
+      `✅ <b>Wiederkehrende Nachricht erstellt!</b>\n\n` +
+      `🔄 ${scheduleDescription}\n` +
+      `${delayInfo}\n` +
+      `🆔 <code>${shortId}</code>\n\n` +
+      `<i>Nächste Ausführung: ${nextRun.toLocaleDateString("de-DE")} um ${nextRun.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</i>\n\n` +
+      `<i>Nutze /list um alle geplanten Nachrichten zu sehen.</i>`
+    );
+  } else {
+    // Einmalige Nachricht speichern
+    const scheduledTime = data.scheduled_date ? new Date(data.scheduled_date) : new Date();
+
+    const messageData: ScheduledMessage = {
+      message_text: data.pending_media_type === "text" ? data.pending_text : undefined,
+      media_type: data.pending_media_type !== "text" ? data.pending_media_type : undefined,
+      media_file_id: data.pending_file_id || undefined,
+      caption: data.pending_caption,
+      target_channel_id: TARGET_CHANNEL || "",
+      scheduled_at: scheduledTime.toISOString(),
+      timezone: "Europe/Berlin",
+      is_recurring: false,
+      next_run_at: scheduledTime.toISOString(),
+      random_delay_minutes: randomDelayMinutes,
+      is_active: true,
+      is_sent: false,
+      bot_type: "channel_bot",
+      created_by: user.id.toString(),
+    };
+
+    const { data: saved, error } = await supabaseAdmin
+      .from("telegram_scheduled_messages")
+      .insert(messageData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error saving message:", error);
+      await sendTextMessage(chatId, "❌ Fehler beim Speichern der Nachricht.");
+      return;
+    }
+
+    await resetConversation(user.id);
+
+    const shortId = saved.id.substring(0, 8);
+    const formattedDate = scheduledTime.toLocaleDateString("de-DE");
+    const formattedTime = scheduledTime.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+
+    const delayInfo = randomDelayMinutes > 0 
+      ? `⏱ +0-${randomDelayMinutes} Min. Zufallsverzögerung` 
+      : `⏱ Keine Verzögerung (exakte Zeit)`;
+
+    await sendTextMessage(chatId,
+      `✅ <b>Nachricht geplant!</b>\n\n` +
+      `📅 ${formattedDate} um ${formattedTime}\n` +
+      `${delayInfo}\n` +
+      `🆔 <code>${shortId}</code>\n\n` +
+      `<i>Nutze /list um alle geplanten Nachrichten zu sehen.</i>`
+    );
+  }
 }
 
 // ============================================
@@ -1177,6 +1270,14 @@ export async function handleUpdate(update: TelegramUpdate): Promise<void> {
           await handleRecurringConfigInput(chatId, user, message.text, session);
         } else {
           await sendTextMessage(chatId, "❌ Bitte sende das Muster als Text.");
+        }
+        return;
+
+      case "awaiting_delay_config":
+        if (message.text) {
+          await handleDelayConfigInput(chatId, user, message.text, session);
+        } else {
+          await sendTextMessage(chatId, "❌ Bitte sende deine Antwort als Text (ja/nein oder eine Zahl).");
         }
         return;
         
