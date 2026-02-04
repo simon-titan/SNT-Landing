@@ -517,7 +517,8 @@ async function handleList(chatId: number, session: BotSession): Promise<void> {
       }
     } else {
       const date = new Date(msg.scheduled_at);
-      scheduleInfo = `📅 ${date.toLocaleDateString("de-DE")} um ${date.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}`;
+      const formatted = formatDateInBerlin(date);
+      scheduleInfo = `📅 ${formatted.full}`;
     }
 
     response += `${emoji} <code>${shortId}</code>\n`;
@@ -944,12 +945,13 @@ async function handleDelayConfigInput(
       ? `⏱ +0-${randomDelayMinutes} Min. Zufallsverzögerung` 
       : `⏱ Keine Verzögerung (exakte Zeit)`;
 
+    const nextRunFormatted = formatDateInBerlin(nextRun);
     await sendTextMessage(chatId,
       `✅ <b>Wiederkehrende Nachricht erstellt!</b>\n\n` +
       `🔄 ${scheduleDescription}\n` +
       `${delayInfo}\n` +
       `🆔 <code>${shortId}</code>\n\n` +
-      `<i>Nächste Ausführung: ${nextRun.toLocaleDateString("de-DE")} um ${nextRun.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</i>\n\n` +
+      `<i>Nächste Ausführung: ${nextRunFormatted.full}</i>\n\n` +
       `<i>Nutze /list um alle geplanten Nachrichten zu sehen.</i>`
     );
   } else {
@@ -988,8 +990,7 @@ async function handleDelayConfigInput(
     await resetConversation(user.id);
 
     const shortId = saved.id.substring(0, 8);
-    const formattedDate = scheduledTime.toLocaleDateString("de-DE");
-    const formattedTime = scheduledTime.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+    const scheduledFormatted = formatDateInBerlin(scheduledTime);
 
     const delayInfo = randomDelayMinutes > 0 
       ? `⏱ +0-${randomDelayMinutes} Min. Zufallsverzögerung` 
@@ -997,7 +998,7 @@ async function handleDelayConfigInput(
 
     await sendTextMessage(chatId,
       `✅ <b>Nachricht geplant!</b>\n\n` +
-      `📅 ${formattedDate} um ${formattedTime}\n` +
+      `📅 ${scheduledFormatted.full}\n` +
       `${delayInfo}\n` +
       `🆔 <code>${shortId}</code>\n\n` +
       `<i>Nutze /list um alle geplanten Nachrichten zu sehen.</i>`
@@ -1069,6 +1070,31 @@ function getNowInBerlin(): { year: number; month: number; day: number; hours: nu
     minutes: parseInt(getPart("minute")),
     dayOfWeek: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"].indexOf(getPart("weekday").replace(".", "")),
     date: now,
+  };
+}
+
+/**
+ * Formatiert ein Date-Objekt in der Berlin-Zeitzone
+ */
+function formatDateInBerlin(date: Date): { date: string; time: string; full: string } {
+  const dateFormatter = new Intl.DateTimeFormat("de-DE", {
+    timeZone: TIMEZONE,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  
+  const timeFormatter = new Intl.DateTimeFormat("de-DE", {
+    timeZone: TIMEZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  
+  return {
+    date: dateFormatter.format(date),
+    time: timeFormatter.format(date),
+    full: `${dateFormatter.format(date)} um ${timeFormatter.format(date)}`,
   };
 }
 
