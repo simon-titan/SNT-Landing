@@ -25,10 +25,6 @@ import {
 
 const TELEGRAM_BLUE = "#0088cc";
 
-// Test-Modus aktivieren (für Development)
-const TEST_MODE = process.env.NODE_ENV === "development" || 
-                  (typeof window !== "undefined" && window.location.search.includes("test=1"));
-
 // Types
 interface UserData {
   email: string;
@@ -60,22 +56,33 @@ export default function TelegramAccountPage() {
   const [linkingError, setLinkingError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Test-Modus prüfen
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("test") === "1") {
-        setTestMode(true);
-      }
-      // Telegram User ID aus URL oder localStorage
-      const tgId = urlParams.get("telegram_user_id") || localStorage.getItem("telegram_user_id");
-      if (tgId) {
-        setTelegramUserId(tgId);
-      }
+    // Test-Modus direkt aus URL prüfen (nicht über State)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTestMode = urlParams.get("test") === "1";
+    setTestMode(isTestMode);
+    
+    // Telegram User ID aus URL oder localStorage
+    const tgId = urlParams.get("telegram_user_id") || localStorage.getItem("telegram_user_id");
+    if (tgId) {
+      setTelegramUserId(tgId);
     }
 
     // Outseta User laden
     const loadUser = async () => {
       try {
+        // Im Test-Modus: Kein Outseta nötig
+        if (isTestMode) {
+          console.log("Test-Modus aktiv - überspringe Outseta");
+          setUser({
+            email: "test@example.com",
+            firstName: "Test",
+            lastName: "User",
+            accountUid: "TEST-123",
+          });
+          setLoading(false);
+          return;
+        }
+
         // Warte auf Outseta (max 3 Sekunden)
         const maxWait = 3000;
         const startTime = Date.now();
@@ -89,17 +96,6 @@ export default function TelegramAccountPage() {
         // Wenn Outseta nicht verfügbar ist
         if (!outseta?.getUser) {
           console.log("Outseta nicht verfügbar");
-          // Im Test-Modus trotzdem weitermachen
-          if (testMode || TEST_MODE) {
-            setUser({
-              email: "test@example.com",
-              firstName: "Test",
-              lastName: "User",
-              accountUid: "TEST-123",
-            });
-            setLoading(false);
-            return;
-          }
           setError("Outseta konnte nicht geladen werden. Bitte Seite neu laden.");
           setLoading(false);
           return;
@@ -151,7 +147,7 @@ export default function TelegramAccountPage() {
     };
 
     loadUser();
-  }, [testMode]);
+  }, []); // Keine Dependencies mehr - läuft nur einmal
 
   // Test-Funktion: Aktiviere Subscription ohne Zahlung
   const handleTestActivation = async () => {
@@ -533,7 +529,7 @@ export default function TelegramAccountPage() {
         </Box>
 
         {/* Test-Modus Panel (nur wenn ?test=1 in URL) */}
-        {(testMode || TEST_MODE) && (
+        {testMode && (
           <Box 
             mt={8} 
             bg="yellow.50" 
