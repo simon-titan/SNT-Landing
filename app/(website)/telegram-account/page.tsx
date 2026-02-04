@@ -20,9 +20,14 @@ import {
   ArrowRight,
   User,
   EnvelopeSimple,
+  Bug,
 } from "@phosphor-icons/react/dist/ssr";
 
 const TELEGRAM_BLUE = "#0088cc";
+
+// Test-Modus aktivieren (für Development)
+const TEST_MODE = process.env.NODE_ENV === "development" || 
+                  (typeof window !== "undefined" && window.location.search.includes("test=1"));
 
 // Types
 interface UserData {
@@ -45,18 +50,34 @@ export default function TelegramAccountPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [member, setMember] = useState<MemberData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [testMode, setTestMode] = useState(false);
+  const [testResult, setTestResult] = useState<string | null>(null);
   
   // Linking state
   const [telegramUsername, setTelegramUsername] = useState("");
+  const [telegramUserId, setTelegramUserId] = useState("");
   const [linkingStatus, setLinkingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [linkingError, setLinkingError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Test-Modus prüfen
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("test") === "1") {
+        setTestMode(true);
+      }
+      // Telegram User ID aus URL oder localStorage
+      const tgId = urlParams.get("telegram_user_id") || localStorage.getItem("telegram_user_id");
+      if (tgId) {
+        setTelegramUserId(tgId);
+      }
+    }
+
     // Outseta User laden
     const loadUser = async () => {
       try {
-        // Warte auf Outseta
-        const maxWait = 5000;
+        // Warte auf Outseta (max 3 Sekunden)
+        const maxWait = 3000;
         const startTime = Date.now();
         
         while (!(window as any).Outseta?.getUser && Date.now() - startTime < maxWait) {
@@ -64,32 +85,54 @@ export default function TelegramAccountPage() {
         }
 
         const outseta = (window as any).Outseta;
+        
+        // Wenn Outseta nicht verfügbar ist
         if (!outseta?.getUser) {
-          setError("Bitte melde dich an um fortzufahren.");
+          console.log("Outseta nicht verfügbar");
+          // Im Test-Modus trotzdem weitermachen
+          if (testMode || TEST_MODE) {
+            setUser({
+              email: "test@example.com",
+              firstName: "Test",
+              lastName: "User",
+              accountUid: "TEST-123",
+            });
+            setLoading(false);
+            return;
+          }
+          setError("Outseta konnte nicht geladen werden. Bitte Seite neu laden.");
           setLoading(false);
           return;
         }
 
-        const outsetaUser = await outseta.getUser();
-        if (!outsetaUser?.Email) {
+        try {
+          const outsetaUser = await outseta.getUser();
+          if (!outsetaUser?.Email) {
+            setError("Bitte melde dich an um fortzufahren.");
+            setLoading(false);
+            return;
+          }
+
+          setUser({
+            email: outsetaUser.Email,
+            firstName: outsetaUser.FirstName || "",
+            lastName: outsetaUser.LastName || "",
+            accountUid: outsetaUser.Account?.Uid || "",
+          });
+        } catch (userError) {
+          console.log("User nicht eingeloggt:", userError);
           setError("Bitte melde dich an um fortzufahren.");
           setLoading(false);
           return;
         }
-
-        setUser({
-          email: outsetaUser.Email,
-          firstName: outsetaUser.FirstName || "",
-          lastName: outsetaUser.LastName || "",
-          accountUid: outsetaUser.Account?.Uid || "",
-        });
 
         // Telegram Status laden
-        const telegramUserId = localStorage.getItem("telegram_user_id");
-        if (telegramUserId) {
+        const storedTelegramUserId = localStorage.getItem("telegram_user_id");
+        if (storedTelegramUserId) {
+          setTelegramUserId(storedTelegramUserId);
           try {
             const response = await fetch(
-              `/api/telegram/paid-group/activate?telegram_user_id=${telegramUserId}`
+              `/api/telegram/paid-group/activate?telegram_user_id=${storedTelegramUserId}`
             );
             const data = await response.json();
             if (data.success) {
@@ -108,7 +151,46 @@ export default function TelegramAccountPage() {
     };
 
     loadUser();
-  }, []);
+  }, [testMode]);
+
+  // Test-Funktion: Aktiviere Subscription ohne Zahlung
+  const handleTestActivation = async () => {
+    if (!telegramUserId) {
+      setTestResult("❌ Keine Telegram User ID angegeben");
+      return;
+    }
+
+    setTestResult("⏳ Aktiviere...");
+
+    try {
+      const response = await fetch("/api/telegram/paid-group/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegram_user_id: parseInt(telegramUserId),
+          provider: "test",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setTestResult(`✅ Aktiviert! Invite-Link: ${data.invite_link || "wird per Telegram gesendet"}`);
+        // Status neu laden
+        setMember({
+          status: "active",
+          is_active: true,
+          is_in_group: false,
+          subscription_plan: "ZmNM7ZW2",
+          telegram_username: null,
+        });
+      } else {
+        setTestResult(`❌ Fehler: ${data.error}`);
+      }
+    } catch (err) {
+      setTestResult(`❌ Exception: ${err}`);
+    }
+  };
 
   const handleLinkTelegram = async () => {
     if (!telegramUsername.trim()) {
@@ -161,24 +243,58 @@ export default function TelegramAccountPage() {
           <Text color="gray.600" mb={6}>
             {error}
           </Text>
-          <a
-            href="/"
-            data-o-anonymous="1"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "12px 24px",
-              backgroundColor: TELEGRAM_BLUE,
-              color: "white",
-              borderRadius: "8px",
-              fontWeight: "600",
-              textDecoration: "none",
-            }}
-          >
-            Zur Anmeldung
-            <ArrowRight size={18} />
-          </a>
+          <VStack gap={3}>
+            <a
+              href="#"
+              data-o-auth="1"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "12px 24px",
+                backgroundColor: TELEGRAM_BLUE,
+                color: "white",
+                borderRadius: "8px",
+                fontWeight: "600",
+                textDecoration: "none",
+                width: "100%",
+                justifyContent: "center",
+              }}
+            >
+              Anmelden
+              <ArrowRight size={18} />
+            </a>
+            <Text fontSize="sm" color="gray.500">
+              oder
+            </Text>
+            <a
+              href="/telegram-checkout"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "12px 24px",
+                backgroundColor: "white",
+                color: TELEGRAM_BLUE,
+                borderRadius: "8px",
+                fontWeight: "600",
+                textDecoration: "none",
+                border: `1px solid ${TELEGRAM_BLUE}`,
+                width: "100%",
+                justifyContent: "center",
+              }}
+            >
+              Neues Konto erstellen
+              <ArrowRight size={18} />
+            </a>
+          </VStack>
+          
+          {/* Test-Link */}
+          <Text fontSize="xs" color="gray.400" mt={6}>
+            <a href="?test=1" style={{ textDecoration: "underline" }}>
+              Test-Modus öffnen
+            </a>
+          </Text>
         </Box>
       </Flex>
     );
@@ -415,6 +531,74 @@ export default function TelegramAccountPage() {
             </a>
           </Text>
         </Box>
+
+        {/* Test-Modus Panel (nur wenn ?test=1 in URL) */}
+        {(testMode || TEST_MODE) && (
+          <Box 
+            mt={8} 
+            bg="yellow.50" 
+            border="2px dashed" 
+            borderColor="yellow.400" 
+            borderRadius="xl" 
+            p={6}
+          >
+            <HStack gap={2} mb={4}>
+              <Bug size={24} color="#ca8a04" weight="fill" />
+              <Heading size="md" color="yellow.800">
+                Test-Modus
+              </Heading>
+            </HStack>
+            
+            <VStack align="stretch" gap={4}>
+              <Box>
+                <Text fontSize="sm" color="yellow.800" mb={2}>
+                  Telegram User ID (vom Bot /start Command):
+                </Text>
+                <Input
+                  placeholder="z.B. 123456789"
+                  value={telegramUserId}
+                  onChange={(e) => setTelegramUserId(e.target.value)}
+                  bg="white"
+                />
+              </Box>
+
+              <button
+                onClick={handleTestActivation}
+                style={{
+                  padding: "12px 24px",
+                  backgroundColor: "#ca8a04",
+                  color: "white",
+                  borderRadius: "8px",
+                  border: "none",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                }}
+              >
+                🧪 Test-Aktivierung (ohne Zahlung)
+              </button>
+
+              {testResult && (
+                <Box 
+                  bg="white" 
+                  p={3} 
+                  borderRadius="lg"
+                  fontFamily="mono"
+                  fontSize="sm"
+                  whiteSpace="pre-wrap"
+                  wordBreak="break-all"
+                >
+                  {testResult}
+                </Box>
+              )}
+
+              <Text fontSize="xs" color="yellow.700">
+                Dieser Bereich ist nur sichtbar wenn ?test=1 in der URL ist.
+                <br />
+                Die Test-Aktivierung fügt den User zur Datenbank hinzu und sendet einen Einladungslink.
+              </Text>
+            </VStack>
+          </Box>
+        )}
       </Box>
     </Box>
   );
