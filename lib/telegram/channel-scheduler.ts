@@ -5,6 +5,7 @@
  * - Zufällige Verzögerung (0-N Minuten nach geplanter Zeit)
  * - Unterstützung für alle Medientypen
  * - Wiederkehrende Nachrichten (täglich, wöchentlich, bestimmte Tage)
+ * - Korrekte Zeitzonenbehandlung (Europe/Berlin)
  */
 
 import { supabaseAdmin } from "../supabase/client";
@@ -17,6 +18,54 @@ import {
   sendAnimation,
   MediaType,
 } from "./channel-bot";
+
+// ============================================
+// Timezone Helpers (Europe/Berlin)
+// ============================================
+
+const TIMEZONE = "Europe/Berlin";
+
+/**
+ * Erstellt ein Date-Objekt für eine bestimmte lokale Zeit in Europe/Berlin
+ */
+function createDateInTimezone(year: number, month: number, day: number, hours: number, minutes: number): Date {
+  const localTimeStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
+  const tempDate = new Date(localTimeStr);
+  const utcDate = new Date(tempDate.toLocaleString("en-US", { timeZone: "UTC" }));
+  const berlinDate = new Date(tempDate.toLocaleString("en-US", { timeZone: TIMEZONE }));
+  const offsetMs = utcDate.getTime() - berlinDate.getTime();
+  return new Date(tempDate.getTime() + offsetMs);
+}
+
+/**
+ * Holt die aktuelle Zeit in der Berlin-Zeitzone
+ */
+function getNowInBerlin(): { year: number; month: number; day: number; hours: number; minutes: number; dayOfWeek: number; date: Date } {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat("de-DE", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "short",
+    hour12: false,
+  });
+  
+  const parts = formatter.formatToParts(now);
+  const getPart = (type: string) => parts.find(p => p.type === type)?.value || "0";
+  
+  return {
+    year: parseInt(getPart("year")),
+    month: parseInt(getPart("month")) - 1,
+    day: parseInt(getPart("day")),
+    hours: parseInt(getPart("hour")),
+    minutes: parseInt(getPart("minute")),
+    dayOfWeek: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"].indexOf(getPart("weekday").replace(".", "")),
+    date: now,
+  };
+}
 
 // ============================================
 // Types
@@ -158,25 +207,18 @@ function calculateNextRun(message: ScheduledMessage): Date | null {
     return null;
   }
 
-  const now = new Date();
-  const currentRun = new Date(message.next_run_at || message.scheduled_at);
+  const berlin = getNowInBerlin();
   const [hours, minutes] = (message.recurring_time || "08:00").split(":").map(Number);
 
   switch (message.recurring_pattern) {
     case "daily": {
-      // Nächster Tag, gleiche Uhrzeit
-      const next = new Date(currentRun);
-      next.setDate(next.getDate() + 1);
-      next.setHours(hours, minutes, 0, 0);
-      return next;
+      // Nächster Tag, gleiche Uhrzeit (in Berlin-Zeitzone)
+      return createDateInTimezone(berlin.year, berlin.month, berlin.day + 1, hours, minutes);
     }
 
     case "weekly": {
-      // Nächste Woche, gleicher Tag
-      const next = new Date(currentRun);
-      next.setDate(next.getDate() + 7);
-      next.setHours(hours, minutes, 0, 0);
-      return next;
+      // Nächste Woche, gleicher Tag (in Berlin-Zeitzone)
+      return createDateInTimezone(berlin.year, berlin.month, berlin.day + 7, hours, minutes);
     }
 
     case "specific_days": {
@@ -185,28 +227,21 @@ function calculateNextRun(message: ScheduledMessage): Date | null {
         return null;
       }
 
-      const currentDay = currentRun.getDay();
+      const currentDay = berlin.dayOfWeek;
       const sortedDays = [...message.recurring_days].sort((a, b) => a - b);
       
       // Finde den nächsten Tag nach dem aktuellen
       for (const day of sortedDays) {
         if (day > currentDay) {
-          const next = new Date(currentRun);
-          next.setDate(currentRun.getDate() + (day - currentDay));
-          next.setHours(hours, minutes, 0, 0);
-          if (next > now) {
-            return next;
-          }
+          const daysUntil = day - currentDay;
+          return createDateInTimezone(berlin.year, berlin.month, berlin.day + daysUntil, hours, minutes);
         }
       }
       
       // Wrap around zur nächsten Woche
       const firstDay = sortedDays[0];
       const daysUntilNext = (7 - currentDay) + firstDay;
-      const next = new Date(currentRun);
-      next.setDate(currentRun.getDate() + daysUntilNext);
-      next.setHours(hours, minutes, 0, 0);
-      return next;
+      return createDateInTimezone(berlin.year, berlin.month, berlin.day + daysUntilNext, hours, minutes);
     }
 
     default:

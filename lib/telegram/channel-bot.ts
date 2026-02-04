@@ -1006,47 +1006,120 @@ async function handleDelayConfigInput(
 }
 
 // ============================================
+// Timezone Helpers (Europe/Berlin)
+// ============================================
+
+const TIMEZONE = "Europe/Berlin";
+
+/**
+ * Erstellt ein Date-Objekt für eine bestimmte lokale Zeit in Europe/Berlin
+ */
+function createDateInTimezone(year: number, month: number, day: number, hours: number, minutes: number): Date {
+  // Erstelle einen ISO-String mit der gewünschten lokalen Zeit
+  const localTimeStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
+  
+  // Verwende Intl.DateTimeFormat um den UTC-Offset für Berlin zu ermitteln
+  const formatter = new Intl.DateTimeFormat("de-DE", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  
+  // Erstelle ein temporäres Date für die gewünschte Zeit
+  const tempDate = new Date(localTimeStr);
+  
+  // Berechne den Offset zwischen UTC und Berlin für dieses Datum
+  const utcDate = new Date(tempDate.toLocaleString("en-US", { timeZone: "UTC" }));
+  const berlinDate = new Date(tempDate.toLocaleString("en-US", { timeZone: TIMEZONE }));
+  const offsetMs = utcDate.getTime() - berlinDate.getTime();
+  
+  // Korrigiere das Datum um den Offset
+  return new Date(tempDate.getTime() + offsetMs);
+}
+
+/**
+ * Holt die aktuelle Zeit in der Berlin-Zeitzone als Komponenten
+ */
+function getNowInBerlin(): { year: number; month: number; day: number; hours: number; minutes: number; dayOfWeek: number; date: Date } {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat("de-DE", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "short",
+    hour12: false,
+  });
+  
+  const parts = formatter.formatToParts(now);
+  const getPart = (type: string) => parts.find(p => p.type === type)?.value || "0";
+  
+  return {
+    year: parseInt(getPart("year")),
+    month: parseInt(getPart("month")) - 1, // 0-indexed
+    day: parseInt(getPart("day")),
+    hours: parseInt(getPart("hour")),
+    minutes: parseInt(getPart("minute")),
+    dayOfWeek: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"].indexOf(getPart("weekday").replace(".", "")),
+    date: now,
+  };
+}
+
+// ============================================
 // Time Parsing Helpers
 // ============================================
 
 function parseScheduleTime(input: string): Date | null {
-  const now = new Date();
+  const berlin = getNowInBerlin();
   const text = input.toLowerCase().trim();
 
   // Format: "morgen HH:MM"
   const tomorrowMatch = text.match(/^morgen\s+(\d{1,2}):(\d{2})$/);
   if (tomorrowMatch) {
-    const date = new Date(now);
-    date.setDate(date.getDate() + 1);
-    date.setHours(parseInt(tomorrowMatch[1]), parseInt(tomorrowMatch[2]), 0, 0);
-    return date;
+    const tomorrow = new Date(berlin.date);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowBerlin = getNowInBerlin();
+    return createDateInTimezone(
+      tomorrowBerlin.year,
+      tomorrowBerlin.month,
+      berlin.day + 1,
+      parseInt(tomorrowMatch[1]),
+      parseInt(tomorrowMatch[2])
+    );
   }
 
   // Format: "DD.MM.YYYY HH:MM"
   const fullDateMatch = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{2})$/);
   if (fullDateMatch) {
-    const date = new Date(
+    return createDateInTimezone(
       parseInt(fullDateMatch[3]),
       parseInt(fullDateMatch[2]) - 1,
       parseInt(fullDateMatch[1]),
       parseInt(fullDateMatch[4]),
-      parseInt(fullDateMatch[5]),
-      0, 0
+      parseInt(fullDateMatch[5])
     );
-    return date;
   }
 
   // Format: "HH:MM" (heute)
   const timeOnlyMatch = text.match(/^(\d{1,2}):(\d{2})$/);
   if (timeOnlyMatch) {
-    const date = new Date(now);
-    date.setHours(parseInt(timeOnlyMatch[1]), parseInt(timeOnlyMatch[2]), 0, 0);
+    const hours = parseInt(timeOnlyMatch[1]);
+    const minutes = parseInt(timeOnlyMatch[2]);
+    
+    let targetDate = createDateInTimezone(berlin.year, berlin.month, berlin.day, hours, minutes);
     
     // Wenn Zeit bereits vorbei, auf morgen setzen
-    if (date <= now) {
-      date.setDate(date.getDate() + 1);
+    if (targetDate <= berlin.date) {
+      targetDate = createDateInTimezone(berlin.year, berlin.month, berlin.day + 1, hours, minutes);
     }
-    return date;
+    return targetDate;
   }
 
   return null;
@@ -1114,52 +1187,44 @@ function parseRecurringPattern(input: string): RecurringPattern | null {
 }
 
 function calculateNextRecurringRun(pattern: RecurringPattern): Date {
-  const now = new Date();
+  const berlin = getNowInBerlin();
   const [hours, minutes] = pattern.time.split(":").map(Number);
-  
-  const targetTime = new Date(now);
-  targetTime.setHours(hours, minutes, 0, 0);
 
   if (pattern.type === "daily") {
+    // Heute zur angegebenen Zeit
+    let targetTime = createDateInTimezone(berlin.year, berlin.month, berlin.day, hours, minutes);
+    
     // Wenn Zeit heute schon vorbei, dann morgen
-    if (targetTime <= now) {
-      targetTime.setDate(targetTime.getDate() + 1);
+    if (targetTime <= berlin.date) {
+      targetTime = createDateInTimezone(berlin.year, berlin.month, berlin.day + 1, hours, minutes);
     }
     return targetTime;
   }
 
   if (pattern.days && pattern.days.length > 0) {
-    const currentDay = now.getDay();
+    const currentDay = berlin.dayOfWeek;
     
     // Finde den nächsten passenden Tag
     for (let i = 0; i < 7; i++) {
       const checkDay = (currentDay + i) % 7;
       if (pattern.days.includes(checkDay)) {
-        const candidate = new Date(now);
-        candidate.setDate(now.getDate() + i);
-        candidate.setHours(hours, minutes, 0, 0);
+        const candidate = createDateInTimezone(berlin.year, berlin.month, berlin.day + i, hours, minutes);
         
-        if (candidate > now) {
+        if (candidate > berlin.date) {
           return candidate;
         }
       }
     }
     
     // Fallback: Nächste Woche, erster passender Tag
-    const nextWeek = new Date(now);
-    nextWeek.setDate(now.getDate() + 7);
     for (const day of pattern.days) {
-      const daysUntil = (day - currentDay + 7) % 7;
-      const candidate = new Date(now);
-      candidate.setDate(now.getDate() + daysUntil + 7);
-      candidate.setHours(hours, minutes, 0, 0);
-      return candidate;
+      const daysUntil = (day - currentDay + 7) % 7 || 7;
+      return createDateInTimezone(berlin.year, berlin.month, berlin.day + daysUntil, hours, minutes);
     }
   }
 
   // Fallback: Morgen
-  targetTime.setDate(targetTime.getDate() + 1);
-  return targetTime;
+  return createDateInTimezone(berlin.year, berlin.month, berlin.day + 1, hours, minutes);
 }
 
 // ============================================
