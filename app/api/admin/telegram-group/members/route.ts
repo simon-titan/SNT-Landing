@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAdminAuth } from "@/lib/affiliates/admin-auth";
+import { requireAdminCredentials } from "@/lib/affiliates/admin-auth";
 import {
   getAllMembers,
   getMemberByTelegramId,
@@ -23,9 +23,9 @@ export const runtime = "nodejs";
  */
 export async function GET(request: NextRequest) {
   // Auth prüfen
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -76,9 +76,9 @@ export async function GET(request: NextRequest) {
  * Erstellt ein neues Mitglied oder aktiviert ein bestehendes
  */
 export async function POST(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -173,9 +173,9 @@ export async function POST(request: NextRequest) {
  * Aktualisiert ein Mitglied
  */
 export async function PUT(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -234,9 +234,9 @@ export async function PUT(request: NextRequest) {
  * Entfernt ein Mitglied (setzt Status auf cancelled)
  */
 export async function DELETE(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {

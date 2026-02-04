@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAdminAuth } from "@/lib/affiliates/admin-auth";
+import { requireAdminCredentials } from "@/lib/affiliates/admin-auth";
 import { supabaseAdmin } from "@/lib/supabase/client";
 
 export const runtime = "nodejs";
@@ -27,9 +27,9 @@ interface ScheduledMessage {
  * Holt alle geplanten Nachrichten
  */
 export async function GET(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -75,9 +75,9 @@ export async function GET(request: NextRequest) {
  * Erstellt eine neue geplante Nachricht
  */
 export async function POST(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -142,9 +142,9 @@ export async function POST(request: NextRequest) {
  * Aktualisiert eine geplante Nachricht
  */
 export async function PUT(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -187,9 +187,9 @@ export async function PUT(request: NextRequest) {
  * Löscht eine geplante Nachricht
  */
 export async function DELETE(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {

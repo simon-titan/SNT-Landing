@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAdminAuth } from "@/lib/affiliates/admin-auth";
+import { requireAdminCredentials } from "@/lib/affiliates/admin-auth";
 import {
   getAllFaqs,
   getFaqById,
@@ -20,9 +20,9 @@ export const runtime = "nodejs";
  * Holt alle FAQ-Einträge
  */
 export async function GET(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -71,9 +71,9 @@ export async function GET(request: NextRequest) {
  * Erstellt einen neuen FAQ-Eintrag
  */
 export async function POST(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -135,9 +135,9 @@ export async function POST(request: NextRequest) {
  * Aktualisiert einen FAQ-Eintrag
  */
 export async function PUT(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
@@ -178,9 +178,9 @@ export async function PUT(request: NextRequest) {
  * Löscht einen FAQ-Eintrag
  */
 export async function DELETE(request: NextRequest) {
-  const authResult = verifyAdminAuth(request.headers);
-  if (!authResult.success) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 });
+  const authError = requireAdminCredentials(request);
+  if (authError) {
+    return authError;
   }
 
   try {
