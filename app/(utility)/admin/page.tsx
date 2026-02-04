@@ -12,11 +12,14 @@ import {
   VStack,
   HStack,
   IconButton,
+  Badge,
+  Table,
+  Spinner,
 } from "@chakra-ui/react";
 import { Collapsible } from "@chakra-ui/react";
 import { NativeSelectField, NativeSelectRoot } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
-import { Trash, Eye, PencilSimple, CaretDown, CaretUp } from "@phosphor-icons/react";
+import { Trash, Eye, PencilSimple, CaretDown, CaretUp, TelegramLogo, Users, Check, X, Plus, MagnifyingGlass } from "@phosphor-icons/react";
 
 type OverviewResponse = {
   affiliates: Array<{
@@ -74,6 +77,28 @@ type LandingPageVersion = {
   updated_at: string;
 };
 
+// Telegram Types
+type TelegramMember = {
+  id: string;
+  telegram_user_id: number;
+  telegram_username: string | null;
+  telegram_first_name: string | null;
+  outseta_email: string | null;
+  subscription_status: string;
+  is_in_group: boolean;
+  created_at: string;
+};
+
+type TelegramStats = {
+  total_members: number;
+  active_members: number;
+  pending_members: number;
+  cancelled_members: number;
+  members_in_group: number;
+  new_today: number;
+  new_this_week: number;
+};
+
 const ADMIN_USERNAME = process.env.NEXT_PUBLIC_AFFILIATE_ADMIN_USERNAME ?? "admin";
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_AFFILIATE_ADMIN_PASSWORD ?? "sntsecure";
 
@@ -116,6 +141,18 @@ export default function AffiliateAdminPage() {
   // Collapse States
   const [isAffiliateCollapsed, setIsAffiliateCollapsed] = useState(false);
   const [isLandingPageCollapsed, setIsLandingPageCollapsed] = useState(false);
+  const [isTelegramCollapsed, setIsTelegramCollapsed] = useState(false);
+
+  // Telegram States
+  const [telegramMembers, setTelegramMembers] = useState<TelegramMember[]>([]);
+  const [telegramStats, setTelegramStats] = useState<TelegramStats | null>(null);
+  const [isLoadingTelegram, setIsLoadingTelegram] = useState(false);
+  const [telegramSearch, setTelegramSearch] = useState("");
+  const [telegramFilter, setTelegramFilter] = useState("all");
+  const [testTelegramUserId, setTestTelegramUserId] = useState("");
+  const [testActivationResult, setTestActivationResult] = useState<string | null>(null);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [newMemberData, setNewMemberData] = useState({ telegram_user_id: "", email: "" });
 
   const baseUrl = useMemo(() => {
     if (typeof window === "undefined") return "https://www.snt-mentorship-platform.de";
@@ -197,6 +234,7 @@ export default function AffiliateAdminPage() {
     if (adminCredentials) {
       fetchOverview();
       fetchLandingVersions();
+      fetchTelegramData();
     }
   }, [adminCredentials]);
 
@@ -483,6 +521,120 @@ export default function AffiliateAdminPage() {
     });
     setEditingVersion(null);
   };
+
+  // Telegram Functions
+  const fetchTelegramData = async () => {
+    if (!adminCredentials) return;
+    setIsLoadingTelegram(true);
+    try {
+      const response = await fetch("/api/admin/telegram-group/members?stats=true&limit=100", {
+        headers: headers ?? undefined,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setTelegramMembers(data.members || []);
+        setTelegramStats(data.stats || null);
+      }
+    } catch (error) {
+      console.error("Telegram-Daten konnten nicht geladen werden:", error);
+    } finally {
+      setIsLoadingTelegram(false);
+    }
+  };
+
+  const handleTelegramMemberAction = async (telegramUserId: number, action: "activate" | "cancel") => {
+    if (!adminCredentials) return;
+    try {
+      const response = await fetch("/api/admin/telegram-group/members", {
+        method: "PUT",
+        headers: headers ?? undefined,
+        body: JSON.stringify({ telegram_user_id: telegramUserId, action }),
+      });
+      if (response.ok) {
+        notify(`Mitglied ${action === "activate" ? "aktiviert" : "entfernt"}`);
+        fetchTelegramData();
+      } else {
+        const data = await response.json();
+        notify(data.error || "Aktion fehlgeschlagen");
+      }
+    } catch (error) {
+      notify("Aktion fehlgeschlagen");
+    }
+  };
+
+  const handleAddTelegramMember = async () => {
+    if (!adminCredentials) return;
+    if (!newMemberData.telegram_user_id) {
+      notify("Telegram User ID ist erforderlich");
+      return;
+    }
+    try {
+      const response = await fetch("/api/admin/telegram-group/members", {
+        method: "POST",
+        headers: headers ?? undefined,
+        body: JSON.stringify({
+          telegram_user_id: newMemberData.telegram_user_id,
+          email: newMemberData.email || undefined,
+          activate: true,
+        }),
+      });
+      if (response.ok) {
+        notify("Mitglied hinzugefügt und aktiviert");
+        setShowAddMemberModal(false);
+        setNewMemberData({ telegram_user_id: "", email: "" });
+        fetchTelegramData();
+      } else {
+        const data = await response.json();
+        notify(data.error || "Hinzufügen fehlgeschlagen");
+      }
+    } catch (error) {
+      notify("Hinzufügen fehlgeschlagen");
+    }
+  };
+
+  const handleTestActivation = async () => {
+    if (!testTelegramUserId) {
+      setTestActivationResult("Bitte Telegram User ID eingeben");
+      return;
+    }
+    setTestActivationResult("Aktiviere...");
+    try {
+      const response = await fetch("/api/telegram/paid-group/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegram_user_id: parseInt(testTelegramUserId),
+          provider: "test",
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTestActivationResult(`Aktiviert! Invite-Link: ${data.invite_link || "wird per Telegram gesendet"}`);
+        fetchTelegramData();
+      } else {
+        setTestActivationResult(`Fehler: ${data.error}`);
+      }
+    } catch (error) {
+      setTestActivationResult(`Fehler: ${error}`);
+    }
+  };
+
+  const filteredTelegramMembers = telegramMembers.filter((m) => {
+    const matchesSearch =
+      !telegramSearch ||
+      m.telegram_username?.toLowerCase().includes(telegramSearch.toLowerCase()) ||
+      m.outseta_email?.toLowerCase().includes(telegramSearch.toLowerCase()) ||
+      m.telegram_user_id.toString().includes(telegramSearch);
+
+    const matchesFilter =
+      telegramFilter === "all" ||
+      (telegramFilter === "active" && m.subscription_status === "active") ||
+      (telegramFilter === "pending" && m.subscription_status === "pending") ||
+      (telegramFilter === "cancelled" && m.subscription_status === "cancelled") ||
+      (telegramFilter === "in_group" && m.is_in_group);
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <Box p="8" maxW="1200px" mx="auto">
@@ -982,6 +1134,253 @@ export default function AffiliateAdminPage() {
             </Stack>
               </Collapsible.Content>
             </Collapsible.Root>
+          </Box>
+        )}
+
+        {/* Telegram Gruppe Section */}
+        {isAuthenticated && (
+          <Box borderWidth="1px" borderRadius="md" p="6">
+            <HStack justify="space-between" align="center" mb="4">
+              <HStack gap="2">
+                <TelegramLogo size={24} color="#0088cc" weight="fill" />
+                <Text fontWeight="semibold">Telegram Gruppe</Text>
+              </HStack>
+              <IconButton
+                aria-label="Toggle Telegram Section"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsTelegramCollapsed(!isTelegramCollapsed)}
+              >
+                {isTelegramCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
+              </IconButton>
+            </HStack>
+
+            <Collapsible.Root open={!isTelegramCollapsed}>
+              <Collapsible.Content>
+                {/* Stats */}
+                {telegramStats && (
+                  <Grid templateColumns={{ base: "1fr 1fr", md: "repeat(4, 1fr)" }} gap="4" mb="6">
+                    <Box bg="gray.900" p="4" borderRadius="md">
+                      <Text fontSize="sm" color="gray.400">Gesamt</Text>
+                      <Text fontSize="2xl" fontWeight="bold">{telegramStats.total_members}</Text>
+                    </Box>
+                    <Box bg="gray.900" p="4" borderRadius="md">
+                      <Text fontSize="sm" color="gray.400">Aktiv</Text>
+                      <Text fontSize="2xl" fontWeight="bold" color="green.400">{telegramStats.active_members}</Text>
+                    </Box>
+                    <Box bg="gray.900" p="4" borderRadius="md">
+                      <Text fontSize="sm" color="gray.400">In Gruppe</Text>
+                      <Text fontSize="2xl" fontWeight="bold" color="blue.400">{telegramStats.members_in_group}</Text>
+                    </Box>
+                    <Box bg="gray.900" p="4" borderRadius="md">
+                      <Text fontSize="sm" color="gray.400">Neu diese Woche</Text>
+                      <Text fontSize="2xl" fontWeight="bold">{telegramStats.new_this_week}</Text>
+                    </Box>
+                  </Grid>
+                )}
+
+                {/* Test Activation */}
+                <Box borderWidth="1px" borderRadius="md" p="4" mb="6" bg="yellow.50">
+                  <Text fontWeight="medium" mb="3" color="gray.800">Test-Aktivierung (ohne Zahlung)</Text>
+                  <HStack gap="2">
+                    <Input
+                      placeholder="Telegram User ID (z.B. 123456789)"
+                      value={testTelegramUserId}
+                      onChange={(e) => setTestTelegramUserId(e.target.value)}
+                      bg="white"
+                      color="gray.800"
+                      maxW="300px"
+                    />
+                    <Button colorScheme="yellow" onClick={handleTestActivation}>
+                      Test-Aktivierung
+                    </Button>
+                  </HStack>
+                  {testActivationResult && (
+                    <Text fontSize="sm" mt="2" color="gray.700" fontFamily="mono">
+                      {testActivationResult}
+                    </Text>
+                  )}
+                </Box>
+
+                {/* Controls */}
+                <HStack justify="space-between" mb="4" flexWrap="wrap" gap="2">
+                  <HStack gap="2">
+                    <Input
+                      placeholder="Suchen..."
+                      value={telegramSearch}
+                      onChange={(e) => setTelegramSearch(e.target.value)}
+                      maxW="200px"
+                    />
+                    <NativeSelectRoot maxW="150px">
+                      <NativeSelectField
+                        value={telegramFilter}
+                        onChange={(e) => setTelegramFilter(e.target.value)}
+                      >
+                        <option value="all">Alle</option>
+                        <option value="active">Aktiv</option>
+                        <option value="pending">Ausstehend</option>
+                        <option value="cancelled">Gekündigt</option>
+                        <option value="in_group">In Gruppe</option>
+                      </NativeSelectField>
+                    </NativeSelectRoot>
+                  </HStack>
+                  <Button size="sm" colorScheme="blue" onClick={() => setShowAddMemberModal(true)}>
+                    <Plus size={16} /> Mitglied hinzufügen
+                  </Button>
+                </HStack>
+
+                {/* Members Table */}
+                {isLoadingTelegram ? (
+                  <Flex justify="center" py="8">
+                    <Spinner size="lg" color="blue.500" />
+                  </Flex>
+                ) : (
+                  <Box borderWidth="1px" borderRadius="md" overflow="hidden">
+                    <Table.Root size="sm">
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.ColumnHeader>Telegram ID</Table.ColumnHeader>
+                          <Table.ColumnHeader>Username</Table.ColumnHeader>
+                          <Table.ColumnHeader>E-Mail</Table.ColumnHeader>
+                          <Table.ColumnHeader>Status</Table.ColumnHeader>
+                          <Table.ColumnHeader>In Gruppe</Table.ColumnHeader>
+                          <Table.ColumnHeader>Aktionen</Table.ColumnHeader>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                        {filteredTelegramMembers.length === 0 ? (
+                          <Table.Row>
+                            <Table.Cell colSpan={6}>
+                              <Text textAlign="center" py="4" color="gray.500">
+                                Keine Mitglieder gefunden
+                              </Text>
+                            </Table.Cell>
+                          </Table.Row>
+                        ) : (
+                          filteredTelegramMembers.map((member) => (
+                            <Table.Row key={member.id}>
+                              <Table.Cell fontFamily="mono" fontSize="sm">
+                                {member.telegram_user_id}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {member.telegram_username ? `@${member.telegram_username}` : "-"}
+                              </Table.Cell>
+                              <Table.Cell>{member.outseta_email || "-"}</Table.Cell>
+                              <Table.Cell>
+                                <Badge
+                                  colorPalette={
+                                    member.subscription_status === "active"
+                                      ? "green"
+                                      : member.subscription_status === "pending"
+                                      ? "yellow"
+                                      : "red"
+                                  }
+                                >
+                                  {member.subscription_status}
+                                </Badge>
+                              </Table.Cell>
+                              <Table.Cell>
+                                {member.is_in_group ? (
+                                  <Check size={18} color="green" />
+                                ) : (
+                                  <X size={18} color="red" />
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                <HStack gap="1">
+                                  {member.subscription_status !== "active" && (
+                                    <Button
+                                      size="xs"
+                                      colorScheme="green"
+                                      onClick={() => handleTelegramMemberAction(member.telegram_user_id, "activate")}
+                                    >
+                                      Aktivieren
+                                    </Button>
+                                  )}
+                                  {member.subscription_status === "active" && (
+                                    <Button
+                                      size="xs"
+                                      colorScheme="red"
+                                      onClick={() => handleTelegramMemberAction(member.telegram_user_id, "cancel")}
+                                    >
+                                      Entfernen
+                                    </Button>
+                                  )}
+                                </HStack>
+                              </Table.Cell>
+                            </Table.Row>
+                          ))
+                        )}
+                      </Table.Body>
+                    </Table.Root>
+                  </Box>
+                )}
+
+                {/* Refresh Button */}
+                <HStack justify="flex-end" mt="4">
+                  <Button size="sm" variant="outline" onClick={fetchTelegramData} loading={isLoadingTelegram}>
+                    Aktualisieren
+                  </Button>
+                </HStack>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </Box>
+        )}
+
+        {/* Add Member Modal */}
+        {showAddMemberModal && (
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            bg="blackAlpha.500"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            zIndex="1000"
+            onClick={() => setShowAddMemberModal(false)}
+          >
+            <Box
+              bg="white"
+              p="6"
+              borderRadius="xl"
+              maxW="400px"
+              w="full"
+              mx="4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <VStack gap="4" align="stretch">
+                <Heading size="md" color="gray.800">Telegram Mitglied hinzufügen</Heading>
+                <Stack gap="1">
+                  <Text fontSize="sm" color="gray.600">Telegram User ID *</Text>
+                  <Input
+                    placeholder="z.B. 123456789"
+                    value={newMemberData.telegram_user_id}
+                    onChange={(e) => setNewMemberData({ ...newMemberData, telegram_user_id: e.target.value })}
+                    color="gray.800"
+                  />
+                </Stack>
+                <Stack gap="1">
+                  <Text fontSize="sm" color="gray.600">E-Mail (optional)</Text>
+                  <Input
+                    placeholder="email@example.com"
+                    value={newMemberData.email}
+                    onChange={(e) => setNewMemberData({ ...newMemberData, email: e.target.value })}
+                    color="gray.800"
+                  />
+                </Stack>
+                <HStack justify="flex-end" gap="2">
+                  <Button variant="outline" onClick={() => setShowAddMemberModal(false)}>
+                    Abbrechen
+                  </Button>
+                  <Button colorScheme="blue" onClick={handleAddTelegramMember}>
+                    Hinzufügen & Aktivieren
+                  </Button>
+                </HStack>
+              </VStack>
+            </Box>
           </Box>
         )}
       </VStack>
