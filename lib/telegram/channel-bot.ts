@@ -463,20 +463,34 @@ async function handleList(chatId: number, session: BotSession): Promise<void> {
     return;
   }
 
-  const { data: messages, error } = await supabaseAdmin
+  // Hole wiederkehrende Nachrichten (aktiv)
+  const { data: recurringMessages, error: recurringError } = await supabaseAdmin
     .from("telegram_scheduled_messages")
     .select("*")
     .eq("bot_type", "channel_bot")
     .eq("is_active", true)
-    .order("next_run_at", { ascending: true, nullsFirst: false })
+    .eq("is_recurring", true)
+    .order("next_run_at", { ascending: true });
+
+  // Hole einmalige Nachrichten (aktiv UND noch nicht gesendet)
+  const { data: oneTimeMessages, error: oneTimeError } = await supabaseAdmin
+    .from("telegram_scheduled_messages")
+    .select("*")
+    .eq("bot_type", "channel_bot")
+    .eq("is_active", true)
+    .eq("is_recurring", false)
+    .eq("is_sent", false)
     .order("scheduled_at", { ascending: true });
 
-  if (error) {
+  if (recurringError || oneTimeError) {
+    console.error("List error:", recurringError || oneTimeError);
     await sendTextMessage(chatId, "❌ Fehler beim Laden der Nachrichten.");
     return;
   }
 
-  if (!messages || messages.length === 0) {
+  const messages = [...(recurringMessages || []), ...(oneTimeMessages || [])];
+
+  if (messages.length === 0) {
     await sendTextMessage(chatId, "📭 Keine geplanten Nachrichten vorhanden.\n\nErstelle eine mit /schedule oder /recurring");
     return;
   }
@@ -548,37 +562,61 @@ async function handleCancel(chatId: number, session: BotSession, args: string): 
     return;
   }
 
-  // Suche nach Nachricht mit passender ID (Prefix-Match)
-  const { data: messages } = await supabaseAdmin
+  const searchId = args.trim().toLowerCase();
+
+  // Hole alle aktiven Nachrichten für diesen Bot
+  const { data: allMessages, error: fetchError } = await supabaseAdmin
     .from("telegram_scheduled_messages")
-    .select("id")
+    .select("id, is_recurring, is_sent")
     .eq("bot_type", "channel_bot")
-    .eq("is_active", true)
-    .ilike("id", `${args}%`);
+    .eq("is_active", true);
 
-  if (!messages || messages.length === 0) {
-    await sendTextMessage(chatId, `❌ Keine Nachricht mit ID "${args}" gefunden.`);
+  if (fetchError) {
+    console.error("Cancel fetch error:", fetchError);
+    await sendTextMessage(chatId, "❌ Fehler beim Suchen der Nachricht.");
     return;
   }
 
-  if (messages.length > 1) {
-    await sendTextMessage(chatId, `❌ Mehrere Nachrichten gefunden. Bitte gib mehr Zeichen der ID an.`);
+  // Filtere: wiederkehrende ODER einmalige die noch nicht gesendet wurden
+  const relevantMessages = (allMessages || []).filter(msg => 
+    msg.is_recurring || !msg.is_sent
+  );
+
+  // Suche nach ID-Prefix
+  const matchingMessages = relevantMessages.filter(msg => 
+    msg.id.toLowerCase().startsWith(searchId)
+  );
+
+  if (matchingMessages.length === 0) {
+    await sendTextMessage(chatId, 
+      `❌ Keine aktive Nachricht mit ID "${args}" gefunden.\n\n` +
+      `Nutze /list um alle IDs zu sehen.`
+    );
     return;
   }
 
-  const messageId = messages[0].id;
+  if (matchingMessages.length > 1) {
+    await sendTextMessage(chatId, 
+      `❌ Mehrere Nachrichten gefunden (${matchingMessages.length}).\n` +
+      `Bitte gib mehr Zeichen der ID an.`
+    );
+    return;
+  }
 
-  const { error } = await supabaseAdmin
+  const messageId = matchingMessages[0].id;
+
+  const { error: updateError } = await supabaseAdmin
     .from("telegram_scheduled_messages")
     .update({ is_active: false })
     .eq("id", messageId);
 
-  if (error) {
+  if (updateError) {
+    console.error("Cancel update error:", updateError);
     await sendTextMessage(chatId, "❌ Fehler beim Löschen der Nachricht.");
     return;
   }
 
-  await sendTextMessage(chatId, `✅ Nachricht <code>${args}</code> wurde gelöscht.`);
+  await sendTextMessage(chatId, `✅ Nachricht <code>${searchId}</code> wurde gelöscht.`);
 }
 
 async function handleCancelAction(chatId: number, user: TelegramUser): Promise<void> {
