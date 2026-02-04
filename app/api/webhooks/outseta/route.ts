@@ -195,27 +195,27 @@ function extractPayloadData(payload: OutsetaWebhookPayload): {
   const event = payload.Event || payload.event || "unknown";
   
   // Daten können unter "Data", "data" oder direkt im Root sein
-  const data = payload.Data || payload.data || payload;
+  const data: OutsetaEventData | undefined = payload.Data || payload.data;
   
   // Account finden
-  const account = data.Account || payload.Account;
+  const account = data?.Account || payload.Account;
   
   // Person finden
-  const person = data.Person || payload.Person || account?.PrimaryContact;
+  const person = data?.Person || payload.Person || account?.PrimaryContact;
   
   // Subscription finden
-  const subscription = data.Subscription || 
+  const subscription = data?.Subscription || 
                        payload.Subscription || 
                        account?.CurrentSubscription ||
                        account?.Subscriptions?.[0];
   
-  // Plan aus Subscription oder direkt
-  const planUid = subscription?.Plan?.Uid || data.Plan?.Uid;
+  // Plan aus Subscription oder direkt aus data
+  const planUid = subscription?.Plan?.Uid || data?.Plan?.Uid;
   
   return {
     event,
     email: person?.Email,
-    accountUid: account?.Uid || data.Uid,
+    accountUid: account?.Uid || data?.Uid,
     personUid: person?.Uid,
     planUid,
     subscription,
