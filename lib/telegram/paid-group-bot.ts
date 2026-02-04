@@ -94,7 +94,7 @@ export interface SendMessageOptions {
  */
 async function telegramApiCall<T>(
   method: string,
-  params?: Record<string, unknown>
+  params?: object
 ): Promise<T> {
   if (!BOT_TOKEN) {
     throw new Error("TELEGRAM_PAID_TOKEN ist nicht konfiguriert");
