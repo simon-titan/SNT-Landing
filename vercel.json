@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/channel-scheduler",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/telegram-scheduler",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}
