@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pricingConfig, isDiscountActive } from '@/config/pricing-config';
+import { activateSubscription as activateTelegramSubscription, getMemberByTelegramId } from '@/lib/telegram/group-management';
+import { TELEGRAM_PLANS } from '@/lib/telegram/paid-group-bot';
 
 // PayPal-Webhook-Ereignisse
 type PayPalWebhookEvent = {
@@ -48,7 +50,15 @@ function getPlanMapping(): Record<string, string> {
     // PayPal Monthly Subscription Plans
     'P-7LS829244N6815906NEXPFVA': pricing.monthly.webhook.outsetaPlanUid, // Standard Monthly
     'P-59C23375XF491315BNCBCDVQ': pricingConfig.discount.monthly.webhook.outsetaPlanUid, // Rabatt Monthly (für existierende Transaktionen)
+    // Telegram Gruppe Plan
+    [TELEGRAM_PLANS.paypal]: TELEGRAM_PLANS.outseta, // 7ma8lrWE -> ZmNM7ZW2
   };
+}
+
+// Prüft ob ein Plan zur Telegram-Gruppe gehört
+function isTelegramGroupPlan(planUid: string | undefined): boolean {
+  if (!planUid) return false;
+  return planUid === TELEGRAM_PLANS.outseta || planUid === TELEGRAM_PLANS.paypal;
 }
 
 // Debug-Funktion für ausführliches Logging
@@ -509,11 +519,24 @@ function extractCustomerData(event: PayPalWebhookEvent): {
         
         const subPlanMapping = getPlanMapping();
         const subPricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
-        planUid = subPlanMapping[event.resource?.plan_id] || subPricing.monthly.webhook.outsetaPlanUid;
+        
+        // Prüfe ob es ein Telegram-Gruppe Plan ist
+        const subscriptionPlanId = event.resource?.plan_id;
+        if (subscriptionPlanId === TELEGRAM_PLANS.paypal) {
+          planUid = TELEGRAM_PLANS.outseta;
+          debugLog('Telegram-Gruppe Abo erkannt', { 
+            plan_id: subscriptionPlanId, 
+            planUid 
+          });
+        } else {
+          planUid = subPlanMapping[subscriptionPlanId] || subPricing.monthly.webhook.outsetaPlanUid;
+        }
+        
         debugLog('Abo Plan erkannt', { 
-          plan_id: event.resource?.plan_id, 
+          plan_id: subscriptionPlanId, 
           planUid,
-          hasCustomerData: !!customerData
+          hasCustomerData: !!customerData,
+          isTelegramGroup: isTelegramGroupPlan(planUid)
         });
         break;
         
@@ -683,6 +706,50 @@ export async function POST(request: NextRequest) {
     };
 
     debugLog('Webhook erfolgreich verarbeitet', successData);
+
+    // Telegram-Gruppe Aktivierung prüfen
+    let telegramActivated = false;
+    if (isTelegramGroupPlan(customerData.planUid)) {
+      debugLog('Telegram-Gruppe Plan erkannt - prüfe auf Telegram User ID');
+      
+      // Telegram User ID aus custom_id extrahieren
+      const customId = event.resource?.custom_id || event.resource?.custom || '';
+      const telegramUserIdMatch = customId.match(/TG_USER_(\d+)/);
+      
+      if (telegramUserIdMatch) {
+        const telegramUserId = parseInt(telegramUserIdMatch[1]);
+        debugLog('Telegram User ID gefunden', { telegramUserId });
+        
+        try {
+          const telegramResult = await activateTelegramSubscription(
+            telegramUserId,
+            TELEGRAM_PLANS.outseta,
+            {
+              account_uid: outsetaResult?.accountUid,
+              email: customerData.email,
+            }
+          );
+          
+          if (telegramResult.success) {
+            telegramActivated = true;
+            debugLog('Telegram-Gruppe Aktivierung erfolgreich', { 
+              inviteLink: telegramResult.inviteLink 
+            });
+          } else {
+            debugLog('Telegram-Gruppe Aktivierung fehlgeschlagen', { 
+              error: telegramResult.error 
+            });
+          }
+        } catch (telegramError) {
+          debugLog('Fehler bei Telegram-Aktivierung', { 
+            error: telegramError instanceof Error ? telegramError.message : 'Unknown' 
+          });
+        }
+      } else {
+        debugLog('Keine Telegram User ID in custom_id gefunden', { customId });
+      }
+    }
+
     console.log(`\n=== [${timestamp}] WEBHOOK ERFOLGREICH VERARBEITET ===`);
     console.log(JSON.stringify(successData, null, 2));
     console.log(`=== ENDE WEBHOOK VERARBEITUNG ===\n`);
@@ -694,7 +761,8 @@ export async function POST(request: NextRequest) {
       customer_email: customerData.email,
       outseta_person_created: !!(outsetaResult?.personUid || outsetaResult?.Uid),
       outseta_account_created: !!outsetaResult?.accountUid,
-      outseta_subscription_created: !!outsetaResult?.subscriptionUid
+      outseta_subscription_created: !!outsetaResult?.subscriptionUid,
+      telegram_activated: telegramActivated
     });
 
   } catch (error) {
