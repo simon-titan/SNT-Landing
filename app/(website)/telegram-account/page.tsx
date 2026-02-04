@@ -56,98 +56,107 @@ export default function TelegramAccountPage() {
   const [linkingError, setLinkingError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Test-Modus direkt aus URL prüfen (nicht über State)
+    // Sofort aus URL prüfen
     const urlParams = new URLSearchParams(window.location.search);
     const isTestMode = urlParams.get("test") === "1";
-    setTestMode(isTestMode);
     
     // Telegram User ID aus URL oder localStorage
-    const tgId = urlParams.get("telegram_user_id") || localStorage.getItem("telegram_user_id");
-    if (tgId) {
-      setTelegramUserId(tgId);
+    const tgId = urlParams.get("telegram_user_id") || localStorage.getItem("telegram_user_id") || "";
+    
+    // States sofort setzen
+    setTestMode(isTestMode);
+    setTelegramUserId(tgId);
+
+    // Im Test-Modus: Sofort fertig laden
+    if (isTestMode) {
+      console.log("[telegram-account] Test-Modus aktiv");
+      setUser({
+        email: "test@example.com",
+        firstName: "Test",
+        lastName: "User",
+        accountUid: "TEST-123",
+      });
+      setLoading(false);
+      return;
     }
 
-    // Outseta User laden
-    const loadUser = async () => {
-      try {
-        // Im Test-Modus: Kein Outseta nötig
-        if (isTestMode) {
-          console.log("Test-Modus aktiv - überspringe Outseta");
-          setUser({
-            email: "test@example.com",
-            firstName: "Test",
-            lastName: "User",
-            accountUid: "TEST-123",
-          });
-          setLoading(false);
-          return;
-        }
+    // Normaler Modus: Outseta laden mit Timeout
+    const loadOutsetaUser = async () => {
+      console.log("[telegram-account] Starte Outseta-Laden...");
+      
+      // Timeout nach 5 Sekunden - dann zeigen wir Login-Screen
+      const timeout = setTimeout(() => {
+        console.log("[telegram-account] Timeout - Outseta nicht verfügbar");
+        setError("Bitte melde dich an um fortzufahren.");
+        setLoading(false);
+      }, 5000);
 
-        // Warte auf Outseta (max 3 Sekunden)
-        const maxWait = 3000;
-        const startTime = Date.now();
-        
-        while (!(window as any).Outseta?.getUser && Date.now() - startTime < maxWait) {
+      try {
+        // Warte auf Outseta
+        let attempts = 0;
+        while (!(window as any).Outseta?.getUser && attempts < 50) {
           await new Promise((r) => setTimeout(r, 100));
+          attempts++;
         }
 
         const outseta = (window as any).Outseta;
         
-        // Wenn Outseta nicht verfügbar ist
         if (!outseta?.getUser) {
-          console.log("Outseta nicht verfügbar");
-          setError("Outseta konnte nicht geladen werden. Bitte Seite neu laden.");
-          setLoading(false);
-          return;
-        }
-
-        try {
-          const outsetaUser = await outseta.getUser();
-          if (!outsetaUser?.Email) {
-            setError("Bitte melde dich an um fortzufahren.");
-            setLoading(false);
-            return;
-          }
-
-          setUser({
-            email: outsetaUser.Email,
-            firstName: outsetaUser.FirstName || "",
-            lastName: outsetaUser.LastName || "",
-            accountUid: outsetaUser.Account?.Uid || "",
-          });
-        } catch (userError) {
-          console.log("User nicht eingeloggt:", userError);
+          clearTimeout(timeout);
+          console.log("[telegram-account] Outseta nicht geladen");
           setError("Bitte melde dich an um fortzufahren.");
           setLoading(false);
           return;
         }
 
-        // Telegram Status laden
-        const storedTelegramUserId = localStorage.getItem("telegram_user_id");
-        if (storedTelegramUserId) {
-          setTelegramUserId(storedTelegramUserId);
+        console.log("[telegram-account] Outseta verfügbar, lade User...");
+        const outsetaUser = await outseta.getUser();
+        clearTimeout(timeout);
+
+        if (!outsetaUser?.Email) {
+          console.log("[telegram-account] Kein User eingeloggt");
+          setError("Bitte melde dich an um fortzufahren.");
+          setLoading(false);
+          return;
+        }
+
+        console.log("[telegram-account] User geladen:", outsetaUser.Email);
+        setUser({
+          email: outsetaUser.Email,
+          firstName: outsetaUser.FirstName || "",
+          lastName: outsetaUser.LastName || "",
+          accountUid: outsetaUser.Account?.Uid || "",
+        });
+
+        // Optional: Telegram Status laden (non-blocking)
+        if (tgId) {
           try {
             const response = await fetch(
-              `/api/telegram/paid-group/activate?telegram_user_id=${storedTelegramUserId}`
+              `/api/telegram/paid-group/activate?telegram_user_id=${tgId}`,
+              { signal: AbortSignal.timeout(3000) }
             );
-            const data = await response.json();
-            if (data.success) {
-              setMember(data);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success) {
+                setMember(data);
+              }
             }
           } catch {
-            console.log("Kein Telegram-Status gefunden");
+            console.log("[telegram-account] Telegram-Status nicht verfügbar");
           }
         }
+
+        setLoading(false);
       } catch (err) {
-        console.error("Fehler beim Laden:", err);
-        setError("Fehler beim Laden der Daten.");
-      } finally {
+        clearTimeout(timeout);
+        console.error("[telegram-account] Fehler:", err);
+        setError("Bitte melde dich an um fortzufahren.");
         setLoading(false);
       }
     };
 
-    loadUser();
-  }, []); // Keine Dependencies mehr - läuft nur einmal
+    loadOutsetaUser();
+  }, []);
 
   // Test-Funktion: Aktiviere Subscription ohne Zahlung
   const handleTestActivation = async () => {

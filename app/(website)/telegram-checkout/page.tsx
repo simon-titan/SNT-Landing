@@ -20,7 +20,7 @@ const TELEGRAM_BLUE = "#0088cc";
 
 // Telegram Gruppe Pricing - separate von der Hauptseite
 const TELEGRAM_PRICING = {
-    price: 47,
+    price: 30,
     label: "PRO MONAT",
     outseta: {
         planUid: "ZmNM7ZW2", // Outseta Plan für Telegram Gruppe
