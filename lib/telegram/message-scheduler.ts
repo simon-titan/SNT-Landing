@@ -28,30 +28,33 @@ interface ScheduledMessage {
 
 /**
  * Holt alle fälligen Nachrichten
+ * NUR für paid_group_bot - channel_bot hat seinen eigenen Scheduler
  */
 async function getDueMessages(): Promise<ScheduledMessage[]> {
   const now = new Date().toISOString();
 
-  // Einmalige Nachrichten die fällig sind
+  // Einmalige Nachrichten die fällig sind (nur paid_group_bot oder NULL für Rückwärtskompatibilität)
   const { data: oneTimeMessages, error: oneTimeError } = await supabaseAdmin
     .from("telegram_scheduled_messages")
     .select("*")
     .eq("is_active", true)
     .eq("is_sent", false)
     .eq("is_recurring", false)
-    .lte("scheduled_at", now);
+    .lte("scheduled_at", now)
+    .or("bot_type.eq.paid_group_bot,bot_type.is.null");
 
   if (oneTimeError) {
     console.error("Fehler beim Abrufen einmaliger Nachrichten:", oneTimeError);
   }
 
-  // Wiederkehrende Nachrichten die fällig sind
+  // Wiederkehrende Nachrichten die fällig sind (nur paid_group_bot oder NULL)
   const { data: recurringMessages, error: recurringError } = await supabaseAdmin
     .from("telegram_scheduled_messages")
     .select("*")
     .eq("is_active", true)
     .eq("is_recurring", true)
-    .lte("next_run_at", now);
+    .lte("next_run_at", now)
+    .or("bot_type.eq.paid_group_bot,bot_type.is.null");
 
   if (recurringError) {
     console.error("Fehler beim Abrufen wiederkehrender Nachrichten:", recurringError);
