@@ -99,6 +99,17 @@ type TelegramStats = {
   new_this_week: number;
 };
 
+type TelegramFaq = {
+  id: string;
+  trigger_keywords: string[];
+  question: string;
+  answer: string;
+  category: string;
+  is_active: boolean;
+  usage_count: number;
+  created_at: string;
+};
+
 const ADMIN_USERNAME = process.env.NEXT_PUBLIC_AFFILIATE_ADMIN_USERNAME ?? "admin";
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_AFFILIATE_ADMIN_PASSWORD ?? "sntsecure";
 
@@ -153,6 +164,20 @@ export default function AffiliateAdminPage() {
   const [testActivationResult, setTestActivationResult] = useState<string | null>(null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [newMemberData, setNewMemberData] = useState({ telegram_user_id: "", email: "" });
+
+  // FAQ States
+  const [telegramFaqs, setTelegramFaqs] = useState<TelegramFaq[]>([]);
+  const [isLoadingFaqs, setIsLoadingFaqs] = useState(false);
+  const [showAddFaqModal, setShowAddFaqModal] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<TelegramFaq | null>(null);
+  const [faqFormState, setFaqFormState] = useState({
+    question: "",
+    answer: "",
+    keywords: "",
+    category: "general",
+    is_active: true,
+  });
+  const [telegramActiveTab, setTelegramActiveTab] = useState<"members" | "faq">("members");
 
   const baseUrl = useMemo(() => {
     if (typeof window === "undefined") return "https://www.snt-mentorship-platform.de";
@@ -235,6 +260,7 @@ export default function AffiliateAdminPage() {
       fetchOverview();
       fetchLandingVersions();
       fetchTelegramData();
+      fetchTelegramFaqs();
     }
   }, [adminCredentials]);
 
@@ -635,6 +661,128 @@ export default function AffiliateAdminPage() {
 
     return matchesSearch && matchesFilter;
   });
+
+  // FAQ Functions
+  const fetchTelegramFaqs = async () => {
+    if (!adminCredentials) return;
+    setIsLoadingFaqs(true);
+    try {
+      const response = await fetch("/api/admin/telegram-group/faq?include_inactive=true", {
+        headers: headers ?? undefined,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setTelegramFaqs(data.faqs || []);
+      }
+    } catch (error) {
+      console.error("FAQ-Daten konnten nicht geladen werden:", error);
+    } finally {
+      setIsLoadingFaqs(false);
+    }
+  };
+
+  const handleSaveFaq = async () => {
+    if (!adminCredentials) return;
+    if (!faqFormState.question || !faqFormState.answer || !faqFormState.keywords) {
+      notify("Bitte alle Felder ausfüllen");
+      return;
+    }
+
+    const keywords = faqFormState.keywords.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
+    if (keywords.length === 0) {
+      notify("Mindestens ein Keyword erforderlich");
+      return;
+    }
+
+    try {
+      const url = editingFaq ? "/api/admin/telegram-group/faq" : "/api/admin/telegram-group/faq";
+      const method = editingFaq ? "PUT" : "POST";
+      const body = editingFaq
+        ? {
+            id: editingFaq.id,
+            question: faqFormState.question,
+            answer: faqFormState.answer,
+            trigger_keywords: keywords,
+            category: faqFormState.category,
+            is_active: faqFormState.is_active,
+          }
+        : {
+            question: faqFormState.question,
+            answer: faqFormState.answer,
+            trigger_keywords: keywords,
+            category: faqFormState.category,
+            is_active: faqFormState.is_active,
+          };
+
+      const response = await fetch(url, {
+        method,
+        headers: headers ?? undefined,
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        notify(editingFaq ? "FAQ aktualisiert" : "FAQ erstellt");
+        setShowAddFaqModal(false);
+        setEditingFaq(null);
+        setFaqFormState({ question: "", answer: "", keywords: "", category: "general", is_active: true });
+        fetchTelegramFaqs();
+      } else {
+        const data = await response.json();
+        notify(data.error || "Fehler beim Speichern");
+      }
+    } catch (error) {
+      notify("Fehler beim Speichern");
+    }
+  };
+
+  const handleEditFaq = (faq: TelegramFaq) => {
+    setEditingFaq(faq);
+    setFaqFormState({
+      question: faq.question,
+      answer: faq.answer,
+      keywords: faq.trigger_keywords.join(", "),
+      category: faq.category,
+      is_active: faq.is_active,
+    });
+    setShowAddFaqModal(true);
+  };
+
+  const handleDeleteFaq = async (faqId: string) => {
+    if (!adminCredentials) return;
+    if (!confirm("FAQ wirklich löschen?")) return;
+
+    try {
+      const response = await fetch(`/api/admin/telegram-group/faq?id=${faqId}`, {
+        method: "DELETE",
+        headers: headers ?? undefined,
+      });
+      if (response.ok) {
+        notify("FAQ gelöscht");
+        fetchTelegramFaqs();
+      } else {
+        notify("Fehler beim Löschen");
+      }
+    } catch (error) {
+      notify("Fehler beim Löschen");
+    }
+  };
+
+  const handleToggleFaqActive = async (faq: TelegramFaq) => {
+    if (!adminCredentials) return;
+    try {
+      const response = await fetch("/api/admin/telegram-group/faq", {
+        method: "PUT",
+        headers: headers ?? undefined,
+        body: JSON.stringify({ id: faq.id, is_active: !faq.is_active }),
+      });
+      if (response.ok) {
+        notify(faq.is_active ? "FAQ deaktiviert" : "FAQ aktiviert");
+        fetchTelegramFaqs();
+      }
+    } catch (error) {
+      notify("Fehler beim Aktualisieren");
+    }
+  };
 
   return (
     <Box p="8" maxW="1200px" mx="auto">
@@ -1173,8 +1321,8 @@ export default function AffiliateAdminPage() {
                       <Text fontSize="2xl" fontWeight="bold" color="blue.400">{telegramStats.members_in_group}</Text>
                     </Box>
                     <Box bg="gray.900" p="4" borderRadius="md">
-                      <Text fontSize="sm" color="gray.400">Neu diese Woche</Text>
-                      <Text fontSize="2xl" fontWeight="bold">{telegramStats.new_this_week}</Text>
+                      <Text fontSize="sm" color="gray.400">FAQs aktiv</Text>
+                      <Text fontSize="2xl" fontWeight="bold">{telegramFaqs.filter(f => f.is_active).length}</Text>
                     </Box>
                   </Grid>
                 )}
@@ -1202,126 +1350,233 @@ export default function AffiliateAdminPage() {
                   )}
                 </Box>
 
-                {/* Controls */}
-                <HStack justify="space-between" mb="4" flexWrap="wrap" gap="2">
-                  <HStack gap="2">
-                    <Input
-                      placeholder="Suchen..."
-                      value={telegramSearch}
-                      onChange={(e) => setTelegramSearch(e.target.value)}
-                      maxW="200px"
-                    />
-                    <NativeSelectRoot maxW="150px">
-                      <NativeSelectField
-                        value={telegramFilter}
-                        onChange={(e) => setTelegramFilter(e.target.value)}
-                      >
-                        <option value="all">Alle</option>
-                        <option value="active">Aktiv</option>
-                        <option value="pending">Ausstehend</option>
-                        <option value="cancelled">Gekündigt</option>
-                        <option value="in_group">In Gruppe</option>
-                      </NativeSelectField>
-                    </NativeSelectRoot>
-                  </HStack>
-                  <Button size="sm" colorScheme="blue" onClick={() => setShowAddMemberModal(true)}>
-                    <Plus size={16} /> Mitglied hinzufügen
+                {/* Tabs for Members / FAQ */}
+                <HStack gap="0" mb="4" borderBottom="1px solid" borderColor="gray.200">
+                  <Button
+                    variant="ghost"
+                    borderRadius="0"
+                    borderBottom={telegramActiveTab === "members" ? "2px solid" : "none"}
+                    borderColor="blue.500"
+                    color={telegramActiveTab === "members" ? "blue.500" : "gray.500"}
+                    onClick={() => setTelegramActiveTab("members")}
+                  >
+                    <Users size={18} /> Mitglieder
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    borderRadius="0"
+                    borderBottom={telegramActiveTab === "faq" ? "2px solid" : "none"}
+                    borderColor="blue.500"
+                    color={telegramActiveTab === "faq" ? "blue.500" : "gray.500"}
+                    onClick={() => setTelegramActiveTab("faq")}
+                  >
+                    FAQ-Antworten
                   </Button>
                 </HStack>
 
-                {/* Members Table */}
-                {isLoadingTelegram ? (
-                  <Flex justify="center" py="8">
-                    <Spinner size="lg" color="blue.500" />
-                  </Flex>
-                ) : (
-                  <Box borderWidth="1px" borderRadius="md" overflow="hidden">
-                    <Table.Root size="sm">
-                      <Table.Header>
-                        <Table.Row>
-                          <Table.ColumnHeader>Telegram ID</Table.ColumnHeader>
-                          <Table.ColumnHeader>Username</Table.ColumnHeader>
-                          <Table.ColumnHeader>E-Mail</Table.ColumnHeader>
-                          <Table.ColumnHeader>Status</Table.ColumnHeader>
-                          <Table.ColumnHeader>In Gruppe</Table.ColumnHeader>
-                          <Table.ColumnHeader>Aktionen</Table.ColumnHeader>
-                        </Table.Row>
-                      </Table.Header>
-                      <Table.Body>
-                        {filteredTelegramMembers.length === 0 ? (
-                          <Table.Row>
-                            <Table.Cell colSpan={6}>
-                              <Text textAlign="center" py="4" color="gray.500">
-                                Keine Mitglieder gefunden
-                              </Text>
-                            </Table.Cell>
-                          </Table.Row>
-                        ) : (
-                          filteredTelegramMembers.map((member) => (
-                            <Table.Row key={member.id}>
-                              <Table.Cell fontFamily="mono" fontSize="sm">
-                                {member.telegram_user_id}
-                              </Table.Cell>
-                              <Table.Cell>
-                                {member.telegram_username ? `@${member.telegram_username}` : "-"}
-                              </Table.Cell>
-                              <Table.Cell>{member.outseta_email || "-"}</Table.Cell>
-                              <Table.Cell>
-                                <Badge
-                                  colorPalette={
-                                    member.subscription_status === "active"
-                                      ? "green"
-                                      : member.subscription_status === "pending"
-                                      ? "yellow"
-                                      : "red"
-                                  }
-                                >
-                                  {member.subscription_status}
-                                </Badge>
-                              </Table.Cell>
-                              <Table.Cell>
-                                {member.is_in_group ? (
-                                  <Check size={18} color="green" />
-                                ) : (
-                                  <X size={18} color="red" />
-                                )}
-                              </Table.Cell>
-                              <Table.Cell>
-                                <HStack gap="1">
-                                  {member.subscription_status !== "active" && (
-                                    <Button
-                                      size="xs"
-                                      colorScheme="green"
-                                      onClick={() => handleTelegramMemberAction(member.telegram_user_id, "activate")}
-                                    >
-                                      Aktivieren
-                                    </Button>
-                                  )}
-                                  {member.subscription_status === "active" && (
-                                    <Button
-                                      size="xs"
-                                      colorScheme="red"
-                                      onClick={() => handleTelegramMemberAction(member.telegram_user_id, "cancel")}
-                                    >
-                                      Entfernen
-                                    </Button>
-                                  )}
-                                </HStack>
-                              </Table.Cell>
+                {/* Members Tab Content */}
+                {telegramActiveTab === "members" && (
+                  <>
+                    {/* Controls */}
+                    <HStack justify="space-between" mb="4" flexWrap="wrap" gap="2">
+                      <HStack gap="2">
+                        <Input
+                          placeholder="Suchen..."
+                          value={telegramSearch}
+                          onChange={(e) => setTelegramSearch(e.target.value)}
+                          maxW="200px"
+                        />
+                        <NativeSelectRoot maxW="150px">
+                          <NativeSelectField
+                            value={telegramFilter}
+                            onChange={(e) => setTelegramFilter(e.target.value)}
+                          >
+                            <option value="all">Alle</option>
+                            <option value="active">Aktiv</option>
+                            <option value="pending">Ausstehend</option>
+                            <option value="cancelled">Gekündigt</option>
+                            <option value="in_group">In Gruppe</option>
+                          </NativeSelectField>
+                        </NativeSelectRoot>
+                      </HStack>
+                      <Button size="sm" colorScheme="blue" onClick={() => setShowAddMemberModal(true)}>
+                        <Plus size={16} /> Mitglied hinzufügen
+                      </Button>
+                    </HStack>
+
+                    {/* Members Table */}
+                    {isLoadingTelegram ? (
+                      <Flex justify="center" py="8">
+                        <Spinner size="lg" color="blue.500" />
+                      </Flex>
+                    ) : (
+                      <Box borderWidth="1px" borderRadius="md" overflow="hidden">
+                        <Table.Root size="sm">
+                          <Table.Header>
+                            <Table.Row>
+                              <Table.ColumnHeader>Telegram ID</Table.ColumnHeader>
+                              <Table.ColumnHeader>Username</Table.ColumnHeader>
+                              <Table.ColumnHeader>E-Mail</Table.ColumnHeader>
+                              <Table.ColumnHeader>Status</Table.ColumnHeader>
+                              <Table.ColumnHeader>In Gruppe</Table.ColumnHeader>
+                              <Table.ColumnHeader>Aktionen</Table.ColumnHeader>
                             </Table.Row>
-                          ))
-                        )}
-                      </Table.Body>
-                    </Table.Root>
-                  </Box>
+                          </Table.Header>
+                          <Table.Body>
+                            {filteredTelegramMembers.length === 0 ? (
+                              <Table.Row>
+                                <Table.Cell colSpan={6}>
+                                  <Text textAlign="center" py="4" color="gray.500">
+                                    Keine Mitglieder gefunden
+                                  </Text>
+                                </Table.Cell>
+                              </Table.Row>
+                            ) : (
+                              filteredTelegramMembers.map((member) => (
+                                <Table.Row key={member.id}>
+                                  <Table.Cell fontFamily="mono" fontSize="sm">
+                                    {member.telegram_user_id}
+                                  </Table.Cell>
+                                  <Table.Cell>
+                                    {member.telegram_username ? `@${member.telegram_username}` : "-"}
+                                  </Table.Cell>
+                                  <Table.Cell>{member.outseta_email || "-"}</Table.Cell>
+                                  <Table.Cell>
+                                    <Badge
+                                      colorPalette={
+                                        member.subscription_status === "active"
+                                          ? "green"
+                                          : member.subscription_status === "pending"
+                                          ? "yellow"
+                                          : "red"
+                                      }
+                                    >
+                                      {member.subscription_status}
+                                    </Badge>
+                                  </Table.Cell>
+                                  <Table.Cell>
+                                    {member.is_in_group ? (
+                                      <Check size={18} color="green" />
+                                    ) : (
+                                      <X size={18} color="red" />
+                                    )}
+                                  </Table.Cell>
+                                  <Table.Cell>
+                                    <HStack gap="1">
+                                      {member.subscription_status !== "active" && (
+                                        <Button
+                                          size="xs"
+                                          colorScheme="green"
+                                          onClick={() => handleTelegramMemberAction(member.telegram_user_id, "activate")}
+                                        >
+                                          Aktivieren
+                                        </Button>
+                                      )}
+                                      {member.subscription_status === "active" && (
+                                        <Button
+                                          size="xs"
+                                          colorScheme="red"
+                                          onClick={() => handleTelegramMemberAction(member.telegram_user_id, "cancel")}
+                                        >
+                                          Entfernen
+                                        </Button>
+                                      )}
+                                    </HStack>
+                                  </Table.Cell>
+                                </Table.Row>
+                              ))
+                            )}
+                          </Table.Body>
+                        </Table.Root>
+                      </Box>
+                    )}
+
+                    {/* Refresh Button */}
+                    <HStack justify="flex-end" mt="4">
+                      <Button size="sm" variant="outline" onClick={fetchTelegramData} loading={isLoadingTelegram}>
+                        Aktualisieren
+                      </Button>
+                    </HStack>
+                  </>
                 )}
 
-                {/* Refresh Button */}
-                <HStack justify="flex-end" mt="4">
-                  <Button size="sm" variant="outline" onClick={fetchTelegramData} loading={isLoadingTelegram}>
-                    Aktualisieren
-                  </Button>
-                </HStack>
+                {/* FAQ Tab Content */}
+                {telegramActiveTab === "faq" && (
+                  <>
+                    <HStack justify="space-between" mb="4">
+                      <Text fontSize="sm" color="gray.500">
+                        {telegramFaqs.length} FAQ-Einträge ({telegramFaqs.filter(f => f.is_active).length} aktiv)
+                      </Text>
+                      <Button size="sm" colorScheme="blue" onClick={() => {
+                        setEditingFaq(null);
+                        setFaqFormState({ question: "", answer: "", keywords: "", category: "general", is_active: true });
+                        setShowAddFaqModal(true);
+                      }}>
+                        <Plus size={16} /> Neue FAQ
+                      </Button>
+                    </HStack>
+
+                    {isLoadingFaqs ? (
+                      <Flex justify="center" py="8">
+                        <Spinner size="lg" color="blue.500" />
+                      </Flex>
+                    ) : telegramFaqs.length === 0 ? (
+                      <Box textAlign="center" py="8" color="gray.500">
+                        <Text>Keine FAQ-Einträge vorhanden</Text>
+                        <Text fontSize="sm">Erstelle einen neuen Eintrag um automatische Antworten einzurichten.</Text>
+                      </Box>
+                    ) : (
+                      <VStack gap="3" align="stretch">
+                        {telegramFaqs.map((faq) => (
+                          <Box
+                            key={faq.id}
+                            borderWidth="1px"
+                            borderRadius="md"
+                            p="4"
+                            opacity={faq.is_active ? 1 : 0.6}
+                          >
+                            <HStack justify="space-between" mb="2">
+                              <HStack gap="2">
+                                <Badge colorPalette={faq.is_active ? "green" : "gray"}>
+                                  {faq.is_active ? "Aktiv" : "Inaktiv"}
+                                </Badge>
+                                <Badge>{faq.category}</Badge>
+                                <Text fontSize="xs" color="gray.500">
+                                  {faq.usage_count}x verwendet
+                                </Text>
+                              </HStack>
+                              <HStack gap="1">
+                                <Button size="xs" variant="outline" onClick={() => handleToggleFaqActive(faq)}>
+                                  {faq.is_active ? "Deaktivieren" : "Aktivieren"}
+                                </Button>
+                                <Button size="xs" variant="outline" onClick={() => handleEditFaq(faq)}>
+                                  <PencilSimple size={14} />
+                                </Button>
+                                <Button size="xs" variant="outline" colorScheme="red" onClick={() => handleDeleteFaq(faq.id)}>
+                                  <Trash size={14} />
+                                </Button>
+                              </HStack>
+                            </HStack>
+                            <Text fontWeight="medium" mb="1">{faq.question}</Text>
+                            <Text fontSize="sm" color="gray.600" mb="2">{faq.answer}</Text>
+                            <HStack gap="1" flexWrap="wrap">
+                              {faq.trigger_keywords.map((kw, i) => (
+                                <Badge key={i} size="sm" colorPalette="blue">{kw}</Badge>
+                              ))}
+                            </HStack>
+                          </Box>
+                        ))}
+                      </VStack>
+                    )}
+
+                    {/* Refresh Button */}
+                    <HStack justify="flex-end" mt="4">
+                      <Button size="sm" variant="outline" onClick={fetchTelegramFaqs} loading={isLoadingFaqs}>
+                        Aktualisieren
+                      </Button>
+                    </HStack>
+                  </>
+                )}
               </Collapsible.Content>
             </Collapsible.Root>
           </Box>
@@ -1377,6 +1632,124 @@ export default function AffiliateAdminPage() {
                   </Button>
                   <Button colorScheme="blue" onClick={handleAddTelegramMember}>
                     Hinzufügen & Aktivieren
+                  </Button>
+                </HStack>
+              </VStack>
+            </Box>
+          </Box>
+        )}
+
+        {/* Add/Edit FAQ Modal */}
+        {showAddFaqModal && (
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            bg="blackAlpha.500"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            zIndex="1000"
+            onClick={() => setShowAddFaqModal(false)}
+          >
+            <Box
+              bg="white"
+              p="6"
+              borderRadius="xl"
+              maxW="500px"
+              w="full"
+              mx="4"
+              maxH="90vh"
+              overflowY="auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <VStack gap="4" align="stretch">
+                <Heading size="md" color="gray.800">
+                  {editingFaq ? "FAQ bearbeiten" : "Neue FAQ erstellen"}
+                </Heading>
+                
+                <Stack gap="1">
+                  <Text fontSize="sm" color="gray.600" fontWeight="medium">Frage *</Text>
+                  <Input
+                    placeholder="z.B. Wie funktionieren die Signale?"
+                    value={faqFormState.question}
+                    onChange={(e) => setFaqFormState({ ...faqFormState, question: e.target.value })}
+                    color="gray.800"
+                  />
+                </Stack>
+
+                <Stack gap="1">
+                  <Text fontSize="sm" color="gray.600" fontWeight="medium">Antwort *</Text>
+                  <textarea
+                    placeholder="Die Antwort, die der Bot senden soll..."
+                    value={faqFormState.answer}
+                    onChange={(e) => setFaqFormState({ ...faqFormState, answer: e.target.value })}
+                    style={{
+                      width: "100%",
+                      minHeight: "100px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid #e2e8f0",
+                      fontSize: "14px",
+                      color: "#1a202c",
+                    }}
+                  />
+                </Stack>
+
+                <Stack gap="1">
+                  <Text fontSize="sm" color="gray.600" fontWeight="medium">Keywords * (kommagetrennt)</Text>
+                  <Input
+                    placeholder="z.B. signale, signal, funktionieren, wie"
+                    value={faqFormState.keywords}
+                    onChange={(e) => setFaqFormState({ ...faqFormState, keywords: e.target.value })}
+                    color="gray.800"
+                  />
+                  <Text fontSize="xs" color="gray.500">
+                    Diese Wörter triggern die automatische Antwort wenn sie in einer Nachricht vorkommen.
+                  </Text>
+                </Stack>
+
+                <Stack gap="1">
+                  <Text fontSize="sm" color="gray.600" fontWeight="medium">Kategorie</Text>
+                  <NativeSelectRoot>
+                    <NativeSelectField
+                      value={faqFormState.category}
+                      onChange={(e) => setFaqFormState({ ...faqFormState, category: e.target.value })}
+                      bg="white"
+                      color="gray.800"
+                    >
+                      <option value="general">Allgemein</option>
+                      <option value="signals">Signale</option>
+                      <option value="payment">Zahlung</option>
+                      <option value="subscription">Abonnement</option>
+                      <option value="support">Support</option>
+                    </NativeSelectField>
+                  </NativeSelectRoot>
+                </Stack>
+
+                <HStack>
+                  <input
+                    type="checkbox"
+                    id="faq-active"
+                    checked={faqFormState.is_active}
+                    onChange={(e) => setFaqFormState({ ...faqFormState, is_active: e.target.checked })}
+                  />
+                  <label htmlFor="faq-active" style={{ fontSize: "14px", color: "#4a5568" }}>
+                    Aktiv (Bot antwortet auf diese FAQ)
+                  </label>
+                </HStack>
+
+                <HStack justify="flex-end" gap="2" mt="2">
+                  <Button variant="outline" onClick={() => {
+                    setShowAddFaqModal(false);
+                    setEditingFaq(null);
+                  }}>
+                    Abbrechen
+                  </Button>
+                  <Button colorScheme="blue" onClick={handleSaveFaq}>
+                    {editingFaq ? "Speichern" : "Erstellen"}
                   </Button>
                 </HStack>
               </VStack>
