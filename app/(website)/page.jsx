@@ -9,18 +9,12 @@ import { CourseOverviewSection } from "@/components/ui/CourseOverviewSection";
 import { SntPremiumPricing } from "@/components/ui/snt-premium-pricing";
 import { MobilePricingFooter } from "@/components/ui/mobile-pricing-footer";
 import { ProductPageSection } from "@/components/ui/product-page-section";
-import { LifetimeCountdownBanner } from "@/components/ui/lifetime-countdown-banner";
 export const metadata = generateMetadata({
     title: "SNTTRADES - DEIN WEG ZUM PROFITABLEN TRADER",
     description: "Über 6+ Jahre Markterfahrung gebündelt in einem klar strukturierten Kurs – für deinen Weg zum selbstbestimmten Trader.",
 });
 export default async function Page() {
     return (<>
-      {/* Desktop Countdown Banner - unter Navbar */}
-      <Box display={{ base: "none", md: "block" }} w="full" bg="black">
-        <LifetimeCountdownBanner />
-      </Box>
-      
       {/* Product Page Section - Neue Hero-Section */}
       <ProductPageSection />
       

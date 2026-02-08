@@ -43,7 +43,7 @@ const features = [
 export function ProductPageSection() {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedPricing, setSelectedPricing] = useState<string>("lifetime");
+  const [selectedPricing, setSelectedPricing] = useState<string>("monthly");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -76,62 +76,33 @@ export function ProductPageSection() {
     }
   }, [selectedPricing, isClient]);
 
-  const loadPayPalSDK = (type: "subscription" | "order" = "subscription") => {
-    if (type === "subscription") {
-      // Check if subscription SDK is already loaded
-      const existingSubscriptionScript = document.getElementById("paypal-sdk-product-monthly");
-      if (existingSubscriptionScript) {
-        if ((window as any).paypal?.Buttons) {
-          setPaypalLoaded(true);
-          setTimeout(renderPayPalButton, 100);
-        }
-        return;
-      }
-
-      // Load subscription SDK (needed for monthly)
-      const script = document.createElement("script");
-      script.id = "paypal-sdk-product-monthly";
-      script.src =
-        "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&intent=subscription&currency=EUR";
-      script.setAttribute("data-sdk-integration-source", "button-factory");
-      script.async = true;
-      script.onload = () => {
-        console.log("Product Page: Subscription SDK geladen");
+  const loadPayPalSDK = () => {
+    // Check if subscription SDK is already loaded
+    const existingSubscriptionScript = document.getElementById("paypal-sdk-product-subscription");
+    if (existingSubscriptionScript) {
+      if ((window as any).paypal?.Buttons) {
         setPaypalLoaded(true);
-        renderPayPalButton();
-      };
-      script.onerror = () => {
-        console.error("Product Page: Fehler beim Laden des Subscription SDK");
-      };
-      document.head.appendChild(script);
-    } else {
-      // Check if order SDK is already loaded
-      const existingOrderScript = document.getElementById("paypal-sdk-product-lifetime");
-      if (existingOrderScript) {
-        if ((window as any).paypal?.Buttons) {
-          setPaypalLoaded(true);
-          setTimeout(renderPayPalButton, 100);
-        }
-        return;
+        setTimeout(renderPayPalButton, 100);
       }
-
-      // Load order SDK (needed for lifetime)
-      const script = document.createElement("script");
-      script.id = "paypal-sdk-product-lifetime";
-      script.src =
-        "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&currency=EUR";
-      script.setAttribute("data-sdk-integration-source", "button-factory");
-      script.async = true;
-      script.onload = () => {
-        console.log("Product Page: Order SDK geladen");
-        setPaypalLoaded(true);
-        renderPayPalButton();
-      };
-      script.onerror = () => {
-        console.error("Product Page: Fehler beim Laden des Order SDK");
-      };
-      document.head.appendChild(script);
+      return;
     }
+
+    // Load subscription SDK (needed for monthly, quarterly, annual)
+    const script = document.createElement("script");
+    script.id = "paypal-sdk-product-subscription";
+    script.src =
+      "https://www.paypal.com/sdk/js?client-id=ASzGd21OHNK5yaZUKtlBrKw4F2oN04ZcUxyUmzAy_VeOjMWYCV7vEy1D0p_biwg5VcBVh_NvfOTEZnmF&vault=true&intent=subscription&currency=EUR";
+    script.setAttribute("data-sdk-integration-source", "button-factory");
+    script.async = true;
+    script.onload = () => {
+      console.log("Product Page: Subscription SDK geladen");
+      setPaypalLoaded(true);
+      renderPayPalButton();
+    };
+    script.onerror = () => {
+      console.error("Product Page: Fehler beim Laden des Subscription SDK");
+    };
+    document.head.appendChild(script);
   };
 
   const renderPayPalButton = () => {
@@ -164,31 +135,17 @@ export function ProductPageSection() {
         tagline: false,
       },
       onApprove: function (data: any) {
-        if (selectedPricing === "monthly") {
-          console.log("PayPal Subscription genehmigt:", data.subscriptionID);
-          const telegramUserId =
-            localStorage.getItem("telegram_user_id") ||
-            sessionStorage.getItem("telegram_user_id");
-          let redirectUrl = `/thank-you-3?subscription_id=${data.subscriptionID}`;
+        console.log("PayPal Subscription genehmigt:", data.subscriptionID);
+        const telegramUserId =
+          localStorage.getItem("telegram_user_id") ||
+          sessionStorage.getItem("telegram_user_id");
+        let redirectUrl = `/thank-you-3?subscription_id=${data.subscriptionID}&product=${selectedPricing}`;
 
-          if (telegramUserId) {
-            redirectUrl += `&telegram_user_id=${telegramUserId}`;
-          }
-
-          window.location.href = redirectUrl;
-        } else if (selectedPricing === "lifetime") {
-          console.log("PayPal Lifetime Order genehmigt:", data.orderID);
-          const telegramUserId =
-            localStorage.getItem("telegram_user_id") ||
-            sessionStorage.getItem("telegram_user_id");
-          let redirectUrl = `/thank-you-3?source=paypal_lifetime&order_id=${data.orderID || "unknown"}`;
-
-          if (telegramUserId) {
-            redirectUrl += `&telegram_user_id=${telegramUserId}`;
-          }
-
-          window.location.href = redirectUrl;
+        if (telegramUserId) {
+          redirectUrl += `&telegram_user_id=${telegramUserId}`;
         }
+
+        window.location.href = redirectUrl;
       },
       onError: function (err: any) {
         console.error("PayPal Fehler:", err);
@@ -198,229 +155,97 @@ export function ProductPageSection() {
       },
     };
 
-    if (selectedPricing === "monthly") {
-      // Monthly Subscription - Use Subscription SDK
-      const subscriptionScript = document.getElementById("paypal-sdk-product-monthly");
-      const orderScript = document.getElementById("paypal-sdk-product-lifetime");
-      
-      const renderMonthlyButton = () => {
-        // Check if we have the right SDK loaded
-        const subscriptionScript = document.getElementById("paypal-sdk-product-monthly");
-        const orderScript = document.getElementById("paypal-sdk-product-lifetime");
-        
-        // If Order SDK is loaded but not Subscription SDK, load Subscription SDK
-        if (orderScript && !subscriptionScript) {
-          console.log("Product Page: Order SDK geladen, lade Subscription SDK für Monthly...");
-          loadPayPalSDK("subscription");
-          // Wait for SDK to load
+    // All plans are subscriptions (monthly, quarterly, annual)
+    const subscriptionScript = document.getElementById("paypal-sdk-product-subscription");
+    
+    const renderSubscriptionButton = () => {
+      if (!(window as any).paypal?.Buttons) {
+        console.log("Product Page: PayPal Buttons API nicht verfügbar");
+        if (!subscriptionScript) {
+          loadPayPalSDK();
+        } else {
           const checkSDK = (attempt = 0) => {
-            const newSubscriptionScript = document.getElementById("paypal-sdk-product-monthly");
-            if (newSubscriptionScript && (window as any).paypal?.Buttons) {
-              renderMonthlyButton();
+            if ((window as any).paypal?.Buttons) {
+              renderSubscriptionButton();
             } else if (attempt < 30) {
               setTimeout(() => checkSDK(attempt + 1), 200);
             } else {
-              console.error("Product Page: Subscription SDK konnte nicht geladen werden");
+              console.error("Product Page: PayPal Buttons API nicht verfügbar nach 30 Versuchen");
             }
           };
-          setTimeout(() => checkSDK(), 500);
-          return;
+          setTimeout(() => checkSDK(), 200);
         }
-        
-        if (!(window as any).paypal?.Buttons) {
-          console.log("Product Page: PayPal Buttons API nicht verfügbar für Monthly");
-          // If SDK not loaded, load it
-          if (!subscriptionScript) {
-            loadPayPalSDK("subscription");
-          } else {
-            // SDK exists but not ready, wait
-            const checkSDK = (attempt = 0) => {
-              if ((window as any).paypal?.Buttons) {
-                renderMonthlyButton();
-              } else if (attempt < 30) {
-                setTimeout(() => checkSDK(attempt + 1), 200);
-              } else {
-                console.error("Product Page: PayPal Buttons API nicht verfügbar nach 30 Versuchen");
-              }
-            };
-            setTimeout(() => checkSDK(), 200);
-          }
-          return;
-        }
-
-        const containerId = `paypal-product-container-${selectedPricing}`;
-        const container = document.getElementById(containerId);
-
-        if (!container) {
-          console.log("Product Page: Container nicht gefunden:", containerId);
-          return;
-        }
-
-        container.innerHTML = "";
-
-        const monthlyConfig = {
-          ...buttonConfig,
-          createSubscription: function (data: any, actions: any) {
-            const telegramUserId = localStorage.getItem("telegram_user_id");
-            const customId = telegramUserId
-              ? `TG_USER_${telegramUserId}|SNTTRADES_MONTHLY_PLAN`
-              : "SNTTRADES_MONTHLY_PLAN";
-
-            return actions.subscription.create({
-              plan_id: pricing.monthly.paypal.planId,
-              custom_id: customId,
-              application_context: {
-                brand_name: "SNTTRADES",
-                shipping_preference: "NO_SHIPPING",
-                payment_method: {
-                  payer_selected: "PAYPAL",
-                  payee_preferred: "IMMEDIATE_PAYMENT_REQUIRED",
-                },
-              },
-            });
-          },
-        };
-
-        (window as any).paypal
-          .Buttons(monthlyConfig)
-          .render(`#${containerId}`)
-          .then(() => {
-            console.log("Product Page: PayPal Monthly Button erfolgreich gerendert");
-            setPaypalButtonRendered(true);
-          })
-          .catch((error: any) => {
-            console.error("Product Page: PayPal Monthly Button Render Fehler:", error);
-          });
-      };
-
-      // Render button - use existing SDK if available
-      if (subscriptionScript && (window as any).paypal?.Buttons) {
-        // SDK already loaded, render immediately
-        setTimeout(() => {
-          renderMonthlyButton();
-        }, 100);
-      } else if (!subscriptionScript) {
-        // Load SDK
-        loadPayPalSDK("subscription");
-      } else {
-        // SDK exists but not ready
-        setTimeout(() => {
-          renderMonthlyButton();
-        }, 200);
+        return;
       }
-    } else if (selectedPricing === "lifetime") {
-      // Lifetime - Use Order SDK
-      const orderScript = document.getElementById("paypal-sdk-product-lifetime");
-      const subscriptionScript = document.getElementById("paypal-sdk-product-monthly");
+
+      // Determine the correct plan based on selectedPricing
+      let planId = pricing.monthly.paypal.planId;
+      let planName = "MONTHLY";
       
-      const renderLifetimeButton = () => {
-        // Check if we have the right SDK loaded
-        const orderScript = document.getElementById("paypal-sdk-product-lifetime");
-        const subscriptionScript = document.getElementById("paypal-sdk-product-monthly");
-        
-        // If Subscription SDK is loaded but not Order SDK, load Order SDK
-        if (subscriptionScript && !orderScript) {
-          console.log("Product Page: Subscription SDK geladen, lade Order SDK für Lifetime...");
-          loadPayPalSDK("order");
-          // Wait for SDK to load
-          const checkSDK = (attempt = 0) => {
-            const newOrderScript = document.getElementById("paypal-sdk-product-lifetime");
-            if (newOrderScript && (window as any).paypal?.Buttons) {
-              renderLifetimeButton();
-            } else if (attempt < 30) {
-              setTimeout(() => checkSDK(attempt + 1), 200);
-            } else {
-              console.error("Product Page: Order SDK konnte nicht geladen werden");
-            }
-          };
-          setTimeout(() => checkSDK(), 500);
-          return;
-        }
-        
-        if (!(window as any).paypal?.Buttons) {
-          console.log("Product Page: PayPal Buttons API nicht verfügbar für Lifetime");
-          if (!orderScript) {
-            loadPayPalSDK("order");
-          } else {
-            // SDK exists but not ready, wait
-            const checkSDK = (attempt = 0) => {
-              if ((window as any).paypal?.Buttons) {
-                renderLifetimeButton();
-              } else if (attempt < 30) {
-                setTimeout(() => checkSDK(attempt + 1), 200);
-              } else {
-                console.error("Product Page: PayPal Buttons API nicht verfügbar nach 30 Versuchen");
-              }
-            };
-            setTimeout(() => checkSDK(), 200);
-          }
-          return;
-        }
+      if (selectedPricing === "quarterly") {
+        planId = pricing.quarterly.paypal.planId;
+        planName = "QUARTERLY";
+      } else if (selectedPricing === "annual") {
+        planId = pricing.annual.paypal.planId;
+        planName = "ANNUAL";
+      }
 
-        const containerId = `paypal-product-container-${selectedPricing}`;
-        const container = document.getElementById(containerId);
+      const containerId = `paypal-product-container-${selectedPricing}`;
+      const container = document.getElementById(containerId);
 
-        if (!container) {
-          console.log("Product Page: Container nicht gefunden:", containerId);
-          return;
-        }
+      if (!container) {
+        console.log("Product Page: Container nicht gefunden:", containerId);
+        return;
+      }
 
-        container.innerHTML = "";
+      container.innerHTML = "";
 
-        const lifetimeConfig = {
-          ...buttonConfig,
-          createOrder: function (data: any, actions: any) {
-            const telegramUserId = localStorage.getItem("telegram_user_id");
-            const customId = telegramUserId
-              ? `TG_USER_${telegramUserId}|SNTTRADES_LIFETIME_PLAN`
-              : "SNTTRADES_LIFETIME_PLAN";
+      const subscriptionConfig = {
+        ...buttonConfig,
+        createSubscription: function (data: any, actions: any) {
+          const telegramUserId = localStorage.getItem("telegram_user_id");
+          const customId = telegramUserId
+            ? `TG_USER_${telegramUserId}|SNTTRADES_${planName}_PLAN`
+            : `SNTTRADES_${planName}_PLAN`;
 
-            return actions.order.create({
-              purchase_units: [
-                {
-                  amount: {
-                    value: pricing.lifetime.price.toString(),
-                    currency_code: "EUR",
-                  },
-                  description: "SNTTRADES Lifetime Access",
-                  custom_id: customId,
-                },
-              ],
-              application_context: {
-                brand_name: "SNTTRADES",
-                shipping_preference: "NO_SHIPPING",
+          return actions.subscription.create({
+            plan_id: planId,
+            custom_id: customId,
+            application_context: {
+              brand_name: "SNTTRADES",
+              shipping_preference: "NO_SHIPPING",
+              payment_method: {
+                payer_selected: "PAYPAL",
+                payee_preferred: "IMMEDIATE_PAYMENT_REQUIRED",
               },
-            });
-          },
-        };
-
-        (window as any).paypal
-          .Buttons(lifetimeConfig)
-          .render(`#${containerId}`)
-          .then(() => {
-            console.log("Product Page: PayPal Lifetime Button erfolgreich gerendert");
-            setPaypalButtonRendered(true);
-          })
-          .catch((error: any) => {
-            console.error("Product Page: PayPal Lifetime Button Render Fehler:", error);
+            },
           });
+        },
       };
 
-      // Render button - use existing SDK if available
-      if (orderScript && (window as any).paypal?.Buttons) {
-        // Order SDK already loaded, render immediately
-        setTimeout(() => {
-          renderLifetimeButton();
-        }, 100);
-      } else if (!orderScript) {
-        // Load Order SDK
-        loadPayPalSDK("order");
-      } else {
-        // SDK exists but not ready
-        setTimeout(() => {
-          renderLifetimeButton();
-        }, 200);
-      }
+      (window as any).paypal
+        .Buttons(subscriptionConfig)
+        .render(`#${containerId}`)
+        .then(() => {
+          console.log(`Product Page: PayPal ${planName} Button erfolgreich gerendert`);
+          setPaypalButtonRendered(true);
+        })
+        .catch((error: any) => {
+          console.error(`Product Page: PayPal ${planName} Button Render Fehler:`, error);
+        });
+    };
+
+    // Render button - use existing SDK if available
+    if (subscriptionScript && (window as any).paypal?.Buttons) {
+      setTimeout(() => {
+        renderSubscriptionButton();
+      }, 100);
+    } else if (!subscriptionScript) {
+      loadPayPalSDK();
+    } else {
+      setTimeout(() => {
+        renderSubscriptionButton();
+      }, 200);
     }
   };
 
@@ -1136,24 +961,79 @@ export function ProductPageSection() {
                 </HStack>
               </Box>
 
-              {/* SNT-PREMIUM Lifetime */}
+              {/* SNT-PREMIUM Quartal */}
               <Box
                 as="button"
-                onClick={() => setSelectedPricing("lifetime")}
+                onClick={() => setSelectedPricing("quarterly")}
                 p={4}
                 borderRadius="lg"
                 border={
-                  selectedPricing === "lifetime"
+                  selectedPricing === "quarterly"
                     ? "2px solid"
                     : "1px solid rgba(59, 130, 246, 0.15)"
                 }
                 borderColor={
-                  selectedPricing === "lifetime"
+                  selectedPricing === "quarterly"
                     ? SNT_BLUE
                     : "rgba(59, 130, 246, 0.15)"
                 }
                 bg={
-                  selectedPricing === "lifetime"
+                  selectedPricing === "quarterly"
+                    ? "rgba(59, 130, 246, 0.1)"
+                    : "rgba(10, 14, 10, 0.6)"
+                }
+                _hover={{
+                  borderColor: SNT_BLUE,
+                  bg: "rgba(59, 130, 246, 0.1)",
+                }}
+                transition="all 0.2s"
+                textAlign="left"
+                w="full"
+              >
+                <HStack gap={3}>
+                  <Box
+                    w={5}
+                    h={5}
+                    borderRadius="full"
+                    border={
+                      selectedPricing === "quarterly"
+                        ? "2px solid"
+                        : "2px solid rgba(59, 130, 246, 0.3)"
+                    }
+                    borderColor={SNT_BLUE}
+                    bg={selectedPricing === "quarterly" ? SNT_BLUE : "transparent"}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    {selectedPricing === "quarterly" && (
+                      <Box w={2.5} h={2.5} borderRadius="full" bg="white" />
+                    )}
+                  </Box>
+                  <Text color="white" fontSize="sm" fontWeight="medium">
+                    SNT-PREMIUM Quartal / {formatPrice(pricing.quarterly.price)}
+                  </Text>
+                </HStack>
+              </Box>
+
+              {/* SNT-PREMIUM Jährlich - Empfehlung */}
+              <Box
+                as="button"
+                onClick={() => setSelectedPricing("annual")}
+                p={4}
+                borderRadius="lg"
+                border={
+                  selectedPricing === "annual"
+                    ? "2px solid"
+                    : "1px solid rgba(59, 130, 246, 0.15)"
+                }
+                borderColor={
+                  selectedPricing === "annual"
+                    ? SNT_BLUE
+                    : "rgba(59, 130, 246, 0.15)"
+                }
+                bg={
+                  selectedPricing === "annual"
                     ? "rgba(59, 130, 246, 0.1)"
                     : "rgba(10, 14, 10, 0.6)"
                 }
@@ -1166,44 +1046,42 @@ export function ProductPageSection() {
                 w="full"
                 position="relative"
               >
-                {selectedPricing === "lifetime" && (
-                  <Box
-                    position="absolute"
-                    top={-2}
-                    right={-2}
-                    bg="red.500"
-                    color="white"
-                    px={2}
-                    py={0.5}
-                    borderRadius="full"
-                    fontSize="2xs"
-                    fontWeight="bold"
-                  >
-                    EMPFEHLUNG
-                  </Box>
-                )}
+                <Box
+                  position="absolute"
+                  top={-2}
+                  right={-2}
+                  bg="red.500"
+                  color="white"
+                  px={2}
+                  py={0.5}
+                  borderRadius="full"
+                  fontSize="2xs"
+                  fontWeight="bold"
+                >
+                  EMPFEHLUNG
+                </Box>
                 <HStack gap={3}>
                   <Box
                     w={5}
                     h={5}
                     borderRadius="full"
                     border={
-                      selectedPricing === "lifetime"
+                      selectedPricing === "annual"
                         ? "2px solid"
                         : "2px solid rgba(59, 130, 246, 0.3)"
                     }
                     borderColor={SNT_BLUE}
-                    bg={selectedPricing === "lifetime" ? SNT_BLUE : "transparent"}
+                    bg={selectedPricing === "annual" ? SNT_BLUE : "transparent"}
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
                   >
-                    {selectedPricing === "lifetime" && (
+                    {selectedPricing === "annual" && (
                       <Box w={2.5} h={2.5} borderRadius="full" bg="white" />
                     )}
                   </Box>
                   <Text color="white" fontSize="sm" fontWeight="medium">
-                    SNT-PREMIUM Lifetime / {formatPrice(pricing.lifetime.price)}
+                    SNT-PREMIUM Jährlich / {formatPrice(pricing.annual.price)}
                   </Text>
                 </HStack>
               </Box>
@@ -1211,8 +1089,8 @@ export function ProductPageSection() {
 
             {/* Desktop: PayPal Button und Join Button vertikal mit "oder" */}
             <VStack gap={1} align="stretch" w="full" display={{ base: "none", md: "flex" }}>
-              {/* PayPal Button für Monthly/Lifetime */}
-              {(selectedPricing === "monthly" || selectedPricing === "lifetime") ? (
+              {/* PayPal Button für alle Subscription-Pläne */}
+              {(selectedPricing === "monthly" || selectedPricing === "quarterly" || selectedPricing === "annual") ? (
                 <Box
                   position="relative"
                   w="full"
@@ -1326,7 +1204,7 @@ export function ProductPageSection() {
             {/* Mobile: PayPal Button und Join Button */}
             <VStack gap={2} align="stretch" w="full" display={{ base: "flex", md: "none" }}>
               {/* PayPal Button (wenn sichtbar) oder Platzhalter */}
-              {(selectedPricing === "monthly" || selectedPricing === "lifetime") ? (
+              {(selectedPricing === "monthly" || selectedPricing === "quarterly" || selectedPricing === "annual") ? (
                 <Box
                   position="relative"
                   w="full"
@@ -1435,7 +1313,6 @@ export function ProductPageSection() {
             {/* Payment Icons - unter beiden Buttons */}
             <HStack gap={3} align="center" justify="center" w="full">
               {/* Platzhalter für PayPal Button */}
-              <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} />
 
               {/* Payment Icons */}
               <Box w={{ base: "32px", md: "40px" }} h={{ base: "24px", md: "30px" }} display="flex" alignItems="center" justifyContent="center">
@@ -1533,7 +1410,7 @@ export function ProductPageSection() {
         onClose={() => {
           setIsModalOpen(false);
         }}
-        initialPlan={selectedPricing === "monthly" ? "monthly" : selectedPricing === "lifetime" ? "lifetime" : null}
+        initialPlan={selectedPricing === "monthly" ? "monthly" : selectedPricing === "quarterly" ? "quarterly" : selectedPricing === "annual" ? "annual" : null}
         skipToCheckout={isDesktop} // Desktop: direkt zum Checkout
       />
     </Box>

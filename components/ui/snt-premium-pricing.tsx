@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
     Button,
     Heading,
@@ -11,25 +11,20 @@ import {
     HStack,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
-import { CheckCircle, Crown } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 
 const SNT_BLUE = "#068CEF";
 
+type PricingPlan = "monthly" | "quarterly" | "annual";
+
 interface PricingToggleProps {
-    value: "monthly" | "lifetime";
-    onChange: (value: "monthly" | "lifetime") => void;
+    value: PricingPlan;
+    onChange: (value: PricingPlan) => void;
 }
 
-interface PricingTogglePropsWithModal extends PricingToggleProps {
-    onMonthlyClick?: () => void;
-}
-
-const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWithModal) => {
-    const pricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
-    const savingsText = "Lifetime";
-
+const PricingToggle = ({ value, onChange }: PricingToggleProps) => {
     return (
         <HStack
             gap={0}
@@ -47,37 +42,47 @@ const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWi
                 _hover={{
                     bg: value === "monthly" ? "#0572c2" : "rgba(6, 140, 239, 0.1)",
                 }}
-                onClick={() => {
-                    if (onMonthlyClick) {
-                        onMonthlyClick();
-                    } else {
-                        onChange("monthly");
-                    }
-                }}
+                onClick={() => onChange("monthly")}
                 borderRadius="lg"
-                px={6}
+                px={{ base: 3, md: 6 }}
                 py={2}
                 fontSize="sm"
                 fontWeight="medium"
             >
                 Monatlich
             </Button>
+            <Button
+                variant={value === "quarterly" ? "solid" : "ghost"}
+                bg={value === "quarterly" ? SNT_BLUE : "transparent"}
+                color={value === "quarterly" ? "white" : "gray.700"}
+                _hover={{
+                    bg: value === "quarterly" ? "#0572c2" : "rgba(6, 140, 239, 0.1)",
+                }}
+                onClick={() => onChange("quarterly")}
+                borderRadius="lg"
+                px={{ base: 3, md: 6 }}
+                py={2}
+                fontSize="sm"
+                fontWeight="medium"
+            >
+                Quartal
+            </Button>
             <Box position="relative">
                 <Button
-                    variant={value === "lifetime" ? "solid" : "ghost"}
-                    bg={value === "lifetime" ? SNT_BLUE : "transparent"}
-                    color={value === "lifetime" ? "white" : "gray.700"}
+                    variant={value === "annual" ? "solid" : "ghost"}
+                    bg={value === "annual" ? SNT_BLUE : "transparent"}
+                    color={value === "annual" ? "white" : "gray.700"}
                     _hover={{
-                        bg: value === "lifetime" ? "#0572c2" : "rgba(6, 140, 239, 0.1)",
+                        bg: value === "annual" ? "#0572c2" : "rgba(6, 140, 239, 0.1)",
                     }}
-                    onClick={() => onChange("lifetime")}
+                    onClick={() => onChange("annual")}
                     borderRadius="lg"
-                    px={6}
+                    px={{ base: 3, md: 6 }}
                     py={2}
                     fontSize="sm"
                     fontWeight="medium"
                 >
-                    {savingsText}
+                    Jährlich
                 </Button>
                 {/* SNT-EMPFEHLUNG Badge */}
                 <Box
@@ -96,7 +101,7 @@ const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWi
                     border="2px solid white"
                     zIndex={10}
                 >
-                    SNT-EMPFEHLUNG
+                    EMPFEHLUNG
                 </Box>
             </Box>
         </HStack>
@@ -105,39 +110,32 @@ const PricingToggle = ({ value, onChange, onMonthlyClick }: PricingTogglePropsWi
 
 export function SntPremiumPricing() {
     const router = useRouter();
-    const [pricingMode, setPricingMode] = useState<"monthly" | "lifetime">("lifetime");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const previousModeRef = useRef<"monthly" | "lifetime">("lifetime");
+    const [pricingMode, setPricingMode] = useState<PricingPlan>("annual");
 
     const discountActive = isDiscountActive();
     const pricing = discountActive ? pricingConfig.discount : pricingConfig.standard;
-    const currentPlan = pricingMode === "lifetime" ? pricing.lifetime : pricing.monthly;
+    
+    const getCurrentPlan = () => {
+        switch (pricingMode) {
+            case "monthly":
+                return pricing.monthly;
+            case "quarterly":
+                return pricing.quarterly;
+            case "annual":
+                return pricing.annual;
+            default:
+                return pricing.annual;
+        }
+    };
+    
+    const currentPlan = getCurrentPlan();
 
-    const handlePlanSelection = (plan: 'lifetime' | 'monthly') => {
+    const handlePlanSelection = (plan: PricingPlan) => {
         router.push(`/checkout/${plan}`);
     };
 
-    const handleModeChange = (newMode: "monthly" | "lifetime") => {
-        if (previousModeRef.current === "lifetime" && newMode === "monthly") {
-            setIsModalOpen(true);
-        } else {
-            setPricingMode(newMode);
-            previousModeRef.current = newMode;
-        }
-    };
-
-    const handleMonthlyClick = () => {
-        handleModeChange("monthly");
-    };
-
-    const handleConfirmMonthly = () => {
-        setIsModalOpen(false);
-        setPricingMode("monthly");
-        previousModeRef.current = "monthly";
-    };
-
-    const handleStayLifetime = () => {
-        setIsModalOpen(false);
+    const handleModeChange = (newMode: PricingPlan) => {
+        setPricingMode(newMode);
     };
 
     // Preis formatieren
@@ -183,7 +181,7 @@ export function SntPremiumPricing() {
                         </Text>
 
                         {/* Pricing Toggle */}
-                        <PricingToggle value={pricingMode} onChange={handleModeChange} onMonthlyClick={handleMonthlyClick} />
+                        <PricingToggle value={pricingMode} onChange={handleModeChange} />
                     </VStack>
 
                     {/* Plan Cards */}
@@ -218,8 +216,8 @@ export function SntPremiumPricing() {
                             }}
                             transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
                         >
-                            {/* SNTTRADES-Empfehlung Badge - Nur bei Lifetime */}
-                            {pricingMode === "lifetime" && (
+                            {/* SNTTRADES-Empfehlung Badge - Nur bei Jährlich */}
+                            {pricingMode === "annual" && (
                                 <Box
                                     position="absolute"
                                     top="-16px"
@@ -301,8 +299,10 @@ export function SntPremiumPricing() {
                                             "100%": { opacity: 0.8, transform: "translateY(0)" }
                                         })} 0.4s ease-out 0.1s both`}
                                     >
-                                        {pricingMode === "lifetime" 
-                                            ? "Lebenslanger Zugang zur kompletten Trading-Ausbildung" 
+                                        {pricingMode === "annual" 
+                                            ? "Jährlicher Zugang zur kompletten Trading-Ausbildung - Beste Ersparnis" 
+                                            : pricingMode === "quarterly"
+                                            ? "Quartalsweise Abrechnung - Flexibel und günstig"
                                             : "Flexibler monatlicher Zugang zur kompletten Trading-Ausbildung"}
                                     </Text>
                                 </VStack>
@@ -325,32 +325,30 @@ export function SntPremiumPricing() {
                                         >
                                             {formatPrice(currentPlan.price)}
                                         </Text>
-                                        {pricingMode === "monthly" && (
-                                            <Text 
-                                                color="gray.600" 
-                                                fontSize="lg"
-                                                key="period"
-                                                animation={`${keyframes({
-                                                    "0%": { opacity: 0 },
-                                                    "100%": { opacity: 1 }
-                                                })} 0.4s ease-out 0.3s both`}
-                                            >
-                                                /Monat
-                                            </Text>
-                                        )}
+                                        <Text 
+                                            color="gray.600" 
+                                            fontSize="lg"
+                                            key="period"
+                                            animation={`${keyframes({
+                                                "0%": { opacity: 0 },
+                                                "100%": { opacity: 1 }
+                                            })} 0.4s ease-out 0.3s both`}
+                                        >
+                                            {pricingMode === "monthly" ? "/Monat" : pricingMode === "quarterly" ? "/Quartal" : "/Jahr"}
+                                        </Text>
                                     </HStack>
-                                    {pricingMode === "lifetime" && (
+                                    {pricingMode === "annual" && (
                                         <Text 
                                             color={SNT_BLUE} 
                                             fontSize="sm" 
                                             fontWeight="medium"
-                                            key="lifetime-text"
+                                            key="annual-text"
                                             animation={`${keyframes({
                                                 "0%": { opacity: 0, transform: "translateY(5px)" },
                                                 "100%": { opacity: 1, transform: "translateY(0)" }
                                             })} 0.4s ease-out 0.4s both`}
                                         >
-                                            ✨ Einmalig zahlen, für immer lernen
+                                            ✨ Beste Ersparnis - Maximaler Wert
                                         </Text>
                                     )}
                                 </VStack>
@@ -374,7 +372,7 @@ export function SntPremiumPricing() {
                                         "100%": { opacity: 1, transform: "translateY(0) scale(1)" }
                                     })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both`}
                                 >
-                                    {pricingMode === "lifetime" ? "LIFETIME SICHERN 🚀" : "MONATLICH WÄHLEN"}
+                                    {pricingMode === "annual" ? "JÄHRLICH SICHERN 🚀" : pricingMode === "quarterly" ? "QUARTAL WÄHLEN" : "MONATLICH WÄHLEN"}
                                 </Button>
                             </Box>
 
@@ -391,7 +389,7 @@ export function SntPremiumPricing() {
                                         "Wöchentliche Live-Marktanalysen",
                                         "24/7 Community-Support",
                                         "Aufgezeichnete Sessions zum Nachschauen",
-                                        pricingMode === "lifetime" ? "Lebenslanger Zugang (bei Lifetime)" : "Flexibler monatlicher Zugang"
+                                        pricingMode === "annual" ? "Jährlicher Zugang - Beste Ersparnis" : pricingMode === "quarterly" ? "Quartalsweiser Zugang - Flexibel" : "Flexibler monatlicher Zugang"
                                     ].map((feature, index) => (
                                         <Box 
                                             key={`feature-${index}`}
@@ -405,9 +403,9 @@ export function SntPremiumPricing() {
                                         >
                                             <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
                                             <Text 
-                                                fontSize="sm" 
-                                                fontWeight="medium" 
-                                                color={feature.includes("Lebenslanger") ? SNT_BLUE : "gray.800"}
+                                            fontSize="sm" 
+                                            fontWeight="medium" 
+                                            color={feature.includes("Jährlicher") || feature.includes("Beste Ersparnis") ? SNT_BLUE : "gray.800"}
                                             >
                                                 {feature}
                                             </Text>
@@ -433,11 +431,13 @@ export function SntPremiumPricing() {
                             justifyContent="center"
                         >
                             <Text fontWeight="bold" color={SNT_BLUE} mb="3">
-                                {pricingMode === "lifetime" ? "🎯 WARUM LIFETIME WÄHLEN?" : "💡 FLEXIBILITÄT"}
+                                {pricingMode === "annual" ? "🎯 WARUM JÄHRLICH WÄHLEN?" : pricingMode === "quarterly" ? "💡 QUARTAL - GUTE BALANCE" : "💡 FLEXIBILITÄT"}
                             </Text>
                             <Text color="gray.700" fontSize="sm">
-                                {pricingMode === "lifetime" 
-                                    ? "Mit dem Lifetime-Plan erhältst du lebenslangen Zugang zu allen zukünftigen Updates, neuen Strategien und erweiterten Inhalten - ohne zusätzliche Kosten!"
+                                {pricingMode === "annual" 
+                                    ? "Mit dem Jahres-Plan sparst du am meisten und erhältst vollen Zugang zu allen Inhalten, Updates und neuen Strategien für ein ganzes Jahr!"
+                                    : pricingMode === "quarterly"
+                                    ? "Mit dem Quartals-Plan hast du eine gute Balance zwischen Ersparnis und Flexibilität. Alle 3 Monate kannst du entscheiden, ob du weitermachen möchtest."
                                     : "Mit dem monatlichen Plan hast du maximale Flexibilität. Du kannst jederzeit kündigen und zahlst nur für die Monate, in denen du die Ausbildung nutzt."}
                             </Text>
                         </Box>
@@ -445,164 +445,6 @@ export function SntPremiumPricing() {
                 </VStack>
             </Box>
 
-            {/* Modal für Lifetime-Wechsel */}
-            {isModalOpen && (
-                <Box
-                    position="fixed"
-                    top={0}
-                    left={0}
-                    right={0}
-                    bottom={0}
-                    bg="rgba(0, 0, 0, 0.5)"
-                    zIndex={9999}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    p={4}
-                    onClick={(e) => {
-                        if (e.target === e.currentTarget) {
-                            setIsModalOpen(false);
-                        }
-                    }}
-                    animation={`${keyframes({
-                        "0%": { opacity: 0 },
-                        "100%": { opacity: 1 }
-                    })} 0.3s ease-out`}
-                    backdropFilter="blur(4px)"
-                >
-                    <Box
-                        bg="white"
-                        borderRadius="2xl"
-                        boxShadow="2xl"
-                        maxW={{ base: "90%", md: "500px" }}
-                        w="full"
-                        p={{ base: 6, md: 8 }}
-                        onClick={(e) => e.stopPropagation()}
-                        animation={`${keyframes({
-                            "0%": { 
-                                opacity: 0, 
-                                transform: "translateY(-20px) scale(0.95)" 
-                            },
-                            "100%": { 
-                                opacity: 1, 
-                                transform: "translateY(0) scale(1)" 
-                            }
-                        })} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)`}
-                    >
-                        <VStack gap={4} align="stretch">
-                            <Heading 
-                                fontSize={{ base: "xl", md: "2xl" }}
-                                fontWeight="bold"
-                                color="gray.900"
-                                textAlign="center"
-                                animation={`${keyframes({
-                                    "0%": { opacity: 0, transform: "translateY(-10px)" },
-                                    "100%": { opacity: 1, transform: "translateY(0)" }
-                                })} 0.5s ease-out 0.1s both`}
-                            >
-                                Bist du dir sicher?
-                            </Heading>
-                            
-                            <Box
-                                bg={`linear-gradient(135deg, ${SNT_BLUE}15, ${SNT_BLUE}05)`}
-                                borderRadius="lg"
-                                p={4}
-                                border="1px solid"
-                                borderColor={`${SNT_BLUE}30`}
-                                animation={`${keyframes({
-                                    "0%": { opacity: 0, transform: "translateY(-10px) scale(0.95)" },
-                                    "100%": { opacity: 1, transform: "translateY(0) scale(1)" }
-                                })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both`}
-                            >
-                                <HStack gap={2} mb={2}>
-                                    <Crown size={24} color={SNT_BLUE} weight="fill" />
-                                    <Text fontWeight="bold" color="gray.900" fontSize={{ base: "md", md: "lg" }}>
-                                        Lifetime lohnt sich bereits nach 5 Monaten!
-                                    </Text>
-                                </HStack>
-                                <Text color="gray.700" fontSize={{ base: "sm", md: "md" }}>
-                                    Bei {formatPrice(pricing.monthly.price)}/Monat zahlst du nach 5 Monaten bereits mehr als die einmalige Lifetime-Gebühr von {formatPrice(pricing.lifetime.price)}.
-                                </Text>
-                            </Box>
-
-                            <VStack gap={3} align="stretch">
-                                {[
-                                    { text: "Dauerhafter Zugang ", desc: "zu allen neuen Inhalten und Updates" },
-                                    { text: "Keine wiederkehrenden Kosten", desc: " - Einmalig zahlen, für immer lernen" },
-                                    { text: "Lebenslange Updates", desc: " - Alle zukünftigen Inhalte inklusive" }
-                                ].map((item, index) => (
-                                    <HStack 
-                                        key={index}
-                                        gap={3} 
-                                        align="start"
-                                        animation={`${keyframes({
-                                            "0%": { opacity: 0, transform: "translateX(-10px)" },
-                                            "100%": { opacity: 1, transform: "translateX(0)" }
-                                        })} 0.5s ease-out ${0.3 + index * 0.1}s both`}
-                                    >
-                                        <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
-                                        <Text color="gray.800" fontSize={{ base: "sm", md: "md" }}>
-                                            <Text as="span" fontWeight="bold">{item.text}</Text>{item.desc}
-                                        </Text>
-                                    </HStack>
-                                ))}
-                            </VStack>
-
-                            <VStack gap={3} mt={6} w="full">
-                                <Button
-                                    bg={SNT_BLUE}
-                                    color="white"
-                                    w="full"
-                                    size={{ base: "lg", md: "md" }}
-                                    onClick={handleStayLifetime}
-                                    _hover={{
-                                        bg: "#0572c2",
-                                        transform: "translateY(-2px)",
-                                        boxShadow: "0 6px 20px rgba(6, 140, 239, 0.4)"
-                                    }}
-                                    fontWeight="bold"
-                                    fontSize={{ base: "md", md: "sm" }}
-                                    py={{ base: 6, md: 4 }}
-                                    borderRadius="lg"
-                                    boxShadow="0 4px 12px rgba(6, 140, 239, 0.3)"
-                                    transition="all 0.3s ease"
-                                    animation={`${keyframes({
-                                        "0%": { opacity: 0, transform: "translateY(10px) scale(0.95)" },
-                                        "100%": { opacity: 1, transform: "translateY(0) scale(1)" }
-                                    })} 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both`}
-                                >
-                                    Lifetime Sichern 🚀
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    w="full"
-                                    size={{ base: "lg", md: "md" }}
-                                    onClick={handleConfirmMonthly}
-                                    borderColor="gray.300"
-                                    borderWidth="2px"
-                                    color="gray.700"
-                                    _hover={{
-                                        bg: "gray.50",
-                                        borderColor: "gray.400",
-                                        transform: "translateY(-1px)"
-                                    }}
-                                    fontSize={{ base: "md", md: "sm" }}
-                                    py={{ base: 6, md: 4 }}
-                                    borderRadius="lg"
-                                    fontWeight="medium"
-                                    transition="all 0.3s ease"
-                                    animation={`${keyframes({
-                                        "0%": { opacity: 0, transform: "translateY(10px)" },
-                                        "100%": { opacity: 1, transform: "translateY(0)" }
-                                    })} 0.5s ease-out 0.7s both`}
-                                >
-                                    Trotzdem Monatlich
-                                </Button>
-                            </VStack>
-                        </VStack>
-                    </Box>
-                </Box>
-            )}
         </>
     );
 }

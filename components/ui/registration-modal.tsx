@@ -14,6 +14,7 @@ import {
 import { keyframes } from "@emotion/react";
 import { X } from "@phosphor-icons/react";
 
+
 const SNT_BLUE = "#068CEF";
 const SNT_YELLOW = "rgba(251, 191, 36, 1)";
 

@@ -27,6 +27,43 @@ export const pricingConfig = {
         outsetaPlanUid: "DQ2LwwWV", // PAYPAL-SNT-PREMIUM
       },
     },
+    quarterly: {
+      price: 127,
+      originalPrice: null as number | null,
+      savings: null as string | null,
+      savingsAmount: null as string | null,
+      label: "PRO QUARTAL",
+      paypal: {
+        planId: "P-01T08443068363936NGEIXPY",
+        containerId: "paypal-button-container-P-01T08443068363936NGEIXPY",
+      },
+      outseta: {
+        planUid: "MQv8vRWY",
+        paymentTerm: "quarter",
+      },
+      webhook: {
+        outsetaPlanUid: "Dmw8qyQ4", // PayPal -> Outseta Mapping für Quartal
+      },
+    },
+    annual: {
+      price: 367,
+      originalPrice: null as number | null,
+      savings: null as string | null,
+      savingsAmount: null as string | null,
+      label: "PRO JAHR",
+      paypal: {
+        planId: "P-8L796165Y0201293WNGEI3II",
+        containerId: "paypal-button-container-P-8L796165Y0201293WNGEI3II",
+      },
+      outseta: {
+        planUid: "yWoP7YmD",
+        paymentTerm: "annual",
+      },
+      webhook: {
+        outsetaPlanUid: "yW10Vy9B", // PayPal -> Outseta Mapping für Jährlich
+      },
+    },
+    /** @deprecated Lifetime wird nicht mehr in der UI angezeigt, bleibt für bestehende Kunden */
     lifetime: {
       price: 467,
       originalPrice: null as number | null,
@@ -48,7 +85,7 @@ export const pricingConfig = {
     },
   },
 
-  /** Aktive Preise (47€/247€) - ohne Sale-Optik */
+  /** Aktive Preise (47€/127€/367€) - ohne Sale-Optik */
   discount: {
     monthly: {
       price: 47,
@@ -68,6 +105,43 @@ export const pricingConfig = {
         outsetaPlanUid: "Nmd4Oxm0",
       },
     },
+    quarterly: {
+      price: 127,
+      originalPrice: null as number | null,
+      savings: null as string | null,
+      savingsAmount: null as string | null,
+      label: "PRO QUARTAL",
+      paypal: {
+        planId: "P-01T08443068363936NGEIXPY",
+        containerId: "paypal-button-container-P-01T08443068363936NGEIXPY",
+      },
+      outseta: {
+        planUid: "MQv8vRWY",
+        paymentTerm: "quarter",
+      },
+      webhook: {
+        outsetaPlanUid: "Dmw8qyQ4", // PayPal -> Outseta Mapping für Quartal
+      },
+    },
+    annual: {
+      price: 367,
+      originalPrice: null as number | null,
+      savings: null as string | null,
+      savingsAmount: null as string | null,
+      label: "PRO JAHR",
+      paypal: {
+        planId: "P-8L796165Y0201293WNGEI3II",
+        containerId: "paypal-button-container-P-8L796165Y0201293WNGEI3II",
+      },
+      outseta: {
+        planUid: "yWoP7YmD",
+        paymentTerm: "annual",
+      },
+      webhook: {
+        outsetaPlanUid: "yW10Vy9B", // PayPal -> Outseta Mapping für Jährlich
+      },
+    },
+    /** @deprecated Lifetime wird nicht mehr in der UI angezeigt, bleibt für bestehende Kunden */
     lifetime: {
       price: 247,
       originalPrice: null as number | null, // Keine Sale-Optik, aber Logik bleibt erhalten
@@ -100,7 +174,17 @@ export function getMonthlyPricing() {
   return getCurrentPricing().monthly;
 }
 
-/** Helper für Lifetime-Preise */
+/** Helper für Quarterly-Preise */
+export function getQuarterlyPricing() {
+  return getCurrentPricing().quarterly;
+}
+
+/** Helper für Annual-Preise */
+export function getAnnualPricing() {
+  return getCurrentPricing().annual;
+}
+
+/** Helper für Lifetime-Preise @deprecated */
 export function getLifetimePricing() {
   return getCurrentPricing().lifetime;
 }

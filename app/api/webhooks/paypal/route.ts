@@ -44,12 +44,17 @@ function getPlanMapping(): Record<string, string> {
   const pricing = isDiscountActive() ? pricingConfig.discount : pricingConfig.standard;
   
   return {
-    // PayPal Lifetime Hosted Buttons
+    // PayPal Lifetime Hosted Buttons (Legacy - nicht mehr in UI angezeigt)
     'MXYWGLBVSQTXW': pricing.lifetime.webhook.outsetaPlanUid, // Standard Lifetime
     '68525GEP8BKRS': pricingConfig.discount.lifetime.webhook.outsetaPlanUid, // Rabatt Lifetime (für existierende Transaktionen)
     // PayPal Monthly Subscription Plans
     'P-7LS829244N6815906NEXPFVA': pricing.monthly.webhook.outsetaPlanUid, // Standard Monthly
+    'P-86799084EE8763009NE273NY': pricingConfig.discount.monthly.webhook.outsetaPlanUid, // Discount Monthly
     'P-59C23375XF491315BNCBCDVQ': pricingConfig.discount.monthly.webhook.outsetaPlanUid, // Rabatt Monthly (für existierende Transaktionen)
+    // PayPal Quarterly Subscription Plans (NEU)
+    'P-01T08443068363936NGEIXPY': pricing.quarterly.webhook.outsetaPlanUid, // Quartal Plan
+    // PayPal Annual Subscription Plans (NEU)
+    'P-8L796165Y0201293WNGEI3II': pricing.annual.webhook.outsetaPlanUid, // Jährlich Plan
     // Telegram Gruppe Plan
     [TELEGRAM_PLANS.paypal]: TELEGRAM_PLANS.outseta, // 7ma8lrWE -> ZmNM7ZW2
   };
@@ -224,6 +229,48 @@ async function validateOutsetaPlan(planUid: string, outsetaDomain: string, outse
     }
   } catch (error) {
     debugLog('FEHLER bei Plan-Validierung', { error: error.message, planUid });
+    return false;
+  }
+}
+
+// Explizit Welcome/Password-Reset Email senden (Fallback für Outseta)
+async function sendOutsetaWelcomeEmail(personUid: string): Promise<boolean> {
+  try {
+    const outsetaDomain = process.env.OUTSETA_DOMAIN || 'seitennull---fzco.outseta.com';
+    const outsetaApiKey = process.env.OUTSETA_API_KEY;
+    const outsetaSecretKey = process.env.OUTSETA_SECRET_KEY;
+
+    if (!outsetaApiKey || !outsetaSecretKey) {
+      debugLog('Outseta Credentials fehlen für Welcome Email');
+      return false;
+    }
+
+    debugLog('Sende Welcome/Password-Reset Email', { personUid });
+
+    // Outseta Password Reset Email API aufrufen
+    const response = await fetch(`https://${outsetaDomain}/api/v1/crm/people/${personUid}/send-password-reset-email`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Outseta ${outsetaApiKey}:${outsetaSecretKey}`,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (response.ok) {
+      debugLog('Welcome Email erfolgreich gesendet', { personUid });
+      return true;
+    } else {
+      const errorText = await response.text();
+      debugLog('FEHLER beim Senden der Welcome Email', { 
+        status: response.status, 
+        error: errorText 
+      });
+      return false;
+    }
+  } catch (error) {
+    debugLog('Exception beim Senden der Welcome Email', { 
+      error: error instanceof Error ? error.message : 'Unknown' 
+    });
     return false;
   }
 }
@@ -528,8 +575,20 @@ function extractCustomerData(event: PayPalWebhookEvent): {
             plan_id: subscriptionPlanId, 
             planUid 
           });
+        } else if (subPlanMapping[subscriptionPlanId]) {
+          // Direkte Zuordnung aus Plan-Mapping (Monthly, Quarterly, Annual)
+          planUid = subPlanMapping[subscriptionPlanId];
+          debugLog('Subscription Plan aus Mapping erkannt', { 
+            plan_id: subscriptionPlanId, 
+            planUid 
+          });
         } else {
-          planUid = subPlanMapping[subscriptionPlanId] || subPricing.monthly.webhook.outsetaPlanUid;
+          // Fallback: Monthly Plan
+          planUid = subPricing.monthly.webhook.outsetaPlanUid;
+          debugLog('Fallback zu Monthly Plan', { 
+            plan_id: subscriptionPlanId, 
+            planUid 
+          });
         }
         
         debugLog('Abo Plan erkannt', { 
@@ -694,6 +753,14 @@ export async function POST(request: NextRequest) {
     // Outseta Account erstellen
     debugLog('Starte Outseta Account-Erstellung');
     const outsetaResult = await createOutsetaAccount(outsetaAccountData);
+
+    // Explizit Welcome Email senden (Fallback für Outseta SendWelcomeEmail Problem)
+    let welcomeEmailSent = false;
+    const personUid = outsetaResult?.personUid || outsetaResult?.Uid;
+    if (personUid) {
+      debugLog('Sende explizite Welcome Email als Fallback');
+      welcomeEmailSent = await sendOutsetaWelcomeEmail(personUid);
+    }
 
     const successData = {
       event_type: event.event_type,

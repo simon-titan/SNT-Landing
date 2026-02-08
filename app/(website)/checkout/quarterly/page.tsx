@@ -13,11 +13,11 @@ function getOutseta() {
     return (window as any).Outseta;
 }
 
-export default function MonthlyCheckoutPage() {
+export default function QuarterlyCheckoutPage() {
     const [isClient, setIsClient] = useState(false);
     const [isOutsetaReady, setIsOutsetaReady] = useState(false);
     const discountActive = isDiscountActive();
-    const pricing = discountActive ? pricingConfig.discount.monthly : pricingConfig.standard.monthly;
+    const pricing = discountActive ? pricingConfig.discount.quarterly : pricingConfig.standard.quarterly;
 
     const buildThankYouUrl = (base: string, telegramUserId: string | null) => {
         if (typeof window === "undefined") return base;
@@ -35,7 +35,7 @@ export default function MonthlyCheckoutPage() {
     const buildCustomId = (telegramUserId: string | null) => {
         const affiliateCode = getPersistedAffiliateCode();
         const suffix = affiliateCode ? `|AFF_${affiliateCode}` : "";
-        const base = `SNTTRADES_MONTHLY_PLAN${suffix}`;
+        const base = `SNTTRADES_QUARTERLY_PLAN${suffix}`;
         if (telegramUserId) {
             return `TG_USER_${telegramUserId}|${base}`;
         }
@@ -53,7 +53,7 @@ export default function MonthlyCheckoutPage() {
             const outseta = getOutseta();
             if (outseta) {
                 setIsOutsetaReady(true);
-                console.log("✅ Outseta ist bereit für Monthly Checkout");
+                console.log("✅ Outseta ist bereit für Quarterly Checkout");
             } else {
                 // Warte nochmal
                 setTimeout(checkOutseta, 100);
@@ -62,7 +62,6 @@ export default function MonthlyCheckoutPage() {
 
         checkOutseta();
     }, [isClient]);
-
 
     // Preis formatieren
     const formatPrice = (price: number) => {
@@ -87,7 +86,7 @@ export default function MonthlyCheckoutPage() {
                     
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
                     const redirectUrl = buildThankYouUrl(
-                        `/thank-you-3?source=outseta&provider=outseta&product=monthly&transaction_id=${encodeURIComponent(event.data.transactionId || 'unknown')}`,
+                        `/thank-you-3?source=outseta&provider=outseta&product=quarterly&transaction_id=${encodeURIComponent(event.data.transactionId || 'unknown')}`,
                         telegramUserId
                     );
 
@@ -101,7 +100,7 @@ export default function MonthlyCheckoutPage() {
                     console.log('✅ Outseta Success URL erkannt');
                     const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
                     const redirectUrl = buildThankYouUrl(
-                        '/thank-you-3?source=outseta_url&provider=outseta&product=monthly',
+                        '/thank-you-3?source=outseta_url&provider=outseta&product=quarterly',
                         telegramUserId
                     );
                     window.location.href = redirectUrl;
@@ -120,7 +119,7 @@ export default function MonthlyCheckoutPage() {
                         setTimeout(() => {
                             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
                             const redirectUrl = buildThankYouUrl(
-                                '/thank-you-3?source=outseta_text&provider=outseta&product=monthly',
+                                '/thank-you-3?source=outseta_text&provider=outseta&product=quarterly',
                                 telegramUserId
                             );
                             window.location.href = redirectUrl;
@@ -179,7 +178,7 @@ export default function MonthlyCheckoutPage() {
                         
                         const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
                         const redirectUrl = buildThankYouUrl(
-                            '/thank-you-3?source=paypal_subscription&provider=paypal&product=monthly&subscription_id=' + (data.subscriptionID || 'unknown'),
+                            '/thank-you-3?source=paypal_subscription&provider=paypal&product=quarterly&subscription_id=' + (data.subscriptionID || 'unknown'),
                             telegramUserId
                         );
                         
@@ -256,7 +255,7 @@ export default function MonthlyCheckoutPage() {
                         fontSize="sm" 
                         fontWeight="medium"
                     >
-                        Monatlicher Zugang • Jederzeit kündbar
+                        Quartals-Zugang • Alle 3 Monate
                     </Text>
                 </Box>
             </Box>
@@ -293,7 +292,7 @@ export default function MonthlyCheckoutPage() {
                     >
                         <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
                         <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
-                        <Text fontSize="xs" color="gray.600">Jederzeit kündbar</Text>
+                        <Text fontSize="xs" color="gray.600">Alle 3 Monate abgerechnet</Text>
                     </Flex>
                 </Box>
             </Box>
@@ -304,8 +303,8 @@ export default function MonthlyCheckoutPage() {
                     
                     {/* PayPal Express Registrierung */}
                     <div id="paypal-express-section" style={{ marginBottom: "2rem" }}>
-                        {/* PayPal Abo Button (Monatlich) */}
-                        <div id="monthly-paypal-section" style={{ textAlign: "center" }}>
+                        {/* PayPal Abo Button (Quartal) */}
+                        <div id="quarterly-paypal-section" style={{ textAlign: "center" }}>
                             {isClient && (
                                 <div id={pricing.paypal.containerId} style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}></div>
                             )}
@@ -340,8 +339,8 @@ export default function MonthlyCheckoutPage() {
                     {/* Reguläre Registrierung mit Zahlungsmethoden */}
                     <div id="regular-checkout-section">
                         <Box
-    bg="white"
-borderRadius="12px"
+                            bg="white"
+                            borderRadius="12px"
                             p={4}
                             mb={4}
                             color="white"
@@ -381,6 +380,7 @@ borderRadius="12px"
                             </HStack>
                         </Box>
                         
+                        {/* Quarterly Outseta Checkout - iframe ohne Scrollen */}
                         {isClient && isOutsetaReady ? (
                             <Box
                                 borderRadius="xl"
@@ -393,8 +393,8 @@ borderRadius="12px"
                                 justifyContent="center"
                             >
                                 <iframe
-                                    title="Monthly Outseta Checkout"
-                                    src={`https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=7ma651QE&planPaymentTerm=month&skipPlanOptions=true`}
+                                    title="Quarterly Outseta Checkout"
+                                    src={`https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=${pricing.outseta.planUid}&planPaymentTerm=${pricing.outseta.paymentTerm}&skipPlanOptions=true`}
                                     style={{
                                         width: "100%",
                                         maxWidth: "500px",
@@ -447,7 +447,7 @@ borderRadius="12px"
                         >
                             <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
                             <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
-                            <Text fontSize="xs" color="gray.600">Jederzeit kündbar</Text>
+                            <Text fontSize="xs" color="gray.600">Alle 3 Monate abgerechnet</Text>
                         </Flex>
                     </Box>
 
@@ -514,7 +514,7 @@ borderRadius="12px"
                                     </svg>
                                 </Box>
                                 <Text color="gray.800" as="span">
-                                    <Text as="span" fontWeight="semibold" color="gray.900">Jederzeit kündbar</Text> - Keine Vertragsbindung
+                                    <Text as="span" fontWeight="semibold" color="gray.900">Spare im Vergleich zum Monatsabo</Text>
                                 </Text>
                             </Flex>
                         </Box>
