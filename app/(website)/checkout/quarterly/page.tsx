@@ -5,17 +5,12 @@ import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
 import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 import { getPersistedAffiliateCode } from "@/lib/affiliate/affiliate-storage";
+import { OutsetaCheckoutEmbed } from "@/components/ui/OutsetaCheckoutEmbed";
 
 const SNT_BLUE = "#068CEF";
 
-function getOutseta() {
-    if (typeof window === "undefined") return null;
-    return (window as any).Outseta;
-}
-
 export default function QuarterlyCheckoutPage() {
     const [isClient, setIsClient] = useState(false);
-    const [isOutsetaReady, setIsOutsetaReady] = useState(false);
     const discountActive = isDiscountActive();
     const pricing = discountActive ? pricingConfig.discount.quarterly : pricingConfig.standard.quarterly;
 
@@ -46,22 +41,6 @@ export default function QuarterlyCheckoutPage() {
         setIsClient(true);
     }, []);
 
-    useEffect(() => {
-        if (!isClient) return;
-
-        const checkOutseta = () => {
-            const outseta = getOutseta();
-            if (outseta) {
-                setIsOutsetaReady(true);
-                console.log("✅ Outseta ist bereit für Quarterly Checkout");
-            } else {
-                // Warte nochmal
-                setTimeout(checkOutseta, 100);
-            }
-        };
-
-        checkOutseta();
-    }, [isClient]);
 
     // Preis formatieren
     const formatPrice = (price: number) => {
@@ -255,7 +234,7 @@ export default function QuarterlyCheckoutPage() {
                         fontSize="sm" 
                         fontWeight="medium"
                     >
-                        Quartals-Zugang • Alle 3 Monate
+                       
                     </Text>
                 </Box>
             </Box>
@@ -291,7 +270,7 @@ export default function QuarterlyCheckoutPage() {
                         gap={1}
                     >
                         <Text fontSize={{ base: "3xl", sm: "4xl" }} fontWeight="extrabold" color={SNT_BLUE} lineHeight="1">{formatPrice(pricing.price)}</Text>
-                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px" mt={-1}>{pricing.label}</Text>
+                        <Text fontSize={{ base: "sm", sm: "md" }} fontWeight="bold" color="gray.800" letterSpacing="0.5px; text-decoration-line: underline;" mt={-1}>SPARE CA. 80€</Text>
                         <Text fontSize="xs" color="gray.600">Alle 3 Monate abgerechnet</Text>
                     </Flex>
                 </Box>
@@ -380,46 +359,13 @@ export default function QuarterlyCheckoutPage() {
                             </HStack>
                         </Box>
                         
-                        {/* Quarterly Outseta Checkout - iframe ohne Scrollen */}
-                        {isClient && isOutsetaReady ? (
-                            <Box
-                                borderRadius="xl"
-                                p={4}
-                                border="1px solid"
-                                borderColor="gray.200"
-                                w="full"
-                                minW={0}
-                                display="flex"
-                                justifyContent="center"
-                            >
-                                <iframe
-                                    title="Quarterly Outseta Checkout"
-                                    src={`https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=${pricing.outseta.planUid}&planPaymentTerm=${pricing.outseta.paymentTerm}&skipPlanOptions=true`}
-                                    style={{
-                                        width: "100%",
-                                        maxWidth: "500px",
-                                        height: "1300px",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        background: "white",
-                                    }}
-                                    scrolling="auto"
-                                />
-                            </Box>
-                        ) : (
-                            <div style={{
-                                background: "white",
-                                color: "black",
-                                padding: "16px",
-                                borderRadius: "8px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                minHeight: "200px"
-                            }}>
-                                <Text color="gray.600" fontSize="sm">Lade Checkout...</Text>
-                            </div>
-                        )}
+                        {/* Quarterly Outseta Checkout - Code Embed */}
+                        <OutsetaCheckoutEmbed
+                            planUid={pricing.outseta.planUid}
+                            planPaymentTerm={pricing.outseta.paymentTerm}
+                            productSlug="quarterly"
+                            containerId="quarterly-outseta-checkout"
+                        />
                     </div>
                 </section>
                 

@@ -14,10 +14,9 @@ import {
 import { X, ArrowLeft, CheckCircle, CreditCard, GoogleLogo, AppleLogo, Lock } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
-import { outsetaConfig } from "@/config/outseta-config";
+import { OutsetaCheckoutEmbed } from "@/components/ui/OutsetaCheckoutEmbed";
 
 const SNT_BLUE = "#068CEF";
-const OUTSETA_DOMAIN = outsetaConfig.domain;
 const MODAL_BG = "rgba(40, 40, 40, 0.98)";
 
 interface PricingSelectionModalProps {
@@ -933,32 +932,12 @@ export function PricingSelectionModal({
                 return (
                   <>
                     {isClient && (
-                      <Box
-                        bg="white"
-                        borderRadius="xl"
-                        p={4}
-                        border="1px solid"
-                        borderColor="gray.200"
-                        w="full"
-                        minW={0}
-                        flex="1"
-                        minH={{ base: "580px", md: "720px" }}
-                        display="flex"
-                        flexDirection="column"
-                        overflow="hidden"
-                      >
-                        <iframe
-                          title="Outseta Checkout"
-                          src={`https://${OUTSETA_DOMAIN}/auth?widgetMode=register&planUid=${planPricing.outseta.planUid}&planPaymentTerm=${planPricing.outseta.paymentTerm}&skipPlanOptions=true`}
-                          style={{
-                            width: "100%",
-                            flex: 1,
-                            minHeight: "520px",
-                            border: "none",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </Box>
+                      <OutsetaCheckoutEmbed
+                        planUid={planPricing.outseta.planUid}
+                        planPaymentTerm={planPricing.outseta.paymentTerm}
+                        productSlug={selectedOption}
+                        containerId={`modal-${selectedOption}-outseta-checkout`}
+                      />
                     )}
                   </>
                 );

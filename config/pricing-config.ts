@@ -32,7 +32,7 @@ export const pricingConfig = {
       originalPrice: null as number | null,
       savings: null as string | null,
       savingsAmount: null as string | null,
-      label: "PRO QUARTAL",
+      label: "3 Monatig",
       paypal: {
         planId: "P-01T08443068363936NGEIXPY",
         containerId: "paypal-button-container-P-01T08443068363936NGEIXPY",

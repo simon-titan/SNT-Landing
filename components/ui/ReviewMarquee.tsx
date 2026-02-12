@@ -348,9 +348,7 @@ export const ReviewMarquee = () => {
                 </Text>
               </HStack>
               
-              <Text fontSize="sm" color="gray.400">
-                {totalReviews} Bewertungen insgesamt
-              </Text>
+             
               
               <RatingDistribution reviews={reviews} />
             </VStack>

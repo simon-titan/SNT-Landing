@@ -1011,7 +1011,7 @@ export function ProductPageSection() {
                     )}
                   </Box>
                   <Text color="white" fontSize="sm" fontWeight="medium">
-                    SNT-PREMIUM Quartal / {formatPrice(pricing.quarterly.price)}
+                    SNT-PREMIUM 3 Monatig / {formatPrice(pricing.quarterly.price)}
                   </Text>
                 </HStack>
               </Box>

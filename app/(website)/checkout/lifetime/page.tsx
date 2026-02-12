@@ -5,23 +5,12 @@ import { Flex, Heading, Box, Text, HStack } from "@chakra-ui/react";
 import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 import { getPersistedAffiliateCode } from "@/lib/affiliate/affiliate-storage";
+import { OutsetaCheckoutEmbed } from "@/components/ui/OutsetaCheckoutEmbed";
 
 const SNT_BLUE = "#068CEF";
 
-declare global {
-    interface Window {
-        paypal?: any;
-    }
-}
-
-function getOutseta() {
-    if (typeof window === "undefined") return null;
-    return (window as any).Outseta;
-}
-
 export default function LifetimeCheckoutPage() {
     const [isClient, setIsClient] = useState(false);
-    const [isOutsetaReady, setIsOutsetaReady] = useState(false);
     const discountActive = isDiscountActive();
     const pricing = discountActive ? pricingConfig.discount.lifetime : pricingConfig.standard.lifetime;
 
@@ -42,22 +31,6 @@ export default function LifetimeCheckoutPage() {
         setIsClient(true);
     }, []);
 
-    useEffect(() => {
-        if (!isClient) return;
-
-        const checkOutseta = () => {
-            const outseta = getOutseta();
-            if (outseta) {
-                setIsOutsetaReady(true);
-                console.log("✅ Outseta ist bereit für Lifetime Checkout");
-            } else {
-                // Warte nochmal
-                setTimeout(checkOutseta, 100);
-            }
-        };
-
-        checkOutseta();
-    }, [isClient]);
 
 
     // Preis formatieren
@@ -374,46 +347,13 @@ export default function LifetimeCheckoutPage() {
                             </HStack>
                         </Box>
                         
-                        {/* Lifetime Outseta Checkout - iframe ohne Scrollen */}
-                        {isClient && isOutsetaReady ? (
-                            <Box
-                                borderRadius="xl"
-                                p={4}
-                                border="1px solid"
-                                borderColor="gray.200"
-                                w="full"
-                                minW={0}
-                                display="flex"
-                                justifyContent="center"
-                            >
-                                <iframe
-                                    title="Lifetime Outseta Checkout"
-                                    src={`https://seitennull---fzco.outseta.com/auth?widgetMode=register&planUid=${pricing.outseta.planUid}&planPaymentTerm=${pricing.outseta.paymentTerm}&skipPlanOptions=true`}
-                                    style={{
-                                        width: "100%",
-                                        maxWidth: "500px",
-                                        height: "1300px",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        background: "white",
-                                    }}
-                                    scrolling="auto"
-                                />
-                            </Box>
-                        ) : (
-                            <div style={{
-                                background: "white",
-                                color: "black",
-                                padding: "16px",
-                                borderRadius: "8px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                minHeight: "200px"
-                            }}>
-                                <Text color="gray.600" fontSize="sm">Lade Checkout...</Text>
-                            </div>
-                        )}
+                        {/* Lifetime Outseta Checkout - Code Embed */}
+                        <OutsetaCheckoutEmbed
+                            planUid={pricing.outseta.planUid}
+                            planPaymentTerm={pricing.outseta.paymentTerm}
+                            productSlug="lifetime"
+                            containerId="lifetime-outseta-checkout"
+                        />
                     </div>
                 </section>
                 
