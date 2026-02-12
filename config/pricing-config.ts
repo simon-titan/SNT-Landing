@@ -21,7 +21,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "79O7dk9E",
-        paymentTerm: "month",
+        paymentTerm: "month" as const,
       },
       webhook: {
         outsetaPlanUid: "DQ2LwwWV", // PAYPAL-SNT-PREMIUM
@@ -39,7 +39,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "MQv8vRWY",
-        paymentTerm: "quarter",
+        paymentTerm: "quarter" as const,
       },
       webhook: {
         outsetaPlanUid: "Dmw8qyQ4", // PayPal -> Outseta Mapping für Quartal
@@ -57,7 +57,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "yWoP7YmD",
-        paymentTerm: "annual",
+        paymentTerm: "annual" as const,
       },
       webhook: {
         outsetaPlanUid: "yW10Vy9B", // PayPal -> Outseta Mapping für Jährlich
@@ -77,7 +77,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "j9bDzomn",
-        paymentTerm: "oneTime",
+        paymentTerm: "oneTime" as const,
       },
       webhook: {
         outsetaPlanUid: "L9nbBg9Z", // PAYPAL-SNT-PREMIUM-LIFETIME
@@ -99,7 +99,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "7ma651QE",
-        paymentTerm: "month",
+        paymentTerm: "month" as const,
       },
       webhook: {
         outsetaPlanUid: "Nmd4Oxm0",
@@ -117,7 +117,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "MQv8vRWY",
-        paymentTerm: "quarter",
+        paymentTerm: "quarter" as const,
       },
       webhook: {
         outsetaPlanUid: "Dmw8qyQ4", // PayPal -> Outseta Mapping für Quartal
@@ -135,7 +135,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "yWoP7YmD",
-        paymentTerm: "annual",
+        paymentTerm: "annual" as const,
       },
       webhook: {
         outsetaPlanUid: "yW10Vy9B", // PayPal -> Outseta Mapping für Jährlich
@@ -155,7 +155,7 @@ export const pricingConfig = {
       },
       outseta: {
         planUid: "496LXdmX",
-        paymentTerm: "oneTime",
+        paymentTerm: "oneTime" as const,
       },
       webhook: {
         outsetaPlanUid: "rmkzJaWg",
