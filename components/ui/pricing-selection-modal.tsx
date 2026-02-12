@@ -523,10 +523,13 @@ export function PricingSelectionModal({
         }
         .modal-container {
           animation: slideUp 0.3s ease-out;
-          overflow: hidden;
+          overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
         }
         .modal-content {
           animation: fadeIn 0.3s ease-out;
+          min-height: 0;
         }
         .item-header {
           display: none !important;
@@ -618,7 +621,7 @@ export function PricingSelectionModal({
         </HStack>
 
         {/* Content – auf Desktop scrollt das Modal (Checkout), das Embed hat feste Höhe und kann intern scrollen */}
-        <Box className="modal-content">
+        <Box className="modal-content" flex="1" minH={0} display="flex" flexDirection="column">
           {currentView === "selection" ? (
             <VStack gap={4} px={6} pb={6} align="stretch">
               <RadioGroup.Root
