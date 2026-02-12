@@ -9,6 +9,12 @@ import { OutsetaCheckoutEmbed } from "@/components/ui/OutsetaCheckoutEmbed";
 
 const SNT_BLUE = "#068CEF";
 
+declare global {
+    interface Window {
+        paypal?: { HostedButtons?: (opts: any) => { render: (selector: string) => void } };
+    }
+}
+
 export default function LifetimeCheckoutPage() {
     const [isClient, setIsClient] = useState(false);
     const discountActive = isDiscountActive();
