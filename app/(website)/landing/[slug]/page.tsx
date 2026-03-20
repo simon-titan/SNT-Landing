@@ -12,6 +12,7 @@ import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { Text, VStack, HStack, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
 import { MobilePricingFooter } from "@/components/ui/mobile-pricing-footer";
 import { MobileFreeCourseFooter } from "@/components/ui/mobile-free-course-footer";
+import { LandingPageTracker } from "@/components/tracking/LandingPageTracker";
 
 interface LandingPageVersion {
   id: string;
@@ -133,6 +134,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+       <LandingPageTracker slug={version.slug} />
        {/* CSS um Navbar auf Slug-Seiten auszublenden */}
        <style>{`
          /* Verstecke alle möglichen Navbar/Header Elemente */
@@ -253,228 +255,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
       
       {/* Glow Trenner */}
       <Box w="100%" h="2px" background="linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)" boxShadow="0 0 20px rgba(59, 130, 246, 0.4)"/>
-      
-      {/* Emre Founder Section */}
-      <FounderSection 
-        image="/personal/emre-2.jpg" 
-        name={
-          <Box
-            as="span"
-            background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-            color="white"
-            px={2}
-            py={1}
-            borderRadius="md"
-            fontWeight="bold"
-            display="inline-block"
-            border="1px solid rgba(59, 130, 246, 0.35)"
-            boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-            backdropFilter="blur(6px)"
-          >
-            Hi, Ich bin Emre
-          </Box>
-        } 
-        subtitle="MEET THE FOUNDER" 
-        description={
-          <Box fontSize="md" color="white">
-            <Text mb={4} lineHeight="1.6">
-              Meine Reise begann nach dem Abitur – ursprünglich wollte ich eine eigene Brand aufbauen. Doch als ich das enorme Potenzial im Trading erkannt habe, habe ich alles andere losgelassen und mich zu 100 % dem Trading gewidmet.
-            </Text>
-            
-            <Text mb={6} lineHeight="1.6">
-              Die ersten Jahre waren intensiv. Ich habe nicht nur die Märkte studiert, sondern auch mich selbst – mentale Stärke, Disziplin und Unternehmertum wurden zu Schlüsselkomponenten auf meinem Weg.
-            </Text>
-            
-            {/* "3 Jahre später" Bereich - Dezenter */}
-            <Box my={6} p={5} bg="rgba(255, 255, 255, 0.03)" borderRadius="lg" border="1px solid rgba(255, 255, 255, 0.1)">
-              <Text fontSize="md" fontWeight="medium" color="white" mb={4} textAlign="center">
-                <Box
-                  as="span"
-                  background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-                  color="white"
-                  px={2}
-                  py={1}
-                  borderRadius="md"
-                  fontWeight="bold"
-                  display="inline-block"
-                  border="1px solid rgba(59, 130, 246, 0.35)"
-                  boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-                  backdropFilter="blur(6px)"
-                >
-                  3 Jahre später...
-                </Box>
-              </Text>
-            
-              <VStack align="start" gap={2.5}>
-                <HStack align="center" gap={3}>
-                  <Box 
-                    flexShrink={0} 
-                    width="20px" 
-                    height="20px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <CheckCircle 
-                      size={20} 
-                      color="white" 
-                      weight="fill" 
-                      style={{ 
-                        minWidth: "20px", 
-                        minHeight: "20px",
-                        width: "20px",
-                        height: "20px"
-                      }} 
-                    />
-                  </Box>
-                  <Text color="gray.300" fontSize="sm">
-                    Vollzeit Daytrader, Scalper & Investor
-                  </Text>
-                </HStack>
-                <HStack align="center" gap={3}>
-                  <Box 
-                    flexShrink={0} 
-                    width="20px" 
-                    height="20px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <CheckCircle 
-                      size={20} 
-                      color="white" 
-                      weight="fill" 
-                      style={{ 
-                        minWidth: "20px", 
-                        minHeight: "20px",
-                        width: "20px",
-                        height: "20px"
-                      }} 
-                    />
-                  </Box>
-                  <Text color="gray.300" fontSize="sm">
-                    Mehrfach funded bei verschiedenen Propfirms mit mehreren tausenden $ von Auszahlungen
-                  </Text>
-                </HStack>
-                <HStack align="center" gap={3}>
-                  <Box 
-                    flexShrink={0} 
-                    width="20px" 
-                    height="20px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <CheckCircle 
-                      size={20} 
-                      color="white" 
-                      weight="fill" 
-                      style={{ 
-                        minWidth: "20px", 
-                        minHeight: "20px",
-                        width: "20px",
-                        height: "20px"
-                      }} 
-                    />
-                  </Box>
-                  <Text color="gray.300" fontSize="sm">
-                    Über 10.000 Follower auf Social Media
-                  </Text>
-                </HStack>
-                <HStack align="center" gap={3}>
-                  <Box 
-                    flexShrink={0} 
-                    width="20px" 
-                    height="20px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <CheckCircle 
-                      size={20} 
-                      color="white" 
-                      weight="fill" 
-                      style={{ 
-                        minWidth: "20px", 
-                        minHeight: "20px",
-                        width: "20px",
-                        height: "20px"
-                      }} 
-                    />
-                  </Box>
-                  <Text color="gray.300" fontSize="sm">
-                    Aufbau einer großen geschlossenen Community mit echten Gleichgesinnten
-                  </Text>
-                </HStack>
-                <HStack align="center" gap={3}>
-                  <Box 
-                    flexShrink={0} 
-                    width="20px" 
-                    height="20px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <CheckCircle 
-                      size={20} 
-                      color="white" 
-                      weight="fill" 
-                      style={{ 
-                        minWidth: "20px", 
-                        minHeight: "20px",
-                        width: "20px",
-                        height: "20px"
-                      }} 
-                    />
-                  </Box>
-                  <Text color="gray.300" fontSize="sm">
-                    Gemeinsam mit Ali über 1.000 Menschen im Trading ausgebildet
-                  </Text>
-                </HStack>
-                 <Text color="white" fontSize="sm" fontWeight="bold" textAlign="left">
-                   <Box
-                     as="span"
-                     background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-                     color="white"
-                     px={2}
-                     py={1}
-                     borderRadius="md"
-                     fontWeight="bold"
-                     display="inline-block"
-                     border="1px solid rgba(59, 130, 246, 0.35)"
-                     boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-                     backdropFilter="blur(6px)"
-                   >
-                     UNSERE MISSION : anderen zeigen, wie sie strukturiert und professionell ihre eigene Trading-Reise starten können !
-                   </Box>
-                 </Text>
-            </VStack>
-            </Box>
-            
-            <Text mb={4} lineHeight="1.6">
-              Wenn du das Ganze ernst meinst und bereit bist, in dich selbst zu investieren – dann bist du hier genau richtig.
-            </Text>
-            
-            <Text mb={4} lineHeight="1.6">
-              Hier findest du kein Bla-Bla, sondern echte Ergebnisse, echte Strategien und ein echtes Netzwerk.
-            </Text>
-            
-            <Text fontWeight="bold" fontSize="lg" color="white">
-              Starte jetzt – dein Trading-Weg beginnt hier.
-            </Text>
-          </Box>
-        } 
-        checklist={[
-          'Spezialist für Scalping und Daytrading Strategien',
-          'Experte in Marktpsychologie und Risikomanagement',
-          'Gründer einer professionellen Trading-Community',
-          'Mentor für über 1.000 erfolgreiche Trader',
-          'Content Creator mit großer Social Media Reichweite',
-          'Fokus auf nachhaltige und profitable Trading-Systeme'
-        ]} 
-        highlights={["as seen in"]}
-      />
-      
+
       {/* Ali Founder Section */}
       <FounderSection 
         image="/personal/ali-2.jpeg" 
@@ -495,40 +276,96 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
             Hi, ich bin Ali
           </Box>
         } 
-        subtitle="CO-FOUNDER" 
+        subtitle="MEET THE FOUNDER" 
         description={
           <Box fontSize="md" color="white">
             <Text mb={4} lineHeight="1.6">
               Meine Reise begann früh. Schon mit 16 war mir klar, dass ich mehr aus meinem Leben rausholen möchte als den klassischen Weg. Also habe ich angefangen zu suchen – und bin dabei oft gescheitert.
             </Text>
-            
+
             <Text mb={4} lineHeight="1.6">
               Ich habe verschiedene Business-Modelle ausprobiert, darunter E-Commerce, Kaltakquise und Webdesign. Nicht, weil ich planlos war, sondern weil ich verstehen wollte, wie Geld wirklich funktioniert.
             </Text>
-            
+
             <Text mb={4} lineHeight="1.6">
               Irgendwann habe ich gemerkt: Trading ist für mich der klarste und direkteste Weg, Geld zu verdienen. Kein Team, keine Abhängigkeiten – nur Entscheidungen, Disziplin und Verantwortung.
             </Text>
-            
-            <Text mb={4} lineHeight="1.6">
+
+            <Text mb={6} lineHeight="1.6">
               Heute bin ich profitabel und lebe vom Trading. Doch der größte Gewinn war nicht das Geld, sondern die persönliche Entwicklung: mentale Stärke, Struktur und Konsequenz.
             </Text>
-            
+
+            {/* Errungenschaften */}
+            <Box my={6} p={5} bg="rgba(255, 255, 255, 0.03)" borderRadius="lg" border="1px solid rgba(255, 255, 255, 0.1)">
+              <Text fontSize="md" fontWeight="medium" color="white" mb={4} textAlign="center">
+                <Box
+                  as="span"
+                  background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+                  color="white"
+                  px={2}
+                  py={1}
+                  borderRadius="md"
+                  fontWeight="bold"
+                  display="inline-block"
+                  border="1px solid rgba(59, 130, 246, 0.35)"
+                  boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+                  backdropFilter="blur(6px)"
+                >
+                  Was wir gemeinsam aufgebaut haben
+                </Box>
+              </Text>
+              <VStack align="start" gap={2.5}>
+                {[
+                  "Vollzeit Daytrader, Scalper & Investor",
+                  "Mehrfach funded bei verschiedenen Propfirms mit mehreren tausenden $ Auszahlungen",
+                  "Über 10.000 Follower auf Social Media",
+                  "Aufbau einer großen geschlossenen Community mit echten Gleichgesinnten",
+                  "Über 1.000 Menschen im Trading ausgebildet",
+                ].map((item, idx) => (
+                  <HStack key={idx} align="center" gap={3}>
+                    <CheckCircle
+                      size={20}
+                      color="white"
+                      weight="fill"
+                      style={{ minWidth: "20px", minHeight: "20px", flexShrink: 0 }}
+                    />
+                    <Text color="gray.300" fontSize="sm">{item}</Text>
+                  </HStack>
+                ))}
+                <Text color="white" fontSize="sm" fontWeight="bold" textAlign="left" mt={1}>
+                  <Box
+                    as="span"
+                    background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+                    color="white"
+                    px={2}
+                    py={1}
+                    borderRadius="md"
+                    fontWeight="bold"
+                    display="inline-block"
+                    border="1px solid rgba(59, 130, 246, 0.35)"
+                    boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+                    backdropFilter="blur(6px)"
+                  >
+                    UNSERE MISSION: anderen zeigen, wie sie strukturiert und professionell ihre eigene Trading-Reise starten können!
+                  </Box>
+                </Text>
+              </VStack>
+            </Box>
+
             <Text fontWeight="bold" fontSize="lg" color="white">
               Ich kenne das Gefühl, keinen klaren Plan zu haben. Genau deshalb weiß ich, wie wichtig es ist, dranzubleiben – auch dann, wenn noch niemand an dich glaubt.
             </Text>
           </Box>
         } 
         checklist={[
-          'Experte für strukturierte Trading-Systeme',
-          'Spezialist in persönlicher Entwicklung & Mindset',
-          'Erfahrung in verschiedenen Business-Modellen',
-          'Fokus auf Disziplin und mentale Stärke',
-          'Mentor für zielstrebige Trader',
-          'Verfechter von Eigenverantwortung im Trading'
+          'Vollzeit Trader & Gründer von SNT',
+          'Spezialist für Scalping und Daytrading Strategien',
+          'Experte in persönlicher Entwicklung & Mindset',
+          'Mehrfach funded bei verschiedenen Propfirms',
+          'Mentor für über 1.000 erfolgreiche Trader',
+          'Gründer einer professionellen Trading-Community',
         ]} 
-        highlights={["co-founder"]}
-        reverse={true}
+        highlights={["meet the founder"]}
       />
       
       <CourseOverviewSection />

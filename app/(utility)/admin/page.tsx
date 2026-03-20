@@ -77,6 +77,29 @@ type LandingPageVersion = {
   updated_at: string;
 };
 
+type LandingVersionStats = {
+  totalViews: number;
+  periodViews: number;
+  totalSales: number;
+  periodSales: number;
+  totalRevenue: number;
+  periodRevenue: number;
+  conversionRate: number;
+  productBreakdown: Record<"monthly" | "quarterly" | "annual" | "lifetime", { sales: number; revenue: number }>;
+  providerBreakdown: Record<"outseta" | "paypal", { sales: number; revenue: number }>;
+};
+
+type LandingStatsResponse = {
+  period: "today" | "week" | "month" | "all";
+  versions: Array<LandingPageVersion & { stats: LandingVersionStats }>;
+  totals: {
+    periodViews: number;
+    periodSales: number;
+    periodRevenue: number;
+    averageConversionRate: number;
+  };
+};
+
 // Telegram Types
 type TelegramMember = {
   id: string;
@@ -148,6 +171,9 @@ export default function AffiliateAdminPage() {
     is_active: true,
   });
   const [editingVersion, setEditingVersion] = useState<string | null>(null);
+  const [landingStats, setLandingStats] = useState<LandingStatsResponse | null>(null);
+  const [isLoadingLandingStats, setIsLoadingLandingStats] = useState(false);
+  const [landingStatsPeriod, setLandingStatsPeriod] = useState<"today" | "week" | "month" | "all">("all");
 
   // Collapse States
   const [isAffiliateCollapsed, setIsAffiliateCollapsed] = useState(false);
@@ -259,6 +285,7 @@ export default function AffiliateAdminPage() {
     if (adminCredentials) {
       fetchOverview();
       fetchLandingVersions();
+      fetchLandingStats();
       fetchTelegramData();
       fetchTelegramFaqs();
     }
@@ -433,6 +460,30 @@ export default function AffiliateAdminPage() {
     }
   };
 
+  const fetchLandingStats = async (period: "today" | "week" | "month" | "all" = landingStatsPeriod) => {
+    if (!adminCredentials) {
+      return;
+    }
+    setIsLoadingLandingStats(true);
+    try {
+      const response = await fetch(`/api/admin/landing-versions/stats?period=${period}`, {
+        headers: headers ?? undefined,
+      });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        notify(payload?.error ?? "Landing-Stats konnten nicht geladen werden");
+        return;
+      }
+      const data = (await response.json()) as LandingStatsResponse;
+      setLandingStats(data);
+    } catch (error) {
+      console.error(error);
+      notify("Landing-Stats konnten nicht geladen werden");
+    } finally {
+      setIsLoadingLandingStats(false);
+    }
+  };
+
   const handleCreateOrUpdateVersion = async () => {
     if (!adminCredentials) {
       notify("Bitte melde dich zuerst an");
@@ -486,6 +537,7 @@ export default function AffiliateAdminPage() {
       });
       setEditingVersion(null);
       fetchLandingVersions();
+      fetchLandingStats();
     } catch (error) {
       console.error(error);
       notify("Version-Speicherung fehlgeschlagen");
@@ -530,6 +582,7 @@ export default function AffiliateAdminPage() {
       
       notify("Version erfolgreich gelöscht");
       fetchLandingVersions();
+      fetchLandingStats();
     } catch (error) {
       console.error(error);
       notify("Version-Löschung fehlgeschlagen");
@@ -1058,9 +1111,7 @@ export default function AffiliateAdminPage() {
         {isAuthenticated && (
           <Box borderWidth="1px" borderRadius="md" p="6">
             <HStack justify="space-between" align="center" mb="4">
-              <Text fontWeight="semibold">
-                Landing Page Versionen
-              </Text>
+              <Text fontWeight="semibold">Landing Page Dashboard</Text>
               <IconButton
                 aria-label="Toggle Landing Page Section"
                 variant="ghost"
@@ -1070,216 +1121,260 @@ export default function AffiliateAdminPage() {
                 {isLandingPageCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
               </IconButton>
             </HStack>
-            
+
             <Collapsible.Root open={!isLandingPageCollapsed}>
               <Collapsible.Content>
-            
-            {/* Version erstellen/bearbeiten Form */}
-            <Box borderWidth="1px" borderRadius="md" p="4" mb="6" bg="gray.50">
-              <Text fontWeight="medium" mb="4" color="gray.800">
-                {editingVersion ? "Version bearbeiten" : "Neue Version erstellen"}
-              </Text>
-              <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="4" mb="4">
-                <Stack gap="1">
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    Name *
+                <HStack justify="space-between" mb="4" flexWrap="wrap" gap="3">
+                  <Text color="gray.500" fontSize="sm">
+                    Tracking pro Landing-Page-Version
                   </Text>
-                  <Input
-                    placeholder="z.B. Standard Landing Page"
-                    value={versionFormState.name}
-                    onChange={(e) => setVersionFormState(prev => ({ ...prev, name: e.target.value }))}
-                    bg="white"
-                    color="gray.800"
-                    borderColor="gray.300"
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                  />
-                </Stack>
-                <Stack gap="1">
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    Slug * (nur a-z, 0-9, -)
-                  </Text>
-                  <Input
-                    placeholder="z.B. standard oder free-course"
-                    value={versionFormState.slug}
-                    onChange={(e) => setVersionFormState(prev => ({ ...prev, slug: e.target.value.toLowerCase() }))}
-                    bg="white"
-                    color="gray.800"
-                    borderColor="gray.300"
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                  />
-                </Stack>
-                <Stack gap="1">
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    Titel *
-                  </Text>
-                  <Input
-                    placeholder="z.B. LERNE WIE DU PROFITABEL TRADEST"
-                    value={versionFormState.title}
-                    onChange={(e) => setVersionFormState(prev => ({ ...prev, title: e.target.value }))}
-                    bg="white"
-                    color="gray.800"
-                    borderColor="gray.300"
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                  />
-                </Stack>
-                <Stack gap="1">
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    Vimeo Video ID * (nur Zahlen)
-                  </Text>
-                  <Input
-                    placeholder="z.B. 1104311683"
-                    value={versionFormState.vimeo_video_id}
-                    onChange={(e) => setVersionFormState(prev => ({ ...prev, vimeo_video_id: e.target.value }))}
-                    bg="white"
-                    color="gray.800"
-                    borderColor="gray.300"
-                    _placeholder={{ color: "gray.500" }}
-                    _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                  />
-                </Stack>
-                <Stack gap="1">
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    Kurs-Typ *
-                  </Text>
-                  <NativeSelectRoot>
-                    <NativeSelectField
-                      value={versionFormState.course_type}
-                      onChange={(e) => setVersionFormState(prev => ({ ...prev, course_type: e.target.value as 'paid' | 'free' }))}
-                      bg="white"
-                      color="gray.800"
-                      borderColor="gray.300"
-                      _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
+                  <HStack gap="2">
+                    <Button
+                      size="sm"
+                      colorScheme="blue"
+                      variant="solid"
+                      onClick={() => {
+                        document.getElementById("landing-version-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
                     >
-                      <option value="paid" style={{ backgroundColor: 'white', color: '#2D3748' }}>Paid (zeigt Pricing)</option>
-                      <option value="free" style={{ backgroundColor: 'white', color: '#2D3748' }}>Free (zeigt Registration Modal)</option>
-                    </NativeSelectField>
-                  </NativeSelectRoot>
-                </Stack>
-                <Stack gap="1">
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    Status
-                  </Text>
-                  <NativeSelectRoot>
-                    <NativeSelectField
-                      value={versionFormState.is_active ? "true" : "false"}
-                      onChange={(e) => setVersionFormState(prev => ({ ...prev, is_active: e.target.value === "true" }))}
-                      bg="white"
-                      color="gray.800"
-                      borderColor="gray.300"
-                      _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                    >
-                      <option value="true">Aktiv</option>
-                      <option value="false">Inaktiv</option>
-                    </NativeSelectField>
-                  </NativeSelectRoot>
-                </Stack>
-              </Grid>
-              <HStack gap="2">
-                <Button 
-                  colorScheme="blue" 
-                  onClick={handleCreateOrUpdateVersion} 
-                  loading={isSubmitting}
-                >
-                  {editingVersion ? "Version aktualisieren" : "Version erstellen"}
-                </Button>
-                {editingVersion && (
-                  <Button variant="outline" onClick={handleCancelEdit}>
-                    Abbrechen
-                  </Button>
-                )}
-              </HStack>
-            </Box>
+                      Neue Landing Page anlegen
+                    </Button>
+                    <NativeSelectRoot>
+                      <NativeSelectField
+                        value={landingStatsPeriod}
+                        onChange={(e) => {
+                          const period = e.target.value as "today" | "week" | "month" | "all";
+                          setLandingStatsPeriod(period);
+                          fetchLandingStats(period);
+                        }}
+                      >
+                        <option value="today">Heute</option>
+                        <option value="week">Diese Woche</option>
+                        <option value="month">Dieser Monat</option>
+                        <option value="all">Gesamt</option>
+                      </NativeSelectField>
+                    </NativeSelectRoot>
+                    <Button size="sm" variant="outline" onClick={() => fetchLandingStats(landingStatsPeriod)} loading={isLoadingLandingStats}>
+                      Aktualisieren
+                    </Button>
+                  </HStack>
+                </HStack>
 
-            {/* Versionen Liste */}
-            <Stack gap="4">
-              <Text fontWeight="medium" color="gray.800">Existierende Versionen</Text>
-              {isLoadingVersions ? (
-                <Text>Lade Versionen...</Text>
-              ) : landingVersions.length === 0 ? (
-                <Text color="gray.600">Keine Versionen vorhanden</Text>
-              ) : (
-                landingVersions.map((version) => (
-                  <Box key={version.id} borderWidth="1px" borderRadius="md" p="4">
-                    <Flex justify="space-between" align="start" mb="2">
-                      <Box flex="1">
-                        <HStack gap="2" mb="1">
-                          <Text fontWeight="bold" color="gray.800">{version.name}</Text>
-                          <Box
-                            px="2"
-                            py="1"
-                            borderRadius="md"
-                            fontSize="xs"
-                            fontWeight="medium"
-                            bg={version.is_active ? "green.100" : "gray.100"}
-                            color={version.is_active ? "green.800" : "gray.600"}
-                          >
-                            {version.is_active ? "Aktiv" : "Inaktiv"}
-                          </Box>
-                          <Box
-                            px="2"
-                            py="1"
-                            borderRadius="md"
-                            fontSize="xs"
-                            fontWeight="medium"
-                            bg={version.course_type === "paid" ? "blue.100" : "purple.100"}
-                            color={version.course_type === "paid" ? "blue.800" : "purple.800"}
-                          >
-                            {version.course_type === "paid" ? "Paid" : "Free"}
-                          </Box>
-                        </HStack>
-                        <Text fontSize="sm" color="gray.700" mb="1">
-                          Slug: /{version.slug}
-                        </Text>
-                        <Text fontSize="sm" color="gray.700" mb="1">
-                          Titel: {version.title}
-                        </Text>
-                        <Text fontSize="sm" color="gray.700">
-                          Vimeo ID: {version.vimeo_video_id}
-                        </Text>
-                      </Box>
-                      <HStack gap="1">
-                        <IconButton
-                          aria-label="Vorschau"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open(`${baseUrl}/landing/${version.slug}`, '_blank')}
-                        >
-                          <Eye size={16} />
-                        </IconButton>
-                        <IconButton
-                          aria-label="Bearbeiten"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEditVersion(version)}
-                        >
-                          <PencilSimple size={16} />
-                        </IconButton>
-                        <IconButton
-                          aria-label="Löschen"
-                          size="sm"
-                          variant="outline"
-                          colorScheme="red"
-                          onClick={() => handleDeleteVersion(version.id)}
-                        >
-                          <Trash size={16} />
-                        </IconButton>
-                      </HStack>
-                    </Flex>
-                    <Text fontSize="xs" color="gray.600">
-                      Erstellt: {new Date(version.created_at).toLocaleString("de-DE")}
-                    </Text>
-                    {version.updated_at !== version.created_at && (
-                      <Text fontSize="xs" color="gray.600">
-                        Aktualisiert: {new Date(version.updated_at).toLocaleString("de-DE")}
-                      </Text>
-                    )}
+                <Grid templateColumns={{ base: "1fr", md: "repeat(4, 1fr)" }} gap="3" mb="6">
+                  <Box bg="gray.900" p="4" borderRadius="md">
+                    <Text fontSize="sm" color="gray.400">Pageviews</Text>
+                    <Text fontSize="2xl" fontWeight="bold">{landingStats?.totals.periodViews ?? 0}</Text>
                   </Box>
-                ))
-              )}
-            </Stack>
+                  <Box bg="gray.900" p="4" borderRadius="md">
+                    <Text fontSize="sm" color="gray.400">Sales</Text>
+                    <Text fontSize="2xl" fontWeight="bold">{landingStats?.totals.periodSales ?? 0}</Text>
+                  </Box>
+                  <Box bg="gray.900" p="4" borderRadius="md">
+                    <Text fontSize="sm" color="gray.400">Umsatz</Text>
+                    <Text fontSize="2xl" fontWeight="bold">{(landingStats?.totals.periodRevenue ?? 0).toFixed(2)}€</Text>
+                  </Box>
+                  <Box bg="gray.900" p="4" borderRadius="md">
+                    <Text fontSize="sm" color="gray.400">Conversion Rate</Text>
+                    <Text fontSize="2xl" fontWeight="bold">{(landingStats?.totals.averageConversionRate ?? 0).toFixed(2)}%</Text>
+                  </Box>
+                </Grid>
+
+                <Stack gap="4" mb="6">
+                  <Text fontWeight="medium" color="gray.800">Performance pro Version</Text>
+                  {(landingStats?.versions ?? landingVersions).map((version) => {
+                    const stats = "stats" in version ? version.stats : null;
+                    return (
+                      <Box key={version.id} borderWidth="1px" borderRadius="md" p="4">
+                        <Flex justify="space-between" align="start" mb="2" gap="4">
+                          <Box flex="1">
+                            <HStack gap="2" mb="1" flexWrap="wrap">
+                              <Text fontWeight="bold" color="gray.800">{version.name}</Text>
+                              <Badge colorPalette={version.is_active ? "green" : "gray"}>
+                                {version.is_active ? "Aktiv" : "Inaktiv"}
+                              </Badge>
+                              <Badge colorPalette={version.course_type === "paid" ? "blue" : "purple"}>
+                                {version.course_type === "paid" ? "Paid" : "Free"}
+                              </Badge>
+                              <Badge>/landing/{version.slug}</Badge>
+                            </HStack>
+                            <Text fontSize="sm" color="gray.600" mb="3">
+                              {version.title}
+                            </Text>
+                            <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap="3">
+                              <Box borderWidth="1px" borderRadius="md" p="2">
+                                <Text fontSize="xs" color="gray.500">Pageviews</Text>
+                                <Text fontWeight="bold">{stats?.periodViews ?? 0}</Text>
+                              </Box>
+                              <Box borderWidth="1px" borderRadius="md" p="2">
+                                <Text fontSize="xs" color="gray.500">Sales</Text>
+                                <Text fontWeight="bold">{stats?.periodSales ?? 0}</Text>
+                              </Box>
+                              <Box borderWidth="1px" borderRadius="md" p="2">
+                                <Text fontSize="xs" color="gray.500">Conversion</Text>
+                                <Text fontWeight="bold">{(stats?.conversionRate ?? 0).toFixed(2)}%</Text>
+                              </Box>
+                              <Box borderWidth="1px" borderRadius="md" p="2">
+                                <Text fontSize="xs" color="gray.500">Umsatz</Text>
+                                <Text fontWeight="bold">{(stats?.periodRevenue ?? 0).toFixed(2)}€</Text>
+                              </Box>
+                            </Grid>
+                            {stats && (
+                              <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="3" mt="3">
+                                <Box borderWidth="1px" borderRadius="md" p="3">
+                                  <Text fontSize="sm" fontWeight="semibold" mb="2">Sales nach Typ</Text>
+                                  {(["monthly", "quarterly", "annual", "lifetime"] as const).map((product) => (
+                                    <Flex key={product} justify="space-between" fontSize="sm" mb="1">
+                                      <Text>{product}</Text>
+                                      <Text>{stats.productBreakdown[product].sales} / {stats.productBreakdown[product].revenue.toFixed(2)}€</Text>
+                                    </Flex>
+                                  ))}
+                                </Box>
+                                <Box borderWidth="1px" borderRadius="md" p="3">
+                                  <Text fontSize="sm" fontWeight="semibold" mb="2">Sales nach Bezahlmethode</Text>
+                                  {(["outseta", "paypal"] as const).map((provider) => (
+                                    <Flex key={provider} justify="space-between" fontSize="sm" mb="1">
+                                      <Text>{provider}</Text>
+                                      <Text>{stats.providerBreakdown[provider].sales} / {stats.providerBreakdown[provider].revenue.toFixed(2)}€</Text>
+                                    </Flex>
+                                  ))}
+                                </Box>
+                              </Grid>
+                            )}
+                          </Box>
+                          <HStack gap="1">
+                            <IconButton
+                              aria-label="Vorschau"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => window.open(`${baseUrl}/landing/${version.slug}`, "_blank")}
+                            >
+                              <Eye size={16} />
+                            </IconButton>
+                            <IconButton
+                              aria-label="Bearbeiten"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditVersion(version)}
+                            >
+                              <PencilSimple size={16} />
+                            </IconButton>
+                            <IconButton
+                              aria-label="Löschen"
+                              size="sm"
+                              variant="outline"
+                              colorScheme="red"
+                              onClick={() => handleDeleteVersion(version.id)}
+                            >
+                              <Trash size={16} />
+                            </IconButton>
+                          </HStack>
+                        </Flex>
+                      </Box>
+                    );
+                  })}
+                </Stack>
+
+                {/* Version erstellen/bearbeiten Form */}
+                <Box id="landing-version-form" borderWidth="1px" borderRadius="md" p="4" mb="6" bg="gray.50">
+                  <Text fontWeight="medium" mb="4" color="gray.800">
+                    {editingVersion ? "Version bearbeiten" : "Neue Version erstellen"}
+                  </Text>
+                  <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="4" mb="4">
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                        Name *
+                      </Text>
+                      <Input
+                        placeholder="z.B. Standard Landing Page"
+                        value={versionFormState.name}
+                        onChange={(e) => setVersionFormState((prev) => ({ ...prev, name: e.target.value }))}
+                        bg="white"
+                        color="gray.800"
+                        borderColor="gray.300"
+                      />
+                    </Stack>
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                        Slug * (nur a-z, 0-9, -)
+                      </Text>
+                      <Input
+                        placeholder="z.B. standard oder free-course"
+                        value={versionFormState.slug}
+                        onChange={(e) => setVersionFormState((prev) => ({ ...prev, slug: e.target.value.toLowerCase() }))}
+                        bg="white"
+                        color="gray.800"
+                        borderColor="gray.300"
+                      />
+                    </Stack>
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                        Titel *
+                      </Text>
+                      <Input
+                        placeholder="z.B. LERNE WIE DU PROFITABEL TRADEST"
+                        value={versionFormState.title}
+                        onChange={(e) => setVersionFormState((prev) => ({ ...prev, title: e.target.value }))}
+                        bg="white"
+                        color="gray.800"
+                        borderColor="gray.300"
+                      />
+                    </Stack>
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                        Vimeo Video ID * (nur Zahlen)
+                      </Text>
+                      <Input
+                        placeholder="z.B. 1104311683"
+                        value={versionFormState.vimeo_video_id}
+                        onChange={(e) => setVersionFormState((prev) => ({ ...prev, vimeo_video_id: e.target.value }))}
+                        bg="white"
+                        color="gray.800"
+                        borderColor="gray.300"
+                      />
+                    </Stack>
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                        Kurs-Typ *
+                      </Text>
+                      <NativeSelectRoot>
+                        <NativeSelectField
+                          value={versionFormState.course_type}
+                          onChange={(e) => setVersionFormState((prev) => ({ ...prev, course_type: e.target.value as "paid" | "free" }))}
+                        >
+                          <option value="paid">Paid (zeigt Pricing)</option>
+                          <option value="free">Free (zeigt Registration Modal)</option>
+                        </NativeSelectField>
+                      </NativeSelectRoot>
+                    </Stack>
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                        Status
+                      </Text>
+                      <NativeSelectRoot>
+                        <NativeSelectField
+                          value={versionFormState.is_active ? "true" : "false"}
+                          onChange={(e) => setVersionFormState((prev) => ({ ...prev, is_active: e.target.value === "true" }))}
+                        >
+                          <option value="true">Aktiv</option>
+                          <option value="false">Inaktiv</option>
+                        </NativeSelectField>
+                      </NativeSelectRoot>
+                    </Stack>
+                  </Grid>
+                  <HStack gap="2">
+                    <Button colorScheme="blue" onClick={handleCreateOrUpdateVersion} loading={isSubmitting}>
+                      {editingVersion ? "Version aktualisieren" : "Version erstellen"}
+                    </Button>
+                    {editingVersion && (
+                      <Button variant="outline" onClick={handleCancelEdit}>
+                        Abbrechen
+                      </Button>
+                    )}
+                    <Button variant="outline" onClick={fetchLandingVersions} loading={isLoadingVersions}>
+                      Versionen neu laden
+                    </Button>
+                  </HStack>
+                </Box>
               </Collapsible.Content>
             </Collapsible.Root>
           </Box>

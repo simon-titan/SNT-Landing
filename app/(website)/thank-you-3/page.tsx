@@ -12,6 +12,16 @@ import {
 import { useEffect } from "react";
 
 const SNT_BLUE = "#068CEF";
+const LANDING_SLUG_KEY = "snt_landing_slug";
+
+const normalizeProduct = (rawProduct: string, source: string) => {
+  const product = rawProduct.toLowerCase();
+  const normalizedSource = source.toLowerCase();
+  if (product === "quarterly" || normalizedSource.includes("quarter")) return "quarterly";
+  if (product === "annual" || product === "yearly" || normalizedSource.includes("annual")) return "annual";
+  if (product === "lifetime" || normalizedSource.includes("lifetime")) return "lifetime";
+  return "monthly";
+};
 
 export default function ThankYouPage() {
   useEffect(() => {
@@ -183,19 +193,19 @@ export default function ThankYouPage() {
     const provider =
       explicitProvider ||
       (source.toLowerCase().includes("paypal") ? "paypal" : "outseta");
-    const product =
-      explicitProduct === "lifetime"
-        ? "lifetime"
-        : explicitProduct === "monthly"
-        ? "monthly"
-        : source.toLowerCase().includes("lifetime")
-        ? "lifetime"
-        : "monthly";
+    const product = normalizeProduct(explicitProduct, source);
 
     const pricing = getCurrentPricing();
     const amount =
-      product === "lifetime" ? pricing.lifetime.price : pricing.monthly.price;
+      product === "lifetime"
+        ? pricing.lifetime.price
+        : product === "quarterly"
+        ? pricing.quarterly.price
+        : product === "annual"
+        ? pricing.annual.price
+        : pricing.monthly.price;
 
+    const landingSlug = localStorage.getItem(LANDING_SLUG_KEY) || undefined;
     const metadata = {
       source,
       transactionId:
@@ -203,6 +213,7 @@ export default function ThankYouPage() {
         urlParams.get("subscription_id") ||
         urlParams.get("order_id") ||
         null,
+      landingSlug: landingSlug ?? null,
     };
 
     const saleDate = urlParams.get("sale_date") ?? undefined;
@@ -226,6 +237,36 @@ export default function ThankYouPage() {
         });
 
         if (response.ok) {
+          if (landingSlug) {
+            const saleTrackingKey = `${sessionKey}_landing_${landingSlug}`;
+            if (!sessionStorage.getItem(saleTrackingKey)) {
+              const landingResponse = await fetch("/api/tracking/sale", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  landingSlug,
+                  provider,
+                  product,
+                  amount,
+                  currency: "EUR",
+                  transactionId: metadata.transactionId,
+                  saleDate,
+                }),
+              });
+
+              if (landingResponse.ok) {
+                sessionStorage.setItem(saleTrackingKey, new Date().toISOString());
+              } else {
+                console.error(
+                  "Landing page sale tracking failed",
+                  landingResponse.status,
+                  await landingResponse.text()
+                );
+              }
+            }
+          }
           sessionStorage.setItem(sessionKey, new Date().toISOString());
         } else {
           console.error(

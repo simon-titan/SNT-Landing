@@ -14,7 +14,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { SimpleVimeoPlayer } from "@/components/ui/simple-vimeo-player";
-import { CheckCircle, Star, Users, Lock } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, Star, Users, Lock, VideoCamera, ChartLineUp, WhatsappLogo, DiscordLogo, BookOpen } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { PricingSelectionModal } from "@/components/ui/pricing-selection-modal";
 import { RegistrationModal } from "@/components/ui/registration-modal";
@@ -24,13 +24,32 @@ import { ApprovedIcon } from "@/components/ui/approved-icon";
 
 const SNT_BLUE = "#068CEF";
 
-// Features-Liste (gleich wie in der ursprünglichen Komponente)
 const features = [
-  "3-5 Wöchentliche Zoom Calls (Livetrading, Mindset, Anfängercalls)",
-  "Strukturierter Videokurs",
-  "Über 10h+ Lernmaterial",
-  "Exklusive Community mit gleichgesinnten (-1000 member)",
-  "Tägliche Marktanalysen",
+  {
+    icon: VideoCamera,
+    label: "7 Wöchentliche Live Calls",
+    detail: "Livetrading, Mindset, Anfängercalls",
+  },
+  {
+    icon: ChartLineUp,
+    label: "NEFS Trading Strategie",
+    detail: null,
+  },
+  {
+    icon: WhatsappLogo,
+    label: "WhatsApp Community",
+    detail: null,
+  },
+  {
+    icon: DiscordLogo,
+    label: "Discord Community",
+    detail: null,
+  },
+  {
+    icon: BookOpen,
+    label: "Über 40 Std. Lernmaterial",
+    detail: null,
+  },
 ];
 
 interface ConfigurableProductPageSectionProps {
@@ -497,21 +516,43 @@ export function ConfigurableProductPageSection({
 
           {/* Features Section - nur für Paid Course */}
           {courseType === 'paid' && (
-            <VStack gap={3} w="full" align="stretch" mt={6}>
-              {/* Trennstrich */}
-              <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={2} />
-
-              <Text fontSize="sm" fontWeight="semibold" color="white" mb={2} textAlign="left">
+            <VStack gap={2} w="full" align="stretch" mt={6}>
+              <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={1} />
+              <Text fontSize="sm" fontWeight="semibold" color="white" mb={1} textAlign="left">
                 Was du bekommst
               </Text>
-              {features.map((feature, idx) => (
-                <HStack key={idx} align="start" gap={3} justify="flex-start">
-                  <Box flexShrink={0} w="20px" h="20px" display="flex" alignItems="flex-start" justifyContent="flex-start" pt="2px">
-                    <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
+              {features.map((feat, idx) => (
+                <HStack
+                  key={idx}
+                  p={3}
+                  borderRadius="xl"
+                  border="1px solid rgba(59, 130, 246, 0.2)"
+                  bg="rgba(10, 14, 10, 0.7)"
+                  backdropFilter="blur(8px)"
+                  gap={3}
+                  align="center"
+                >
+                  <Box
+                    p="6px"
+                    borderRadius="lg"
+                    bg="rgba(59, 130, 246, 0.18)"
+                    flexShrink={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <feat.icon size={18} color={SNT_BLUE} weight="fill" />
                   </Box>
-                  <Text fontSize="sm" color="gray.300" textAlign="left" flex={1}>
-                    {feature}
-                  </Text>
+                  <VStack align="start" gap={0}>
+                    <Text fontSize="sm" fontWeight="semibold" color="white" lineHeight="1.3">
+                      {feat.label}
+                    </Text>
+                    {feat.detail && (
+                      <Text fontSize="xs" color="gray.400" lineHeight="1.3">
+                        {feat.detail}
+                      </Text>
+                    )}
+                  </VStack>
                 </HStack>
               ))}
             </VStack>
@@ -1173,15 +1214,6 @@ export function ConfigurableProductPageSection({
               </HStack>
             )}
 
-            {/* Community Stats - nur für Paid Course */}
-            {courseType === 'paid' && (
-              <HStack justify="center" gap={2}>
-                <Users size={16} color="gray.400" />
-                <Text fontSize="xs" color="gray.400">
-                  Join 213 members
-                </Text>
-              </HStack>
-            )}
           </VStack>
         </Stack>
 
@@ -1193,34 +1225,57 @@ export function ConfigurableProductPageSection({
           mt={8}
           display={{ base: "none", md: courseType === 'paid' ? "block" : "none" }}
         >
-            {/* Trennstrich - volle Breite */}
-            <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={6} />
+          <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={6} />
 
-            <Stack direction="row" gap={8} align="start">
-              {/* Links: Features Überschrift */}
-              <Box flex="0 0 200px">
-                <Text fontSize="sm" fontWeight="semibold" color="white" textAlign="left">
-                  WAS DU BEKOMMST
-                </Text>
-              </Box>
+          <Stack direction="row" gap={8} align="start">
+            <Box flex="0 0 180px" pt={1}>
+              <Text fontSize="sm" fontWeight="semibold" color="white" textTransform="uppercase" letterSpacing="wider">
+                Was du<br />bekommst
+              </Text>
+            </Box>
 
-              {/* Rechts: Features Liste */}
-              <VStack gap={0} align="stretch" flex={1}>
-                {features.map((feature, idx) => (
-                  <Box key={idx}>
-                    <HStack align="start" gap={3} justify="flex-start" py={2}>
-                      <CheckCircle size={20} color={SNT_BLUE} weight="fill" style={{ marginTop: "2px", flexShrink: 0 }} />
-                      <Text fontSize="sm" color="gray.300" textAlign="left">
-                        {feature}
-                      </Text>
-                    </HStack>
-                    {idx < features.length - 1 && (
-                      <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" />
-                    )}
+            <SimpleGrid columns={2} gap={3} flex={1}>
+              {features.map((feat, idx) => (
+                <HStack
+                  key={idx}
+                  p={4}
+                  borderRadius="xl"
+                  border="1px solid rgba(59, 130, 246, 0.2)"
+                  bg="rgba(10, 14, 10, 0.7)"
+                  backdropFilter="blur(12px)"
+                  gap={3}
+                  align="center"
+                  _hover={{
+                    borderColor: "rgba(59, 130, 246, 0.45)",
+                    bg: "rgba(59, 130, 246, 0.06)",
+                  }}
+                  transition="all 0.2s ease"
+                >
+                  <Box
+                    p="8px"
+                    borderRadius="lg"
+                    bg="rgba(59, 130, 246, 0.18)"
+                    flexShrink={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <feat.icon size={20} color={SNT_BLUE} weight="fill" />
                   </Box>
-                ))}
-              </VStack>
-            </Stack>
+                  <VStack align="start" gap={0.5}>
+                    <Text fontSize="sm" fontWeight="semibold" color="white" lineHeight="1.3">
+                      {feat.label}
+                    </Text>
+                    {feat.detail && (
+                      <Text fontSize="xs" color="gray.400" lineHeight="1.3">
+                        {feat.detail}
+                      </Text>
+                    )}
+                  </VStack>
+                </HStack>
+              ))}
+            </SimpleGrid>
+          </Stack>
         </Box>
 
       </VStack>
