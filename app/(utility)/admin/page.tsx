@@ -100,6 +100,12 @@ type LandingStatsResponse = {
   };
 };
 
+function hasLandingStats(
+  version: LandingPageVersion | (LandingPageVersion & { stats: LandingVersionStats })
+): version is LandingPageVersion & { stats: LandingVersionStats } {
+  return "stats" in version;
+}
+
 // Telegram Types
 type TelegramMember = {
   id: string;
@@ -1182,7 +1188,7 @@ export default function AffiliateAdminPage() {
                 <Stack gap="4" mb="6">
                   <Text fontWeight="medium" color="gray.800">Performance pro Version</Text>
                   {(landingStats?.versions ?? landingVersions).map((version) => {
-                    const stats = "stats" in version ? version.stats : null;
+                    const stats = hasLandingStats(version) ? version.stats : null;
                     return (
                       <Box key={version.id} borderWidth="1px" borderRadius="md" p="4">
                         <Flex justify="space-between" align="start" mb="2" gap="4">
