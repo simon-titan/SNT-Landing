@@ -39,9 +39,8 @@ export default function MonthlyCheckoutPage() {
 
     useEffect(() => {
         setIsClient(true);
+        localStorage.setItem("snt_checkout_product", "monthly");
     }, []);
-
-
 
     // Preis formatieren
     const formatPrice = (price: number) => {

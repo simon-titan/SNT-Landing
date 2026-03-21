@@ -39,8 +39,8 @@ export default function AnnualCheckoutPage() {
 
     useEffect(() => {
         setIsClient(true);
+        localStorage.setItem("snt_checkout_product", "annual");
     }, []);
-
 
     // Preis formatieren
     const formatPrice = (price: number) => {

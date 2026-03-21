@@ -94,7 +94,7 @@ export function PricingSelectionModal({
             console.log('✅ Outseta Registrierung erfolgreich:', event.data);
             
             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-            let redirectUrl = '/thank-you-3?source=outseta&transaction_id=' + (event.data.transactionId || 'unknown');
+            let redirectUrl = `/thank-you-3?source=outseta&provider=outseta&product=${selectedOption || "monthly"}&transaction_id=` + (event.data.transactionId || 'unknown');
             
             if (telegramUserId) {
               redirectUrl += `&telegram_user_id=${telegramUserId}`;
@@ -109,7 +109,7 @@ export function PricingSelectionModal({
           if (currentUrl.includes('success') || currentUrl.includes('completed')) {
             console.log('✅ Outseta Success URL erkannt');
             const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-            let redirectUrl = '/thank-you-3?source=outseta_url';
+            let redirectUrl = `/thank-you-3?source=outseta_url&provider=outseta&product=${selectedOption || "monthly"}`;
             if (telegramUserId) {
               redirectUrl += `&telegram_user_id=${telegramUserId}`;
             }
@@ -128,7 +128,7 @@ export function PricingSelectionModal({
               console.log('✅ Outseta Success Text erkannt');
               setTimeout(() => {
                 const telegramUserId = localStorage.getItem('telegram_user_id') || sessionStorage.getItem('telegram_user_id');
-                let redirectUrl = '/thank-you-3?source=outseta_text';
+                let redirectUrl = `/thank-you-3?source=outseta_text&provider=outseta&product=${selectedOption || "monthly"}`;
                 if (telegramUserId) {
                   redirectUrl += `&telegram_user_id=${telegramUserId}`;
                 }
@@ -241,10 +241,15 @@ export function PricingSelectionModal({
         const telegramUserId =
           localStorage.getItem("telegram_user_id") ||
           sessionStorage.getItem("telegram_user_id");
-        let redirectUrl = `/thank-you-3?subscription_id=${data.subscriptionID}&product=${selectedOption}`;
+        let redirectUrl = `/thank-you-3?source=paypal_subscription&provider=paypal&product=${selectedOption}&subscription_id=${data.subscriptionID}`;
 
         if (telegramUserId) {
           redirectUrl += `&telegram_user_id=${telegramUserId}`;
+        }
+
+        const affiliateCode = localStorage.getItem("snt_affiliate_code");
+        if (affiliateCode) {
+          redirectUrl += `&aff=${affiliateCode}`;
         }
 
         window.location.href = redirectUrl;

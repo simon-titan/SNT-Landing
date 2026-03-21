@@ -179,13 +179,6 @@ export default function ThankYouPage() {
     if (typeof window === "undefined") return;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const affiliateCodeFromQuery = extractAffiliateCodeFromQuery(urlParams);
-    const affiliateCode = affiliateCodeFromQuery || getPersistedAffiliateCode();
-    if (!affiliateCode) return;
-
-    const sessionKey = `snt_affiliate_sale_${affiliateCode}`;
-    if (sessionStorage.getItem(sessionKey)) return;
-
     const source = urlParams.get("source") || "";
     const explicitProvider = urlParams.get("provider") || "";
     const explicitProduct = urlParams.get("product") || "";
@@ -193,7 +186,8 @@ export default function ThankYouPage() {
     const provider =
       explicitProvider ||
       (source.toLowerCase().includes("paypal") ? "paypal" : "outseta");
-    const product = normalizeProduct(explicitProduct, source);
+    const fallbackProduct = localStorage.getItem("snt_checkout_product") || "";
+    const product = normalizeProduct(explicitProduct || fallbackProduct, source);
 
     const pricing = getCurrentPricing();
     const amount =
@@ -205,26 +199,68 @@ export default function ThankYouPage() {
         ? pricing.annual.price
         : pricing.monthly.price;
 
-    const landingSlug = localStorage.getItem(LANDING_SLUG_KEY) || undefined;
-    const metadata = {
-      source,
-      transactionId:
-        urlParams.get("transaction_id") ||
-        urlParams.get("subscription_id") ||
-        urlParams.get("order_id") ||
-        null,
-      landingSlug: landingSlug ?? null,
-    };
+    const transactionId =
+      urlParams.get("transaction_id") ||
+      urlParams.get("subscription_id") ||
+      urlParams.get("order_id") ||
+      null;
 
     const saleDate = urlParams.get("sale_date") ?? undefined;
+    const landingSlug = localStorage.getItem(LANDING_SLUG_KEY) || undefined;
+
+    if (landingSlug) {
+      const landingSessionKey = `snt_landing_sale_${landingSlug}`;
+      if (!sessionStorage.getItem(landingSessionKey)) {
+        void (async () => {
+          try {
+            const landingResponse = await fetch("/api/tracking/sale", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                landingSlug,
+                provider,
+                product,
+                amount,
+                currency: "EUR",
+                transactionId,
+                saleDate,
+              }),
+            });
+
+            if (landingResponse.ok) {
+              sessionStorage.setItem(landingSessionKey, new Date().toISOString());
+            } else {
+              console.error(
+                "Landing page sale tracking failed",
+                landingResponse.status,
+                await landingResponse.text()
+              );
+            }
+          } catch (error) {
+            console.error("Landing page sale tracking error", error);
+          }
+        })();
+      }
+    }
+
+    const affiliateCodeFromQuery = extractAffiliateCodeFromQuery(urlParams);
+    const affiliateCode = affiliateCodeFromQuery || getPersistedAffiliateCode();
+    if (!affiliateCode) return;
+
+    const sessionKey = `snt_affiliate_sale_${affiliateCode}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+
+    const metadata = {
+      source,
+      transactionId,
+      landingSlug: landingSlug ?? null,
+    };
 
     (async () => {
       try {
         const response = await fetch("/api/affiliates/track", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             affiliateCode,
             provider,
@@ -237,36 +273,6 @@ export default function ThankYouPage() {
         });
 
         if (response.ok) {
-          if (landingSlug) {
-            const saleTrackingKey = `${sessionKey}_landing_${landingSlug}`;
-            if (!sessionStorage.getItem(saleTrackingKey)) {
-              const landingResponse = await fetch("/api/tracking/sale", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  landingSlug,
-                  provider,
-                  product,
-                  amount,
-                  currency: "EUR",
-                  transactionId: metadata.transactionId,
-                  saleDate,
-                }),
-              });
-
-              if (landingResponse.ok) {
-                sessionStorage.setItem(saleTrackingKey, new Date().toISOString());
-              } else {
-                console.error(
-                  "Landing page sale tracking failed",
-                  landingResponse.status,
-                  await landingResponse.text()
-                );
-              }
-            }
-          }
           sessionStorage.setItem(sessionKey, new Date().toISOString());
         } else {
           console.error(

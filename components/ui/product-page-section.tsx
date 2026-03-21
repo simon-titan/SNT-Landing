@@ -139,10 +139,15 @@ export function ProductPageSection() {
         const telegramUserId =
           localStorage.getItem("telegram_user_id") ||
           sessionStorage.getItem("telegram_user_id");
-        let redirectUrl = `/thank-you-3?subscription_id=${data.subscriptionID}&product=${selectedPricing}`;
+        let redirectUrl = `/thank-you-3?source=paypal_subscription&provider=paypal&product=${selectedPricing}&subscription_id=${data.subscriptionID}`;
 
         if (telegramUserId) {
           redirectUrl += `&telegram_user_id=${telegramUserId}`;
+        }
+
+        const affiliateCode = localStorage.getItem("snt_affiliate_code");
+        if (affiliateCode) {
+          redirectUrl += `&aff=${affiliateCode}`;
         }
 
         window.location.href = redirectUrl;

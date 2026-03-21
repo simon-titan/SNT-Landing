@@ -35,9 +35,8 @@ export default function LifetimeCheckoutPage() {
 
     useEffect(() => {
         setIsClient(true);
+        localStorage.setItem("snt_checkout_product", "lifetime");
     }, []);
-
-
 
     // Preis formatieren
     const formatPrice = (price: number) => {

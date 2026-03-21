@@ -39,8 +39,8 @@ export default function QuarterlyCheckoutPage() {
 
     useEffect(() => {
         setIsClient(true);
+        localStorage.setItem("snt_checkout_product", "quarterly");
     }, []);
-
 
     // Preis formatieren
     const formatPrice = (price: number) => {
