@@ -216,6 +216,13 @@ export default function AffiliateAdminPage() {
     return window.location.origin;
   }, []);
 
+  const { standardLandingVersion, slugLandingVersions } = useMemo(() => {
+    const list = landingStats?.versions ?? landingVersions;
+    const standard = list.find((v) => v.slug === "standard") ?? null;
+    const slugPages = list.filter((v) => v.slug !== "standard");
+    return { standardLandingVersion: standard, slugLandingVersions: slugPages };
+  }, [landingStats?.versions, landingVersions]);
+
   const linkVariants = [
     { label: "Startseite", path: "/" },
     { label: "Checkout (monatlich)", path: "/checkout/monthly" },
@@ -1185,99 +1192,217 @@ export default function AffiliateAdminPage() {
                   </Box>
                 </Grid>
 
-                <Stack gap="4" mb="6">
+                <Stack gap="6" mb="6">
                   <Text fontWeight="medium" color="gray.800">Performance pro Version</Text>
-                  {(landingStats?.versions ?? landingVersions).map((version) => {
-                    const stats = hasLandingStats(version) ? version.stats : null;
-                    return (
-                      <Box key={version.id} borderWidth="1px" borderRadius="md" p="4">
-                        <Flex justify="space-between" align="start" mb="2" gap="4">
-                          <Box flex="1">
-                            <HStack gap="2" mb="1" flexWrap="wrap">
-                              <Text fontWeight="bold" color="gray.800">{version.name}</Text>
-                              <Badge colorPalette={version.is_active ? "green" : "gray"}>
-                                {version.is_active ? "Aktiv" : "Inaktiv"}
-                              </Badge>
-                              <Badge colorPalette={version.course_type === "paid" ? "blue" : "purple"}>
-                                {version.course_type === "paid" ? "Paid" : "Free"}
-                              </Badge>
-                              <Badge>/landing/{version.slug}</Badge>
-                            </HStack>
-                            <Text fontSize="sm" color="gray.600" mb="3">
-                              {version.title}
-                            </Text>
-                            <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap="3">
-                              <Box borderWidth="1px" borderRadius="md" p="2">
-                                <Text fontSize="xs" color="gray.500">Pageviews</Text>
-                                <Text fontWeight="bold">{stats?.periodViews ?? 0}</Text>
+
+                  {standardLandingVersion && (
+                    <Box color="gray.900">
+                      <Text fontWeight="semibold" color="gray.900" mb="1">
+                        Standard Landing Page (Hauptseite)
+                      </Text>
+                      <Text fontSize="sm" color="gray.700" mb="3">
+                        Tracking für die Startseite <Badge colorPalette="cyan">/</Badge> — getrennt von den Slug-Seiten unter <Badge>/landing/…</Badge>
+                      </Text>
+                      {(() => {
+                        const version = standardLandingVersion;
+                        const stats = hasLandingStats(version) ? version.stats : null;
+                        const previewUrl = `${baseUrl}/`;
+                        return (
+                          <Box borderWidth="1px" borderRadius="md" p="4" borderColor="blue.200" bg="blue.50" color="gray.900">
+                            <Flex justify="space-between" align="start" mb="2" gap="4">
+                              <Box flex="1">
+                                <HStack gap="2" mb="1" flexWrap="wrap">
+                                  <Text fontWeight="bold" color="gray.900">{version.name}</Text>
+                                  <Badge colorPalette={version.is_active ? "green" : "gray"}>
+                                    {version.is_active ? "Aktiv" : "Inaktiv"}
+                                  </Badge>
+                                  <Badge colorPalette={version.course_type === "paid" ? "blue" : "purple"}>
+                                    {version.course_type === "paid" ? "Paid" : "Free"}
+                                  </Badge>
+                                  <Badge colorPalette="cyan">Startseite /</Badge>
+                                </HStack>
+                                <Text fontSize="sm" color="gray.700" mb="3">
+                                  {version.title}
+                                </Text>
+                                <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap="3">
+                                  <Box borderWidth="1px" borderRadius="md" p="2" bg="white" borderColor="gray.200" color="gray.900">
+                                    <Text fontSize="xs" color="gray.600">Pageviews</Text>
+                                    <Text fontWeight="bold" color="gray.900">{stats?.periodViews ?? 0}</Text>
+                                  </Box>
+                                  <Box borderWidth="1px" borderRadius="md" p="2" bg="white" borderColor="gray.200" color="gray.900">
+                                    <Text fontSize="xs" color="gray.600">Sales</Text>
+                                    <Text fontWeight="bold" color="gray.900">{stats?.periodSales ?? 0}</Text>
+                                  </Box>
+                                  <Box borderWidth="1px" borderRadius="md" p="2" bg="white" borderColor="gray.200" color="gray.900">
+                                    <Text fontSize="xs" color="gray.600">Conversion</Text>
+                                    <Text fontWeight="bold" color="gray.900">{(stats?.conversionRate ?? 0).toFixed(2)}%</Text>
+                                  </Box>
+                                  <Box borderWidth="1px" borderRadius="md" p="2" bg="white" borderColor="gray.200" color="gray.900">
+                                    <Text fontSize="xs" color="gray.600">Umsatz</Text>
+                                    <Text fontWeight="bold" color="gray.900">{(stats?.periodRevenue ?? 0).toFixed(2)}€</Text>
+                                  </Box>
+                                </Grid>
+                                {stats && (
+                                  <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="3" mt="3">
+                                    <Box borderWidth="1px" borderRadius="md" p="3" bg="white" borderColor="gray.200" color="gray.900">
+                                      <Text fontSize="sm" fontWeight="semibold" mb="2" color="gray.900">Sales nach Typ</Text>
+                                      {(["monthly", "quarterly", "annual", "lifetime"] as const).map((product) => (
+                                        <Flex key={product} justify="space-between" fontSize="sm" mb="1">
+                                          <Text color="gray.800">{product}</Text>
+                                          <Text color="gray.800" fontWeight="medium">{stats.productBreakdown[product].sales} / {stats.productBreakdown[product].revenue.toFixed(2)}€</Text>
+                                        </Flex>
+                                      ))}
+                                    </Box>
+                                    <Box borderWidth="1px" borderRadius="md" p="3" bg="white" borderColor="gray.200" color="gray.900">
+                                      <Text fontSize="sm" fontWeight="semibold" mb="2" color="gray.900">Sales nach Bezahlmethode</Text>
+                                      {(["outseta", "paypal"] as const).map((provider) => (
+                                        <Flex key={provider} justify="space-between" fontSize="sm" mb="1">
+                                          <Text color="gray.800">{provider}</Text>
+                                          <Text color="gray.800" fontWeight="medium">{stats.providerBreakdown[provider].sales} / {stats.providerBreakdown[provider].revenue.toFixed(2)}€</Text>
+                                        </Flex>
+                                      ))}
+                                    </Box>
+                                  </Grid>
+                                )}
                               </Box>
-                              <Box borderWidth="1px" borderRadius="md" p="2">
-                                <Text fontSize="xs" color="gray.500">Sales</Text>
-                                <Text fontWeight="bold">{stats?.periodSales ?? 0}</Text>
-                              </Box>
-                              <Box borderWidth="1px" borderRadius="md" p="2">
-                                <Text fontSize="xs" color="gray.500">Conversion</Text>
-                                <Text fontWeight="bold">{(stats?.conversionRate ?? 0).toFixed(2)}%</Text>
-                              </Box>
-                              <Box borderWidth="1px" borderRadius="md" p="2">
-                                <Text fontSize="xs" color="gray.500">Umsatz</Text>
-                                <Text fontWeight="bold">{(stats?.periodRevenue ?? 0).toFixed(2)}€</Text>
-                              </Box>
-                            </Grid>
-                            {stats && (
-                              <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="3" mt="3">
-                                <Box borderWidth="1px" borderRadius="md" p="3">
-                                  <Text fontSize="sm" fontWeight="semibold" mb="2">Sales nach Typ</Text>
-                                  {(["monthly", "quarterly", "annual", "lifetime"] as const).map((product) => (
-                                    <Flex key={product} justify="space-between" fontSize="sm" mb="1">
-                                      <Text>{product}</Text>
-                                      <Text>{stats.productBreakdown[product].sales} / {stats.productBreakdown[product].revenue.toFixed(2)}€</Text>
-                                    </Flex>
-                                  ))}
-                                </Box>
-                                <Box borderWidth="1px" borderRadius="md" p="3">
-                                  <Text fontSize="sm" fontWeight="semibold" mb="2">Sales nach Bezahlmethode</Text>
-                                  {(["outseta", "paypal"] as const).map((provider) => (
-                                    <Flex key={provider} justify="space-between" fontSize="sm" mb="1">
-                                      <Text>{provider}</Text>
-                                      <Text>{stats.providerBreakdown[provider].sales} / {stats.providerBreakdown[provider].revenue.toFixed(2)}€</Text>
-                                    </Flex>
-                                  ))}
-                                </Box>
-                              </Grid>
-                            )}
+                              <HStack gap="1">
+                                <IconButton
+                                  aria-label="Vorschau Startseite"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => window.open(previewUrl, "_blank")}
+                                >
+                                  <Eye size={16} />
+                                </IconButton>
+                                <IconButton
+                                  aria-label="Bearbeiten"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditVersion(version)}
+                                >
+                                  <PencilSimple size={16} />
+                                </IconButton>
+                                <IconButton
+                                  aria-label="Löschen"
+                                  size="sm"
+                                  variant="outline"
+                                  colorScheme="red"
+                                  onClick={() => handleDeleteVersion(version.id)}
+                                >
+                                  <Trash size={16} />
+                                </IconButton>
+                              </HStack>
+                            </Flex>
                           </Box>
-                          <HStack gap="1">
-                            <IconButton
-                              aria-label="Vorschau"
-                              size="sm"
-                              variant="outline"
-                              onClick={() => window.open(`${baseUrl}/landing/${version.slug}`, "_blank")}
-                            >
-                              <Eye size={16} />
-                            </IconButton>
-                            <IconButton
-                              aria-label="Bearbeiten"
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditVersion(version)}
-                            >
-                              <PencilSimple size={16} />
-                            </IconButton>
-                            <IconButton
-                              aria-label="Löschen"
-                              size="sm"
-                              variant="outline"
-                              colorScheme="red"
-                              onClick={() => handleDeleteVersion(version.id)}
-                            >
-                              <Trash size={16} />
-                            </IconButton>
-                          </HStack>
-                        </Flex>
-                      </Box>
-                    );
-                  })}
+                        );
+                      })()}
+                    </Box>
+                  )}
+
+                  {slugLandingVersions.length > 0 && (
+                    <Box>
+                      <Text fontWeight="semibold" color="gray.800" mb="1">
+                        Slug-Landingpages
+                      </Text>
+                      <Text fontSize="sm" color="gray.600" mb="3">
+                        Erreichbar unter <Badge>/landing/…</Badge> (je nach Slug)
+                      </Text>
+                      <Stack gap="3">
+                        {slugLandingVersions.map((version) => {
+                          const stats = hasLandingStats(version) ? version.stats : null;
+                          const previewUrl = `${baseUrl}/landing/${version.slug}`;
+                          return (
+                            <Box key={version.id} borderWidth="1px" borderRadius="md" p="4">
+                              <Flex justify="space-between" align="start" mb="2" gap="4">
+                                <Box flex="1">
+                                  <HStack gap="2" mb="1" flexWrap="wrap">
+                                    <Text fontWeight="bold" color="gray.800">{version.name}</Text>
+                                    <Badge colorPalette={version.is_active ? "green" : "gray"}>
+                                      {version.is_active ? "Aktiv" : "Inaktiv"}
+                                    </Badge>
+                                    <Badge colorPalette={version.course_type === "paid" ? "blue" : "purple"}>
+                                      {version.course_type === "paid" ? "Paid" : "Free"}
+                                    </Badge>
+                                    <Badge>/landing/{version.slug}</Badge>
+                                  </HStack>
+                                  <Text fontSize="sm" color="gray.600" mb="3">
+                                    {version.title}
+                                  </Text>
+                                  <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap="3">
+                                    <Box borderWidth="1px" borderRadius="md" p="2">
+                                      <Text fontSize="xs" color="gray.500">Pageviews</Text>
+                                      <Text fontWeight="bold">{stats?.periodViews ?? 0}</Text>
+                                    </Box>
+                                    <Box borderWidth="1px" borderRadius="md" p="2">
+                                      <Text fontSize="xs" color="gray.500">Sales</Text>
+                                      <Text fontWeight="bold">{stats?.periodSales ?? 0}</Text>
+                                    </Box>
+                                    <Box borderWidth="1px" borderRadius="md" p="2">
+                                      <Text fontSize="xs" color="gray.500">Conversion</Text>
+                                      <Text fontWeight="bold">{(stats?.conversionRate ?? 0).toFixed(2)}%</Text>
+                                    </Box>
+                                    <Box borderWidth="1px" borderRadius="md" p="2">
+                                      <Text fontSize="xs" color="gray.500">Umsatz</Text>
+                                      <Text fontWeight="bold">{(stats?.periodRevenue ?? 0).toFixed(2)}€</Text>
+                                    </Box>
+                                  </Grid>
+                                  {stats && (
+                                    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="3" mt="3">
+                                      <Box borderWidth="1px" borderRadius="md" p="3">
+                                        <Text fontSize="sm" fontWeight="semibold" mb="2">Sales nach Typ</Text>
+                                        {(["monthly", "quarterly", "annual", "lifetime"] as const).map((product) => (
+                                          <Flex key={product} justify="space-between" fontSize="sm" mb="1">
+                                            <Text>{product}</Text>
+                                            <Text>{stats.productBreakdown[product].sales} / {stats.productBreakdown[product].revenue.toFixed(2)}€</Text>
+                                          </Flex>
+                                        ))}
+                                      </Box>
+                                      <Box borderWidth="1px" borderRadius="md" p="3">
+                                        <Text fontSize="sm" fontWeight="semibold" mb="2">Sales nach Bezahlmethode</Text>
+                                        {(["outseta", "paypal"] as const).map((provider) => (
+                                          <Flex key={provider} justify="space-between" fontSize="sm" mb="1">
+                                            <Text>{provider}</Text>
+                                            <Text>{stats.providerBreakdown[provider].sales} / {stats.providerBreakdown[provider].revenue.toFixed(2)}€</Text>
+                                          </Flex>
+                                        ))}
+                                      </Box>
+                                    </Grid>
+                                  )}
+                                </Box>
+                                <HStack gap="1">
+                                  <IconButton
+                                    aria-label="Vorschau"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => window.open(previewUrl, "_blank")}
+                                  >
+                                    <Eye size={16} />
+                                  </IconButton>
+                                  <IconButton
+                                    aria-label="Bearbeiten"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleEditVersion(version)}
+                                  >
+                                    <PencilSimple size={16} />
+                                  </IconButton>
+                                  <IconButton
+                                    aria-label="Löschen"
+                                    size="sm"
+                                    variant="outline"
+                                    colorScheme="red"
+                                    onClick={() => handleDeleteVersion(version.id)}
+                                  >
+                                    <Trash size={16} />
+                                  </IconButton>
+                                </HStack>
+                              </Flex>
+                            </Box>
+                          );
+                        })}
+                      </Stack>
+                    </Box>
+                  )}
                 </Stack>
 
                 {/* Version erstellen/bearbeiten Form */}

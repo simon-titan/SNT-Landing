@@ -57,8 +57,7 @@ export function PricingSelectionModal({
       } else if (initialPlan === "annual") {
         setSelectedOption("annual");
       } else {
-        // Default to annual if no initial plan (beste Empfehlung)
-        setSelectedOption("annual");
+        setSelectedOption("quarterly");
       }
 
       // Wenn skipToCheckout true ist, direkt zum Checkout springen
@@ -673,46 +672,7 @@ export function PricingSelectionModal({
                     </HStack>
                   </Box>
 
-                  {/* Quarterly Option */}
-                  <Box
-                    as="label"
-                    cursor="pointer"
-                    p={4}
-                    borderRadius="lg"
-                    border="1px solid"
-                    borderColor={
-                      selectedOption === "quarterly"
-                        ? SNT_BLUE
-                        : "rgba(255, 255, 255, 0.1)"
-                    }
-                    bg={
-                      selectedOption === "quarterly"
-                        ? "rgba(6, 140, 239, 0.1)"
-                        : "rgba(255, 255, 255, 0.02)"
-                    }
-                    transition="all 0.2s"
-                    _hover={{
-                      borderColor: "rgba(6, 140, 239, 0.5)",
-                      bg: "rgba(6, 140, 239, 0.05)",
-                    }}
-                  >
-                    <HStack gap={3}>
-                      <RadioGroup.Item value="quarterly">
-                        <RadioGroup.ItemHiddenInput />
-                        <RadioGroup.ItemIndicator />
-                      </RadioGroup.Item>
-                      <VStack align="start" gap={0} flex={1}>
-                        <Text color="white" fontWeight="medium">
-                          SNT-PREMIUM  / {formatPrice(pricing.quarterly.price)}
-                        </Text>
-                        <Text color="gray.400" fontSize="md">
-                          3-Monatiges Abo - <Text as="span" color="white">Spare ca. <b style={{ textDecoration: "underline" }}>80€</b></Text> 
-                          </Text>
-                      </VStack>
-                    </HStack>
-                  </Box>
-
-                  {/* Annual Option - Empfehlung */}
+                  {/* Quarterly Option - Empfehlung */}
                   <Box
                     as="label"
                     cursor="pointer"
@@ -720,12 +680,12 @@ export function PricingSelectionModal({
                     borderRadius="lg"
                     border="2px solid"
                     borderColor={
-                      selectedOption === "annual"
+                      selectedOption === "quarterly"
                         ? SNT_BLUE
                         : "rgba(255, 255, 255, 0.1)"
                     }
                     bg={
-                      selectedOption === "annual"
+                      selectedOption === "quarterly"
                         ? "rgba(6, 140, 239, 0.15)"
                         : "rgba(255, 255, 255, 0.02)"
                     }
@@ -751,12 +711,51 @@ export function PricingSelectionModal({
                       EMPFEHLUNG
                     </Box>
                     <HStack gap={3}>
-                      <RadioGroup.Item value="annual">
+                      <RadioGroup.Item value="quarterly">
                         <RadioGroup.ItemHiddenInput />
                         <RadioGroup.ItemIndicator />
                       </RadioGroup.Item>
                       <VStack align="start" gap={0} flex={1}>
                         <Text color="white" fontWeight="bold">
+                          SNT-PREMIUM  / {formatPrice(pricing.quarterly.price)}
+                        </Text>
+                        <Text color="gray.400" fontSize="md">
+                          3-Monatiges Abo - <Text as="span" color="white">Spare ca. <b style={{ textDecoration: "underline" }}>80€</b></Text> 
+                          </Text>
+                      </VStack>
+                    </HStack>
+                  </Box>
+
+                  {/* Annual Option */}
+                  <Box
+                    as="label"
+                    cursor="pointer"
+                    p={4}
+                    borderRadius="lg"
+                    border="1px solid"
+                    borderColor={
+                      selectedOption === "annual"
+                        ? SNT_BLUE
+                        : "rgba(255, 255, 255, 0.1)"
+                    }
+                    bg={
+                      selectedOption === "annual"
+                        ? "rgba(6, 140, 239, 0.1)"
+                        : "rgba(255, 255, 255, 0.02)"
+                    }
+                    transition="all 0.2s"
+                    _hover={{
+                      borderColor: "rgba(6, 140, 239, 0.5)",
+                      bg: "rgba(6, 140, 239, 0.05)",
+                    }}
+                  >
+                    <HStack gap={3}>
+                      <RadioGroup.Item value="annual">
+                        <RadioGroup.ItemHiddenInput />
+                        <RadioGroup.ItemIndicator />
+                      </RadioGroup.Item>
+                      <VStack align="start" gap={0} flex={1}>
+                        <Text color="white" fontWeight="medium">
                           SNT-PREMIUM  / {formatPrice(pricing.annual.price)}
                         </Text>
                         <Text color="gray.400" fontSize="md">

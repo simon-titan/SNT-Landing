@@ -14,43 +14,16 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { SimpleVimeoPlayer } from "@/components/ui/simple-vimeo-player";
-import { CheckCircle, Star, Users, Lock, VideoCamera, ChartLineUp, WhatsappLogo, DiscordLogo, BookOpen } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, Star, Users, Lock } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { PricingSelectionModal } from "@/components/ui/pricing-selection-modal";
 import { RegistrationModal } from "@/components/ui/registration-modal";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 import { keyframes } from "@emotion/react";
 import { ApprovedIcon } from "@/components/ui/approved-icon";
+import { LANDING_PAID_PRODUCT_FEATURES } from "@/config/landing-paid-product-features";
 
 const SNT_BLUE = "#068CEF";
-
-const features = [
-  {
-    icon: VideoCamera,
-    label: "7 Wöchentliche Live Calls",
-    detail: "Livetrading, Mindset, Anfängercalls",
-  },
-  {
-    icon: ChartLineUp,
-    label: "NEFS Trading Strategie",
-    detail: null,
-  },
-  {
-    icon: WhatsappLogo,
-    label: "WhatsApp Community",
-    detail: null,
-  },
-  {
-    icon: DiscordLogo,
-    label: "Discord Community",
-    detail: null,
-  },
-  {
-    icon: BookOpen,
-    label: "Über 40 Std. Lernmaterial",
-    detail: null,
-  },
-];
 
 interface ConfigurableProductPageSectionProps {
   title: string;
@@ -64,7 +37,7 @@ export function ConfigurableProductPageSection({
   courseType 
 }: ConfigurableProductPageSectionProps) {
   const router = useRouter();
-  const [selectedPricing, setSelectedPricing] = useState<string>("monthly");
+  const [selectedPricing, setSelectedPricing] = useState<string>("quarterly");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -526,7 +499,9 @@ export function ConfigurableProductPageSection({
               <Text fontSize="sm" fontWeight="semibold" color="white" mb={1} textAlign="left">
                 Was du bekommst
               </Text>
-              {features.map((feat, idx) => (
+              {LANDING_PAID_PRODUCT_FEATURES.map((feat, idx) => {
+                const FeatIcon = feat.icon;
+                return (
                 <HStack
                   key={idx}
                   p={3}
@@ -546,7 +521,7 @@ export function ConfigurableProductPageSection({
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <feat.icon size={18} color={SNT_BLUE} weight="fill" />
+                    <FeatIcon size={18} color={SNT_BLUE} weight="fill" />
                   </Box>
                   <VStack align="start" gap={0}>
                     <Text fontSize="sm" fontWeight="semibold" color="white" lineHeight="1.3">
@@ -559,7 +534,8 @@ export function ConfigurableProductPageSection({
                     )}
                   </VStack>
                 </HStack>
-              ))}
+              );
+              })}
             </VStack>
           )}
         </VStack>
@@ -792,7 +768,7 @@ export function ConfigurableProductPageSection({
                   </HStack>
                 </Box>
 
-                {/* SNT-PREMIUM Quartal */}
+                {/* SNT-PREMIUM Quartal - Empfehlung */}
                 <Box
                   as="button"
                   onClick={() => setSelectedPricing("quarterly")}
@@ -820,7 +796,22 @@ export function ConfigurableProductPageSection({
                   transition="all 0.2s"
                   textAlign="left"
                   w="full"
+                  position="relative"
                 >
+                  <Box
+                    position="absolute"
+                    top={-2}
+                    right={-2}
+                    bg="red.500"
+                    color="white"
+                    px={2}
+                    py={0.5}
+                    borderRadius="full"
+                    fontSize="2xs"
+                    fontWeight="bold"
+                  >
+                    EMPFEHLUNG
+                  </Box>
                   <HStack gap={3}>
                     <Box
                       w={5}
@@ -847,7 +838,7 @@ export function ConfigurableProductPageSection({
                   </HStack>
                 </Box>
 
-                {/* SNT-PREMIUM Jährlich - Empfehlung */}
+                {/* SNT-PREMIUM Jährlich */}
                 <Box
                   as="button"
                   onClick={() => setSelectedPricing("annual")}
@@ -875,22 +866,7 @@ export function ConfigurableProductPageSection({
                   transition="all 0.2s"
                   textAlign="left"
                   w="full"
-                  position="relative"
                 >
-                  <Box
-                    position="absolute"
-                    top={-2}
-                    right={-2}
-                    bg="red.500"
-                    color="white"
-                    px={2}
-                    py={0.5}
-                    borderRadius="full"
-                    fontSize="2xs"
-                    fontWeight="bold"
-                  >
-                    EMPFEHLUNG
-                  </Box>
                   <HStack gap={3}>
                     <Box
                       w={5}
@@ -1240,7 +1216,9 @@ export function ConfigurableProductPageSection({
             </Box>
 
             <SimpleGrid columns={2} gap={3} flex={1}>
-              {features.map((feat, idx) => (
+              {LANDING_PAID_PRODUCT_FEATURES.map((feat, idx) => {
+                const FeatIcon = feat.icon;
+                return (
                 <HStack
                   key={idx}
                   p={4}
@@ -1265,7 +1243,7 @@ export function ConfigurableProductPageSection({
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <feat.icon size={20} color={SNT_BLUE} weight="fill" />
+                    <FeatIcon size={20} color={SNT_BLUE} weight="fill" />
                   </Box>
                   <VStack align="start" gap={0.5}>
                     <Text fontSize="sm" fontWeight="semibold" color="white" lineHeight="1.3">
@@ -1278,7 +1256,8 @@ export function ConfigurableProductPageSection({
                     )}
                   </VStack>
                 </HStack>
-              ))}
+              );
+              })}
             </SimpleGrid>
           </Stack>
         </Box>

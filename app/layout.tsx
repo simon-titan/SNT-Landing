@@ -40,6 +40,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <html suppressHydrationWarning className="cc--theme light">
       <Head>
         <title>SNTTRADES</title>
+        <link rel="icon" href="/assets/favicon-emre.png" type="image/png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:image" content="/assets/opengraph.png" />
         <noscript>

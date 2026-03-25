@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -10,40 +10,19 @@ import {
   Heading,
   Button,
   SimpleGrid,
-  Image,
-  Flex,
 } from "@chakra-ui/react";
 import { BrandedVimeoPlayer } from "@/components/ui/BrandedVimeoPlayer";
-import { CheckCircle, Star, Users, Lock } from "@phosphor-icons/react/dist/ssr";
-import { useRouter } from "next/navigation";
+import { Star, Lock } from "@phosphor-icons/react/dist/ssr";
 import { PricingSelectionModal } from "@/components/ui/pricing-selection-modal";
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 import { keyframes } from "@emotion/react";
 import { ApprovedIcon } from "@/components/ui/approved-icon";
+import { LANDING_PAID_PRODUCT_FEATURES } from "@/config/landing-paid-product-features";
 
 const SNT_BLUE = "#068CEF";
 
-// Produktbilder aus VORTEILE Ordner
-const productImages = [
-  "/assets/VORTEILE/V1.png",
-  "/assets/VORTEILE/V2.png",
-  "/assets/VORTEILE/V3.png",
-  "/assets/VORTEILE/V4.png",
-];
-
-// Features-Liste
-const features = [
-  "3-5 Wöchentliche Zoom Calls (Livetrading, Mindset, Anfängercalls)",
-  "Strukturierter Videokurs",
-  "Über 10h+ Lernmaterial",
-  "Exklusive Community mit gleichgesinnten (-1000 member)",
-  "Tägliche Marktanalysen",
-];
-
 export function ProductPageSection() {
-  const router = useRouter();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedPricing, setSelectedPricing] = useState<string>("monthly");
+  const [selectedPricing, setSelectedPricing] = useState<string>("quarterly");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -262,14 +241,6 @@ export function ProductPageSection() {
     setIsModalOpen(true);
   };
 
-  const handleImageClick = (img: string) => {
-    setSelectedImage(img);
-  };
-
-  const handleVideoClick = () => {
-    setSelectedImage(null);
-  };
-
   return (
     <Box
       id="product-page-section"
@@ -283,14 +254,68 @@ export function ProductPageSection() {
         linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(10,12,10,1) 100%)"
     >
       <VStack gap={{ base: 6, md: 8 }} maxW="1400px" mx="auto">
+        {/* Titel über Video (wie Slug / Configurable) */}
+        <VStack gap={4} w="full" textAlign="center">
+          <HStack
+            mx={1.5}
+            justifyContent="center"
+            animation={`${keyframes({
+              from: { opacity: 0, transform: "translateY(-6%) scale(0.96)", filter: "blur(2px)" },
+              to: { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
+            })} 1600ms ease-out both`}
+          >
+            <ApprovedIcon boxSize={{ base: 5, md: 6 }} />
+            <Heading
+              as="h2"
+              color="white"
+              textAlign="center"
+              fontWeight="600"
+              fontSize={{ base: "sm", md: "md" }}
+              lineHeight="1"
+            >
+              SNTTRADES™
+            </Heading>
+          </HStack>
+
+          <Heading
+            as="h1"
+            fontSize={{ base: "2xl", md: "4xl" }}
+            fontWeight="bold"
+            color="white"
+            lineHeight="tight"
+            textAlign="center"
+            textTransform="uppercase"
+            letterSpacing={{ base: "0.02em", md: "0.03em" }}
+          >
+            WARUM SOLLTE ICH{" "}
+            <Box
+              as="span"
+              background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
+              color="white"
+              px={1}
+              py={1}
+              borderRadius="md"
+              fontWeight="bold"
+              display="inline-block"
+              border="1px solid rgba(59, 130, 246, 0.2)"
+              boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
+              backdropFilter="blur(6px)"
+              textTransform="none"
+            >
+              TRADING
+            </Box>{" "}
+            LERNEN ? (5MIN)
+          </Heading>
+        </VStack>
+
         {/* Mobile Layout: Video oben, Details unten */}
         <VStack
-          gap={6}
+          gap={0}
           w="full"
           display={{ base: "flex", md: "none" }}
           align="stretch"
         >
-          {/* Video Player / Image Display */}
+          {/* Video Player */}
           <Box
             w="100%"
             aspectRatio={16 / 9}
@@ -300,244 +325,17 @@ export function ProductPageSection() {
             borderRadius="lg"
             border="1px solid rgba(59, 130, 246, 0.15)"
             boxShadow="0 8px 32px rgba(59, 130, 246, 0.08)"
+            mb={6}
           >
-            {selectedImage ? (
-              <Image
-                src={selectedImage}
-                alt="Produktbild"
-                w="100%"
-                h="100%"
-                objectFit="cover"
-              />
-            ) : (
-              <BrandedVimeoPlayer videoId="1104311683" autoplay={true} muted={true} />
-            )}
-          </Box>
-
-          {/* Thumbnail Gallery */}
-          <Box
-            w="full"
-            overflowX="auto"
-            pb={2}
-            css={{
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            <HStack gap={2} w="max-content">
-              {/* Video Thumbnail */}
-              <Box
-                flexShrink={0}
-                w="80px"
-                h="60px"
-                borderRadius="md"
-                overflow="hidden"
-                cursor="pointer"
-                border={
-                  selectedImage === null
-                    ? "2px solid"
-                    : "1px solid rgba(59, 130, 246, 0.15)"
-                }
-                borderColor={
-                  selectedImage === null ? SNT_BLUE : "rgba(59, 130, 246, 0.15)"
-                }
-                onClick={handleVideoClick}
-                _hover={{ borderColor: SNT_BLUE }}
-                transition="all 0.2s"
-                position="relative"
-                bg="black"
-              >
-                <Box
-                  position="absolute"
-                  inset={0}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  bg="rgba(0,0,0,0.5)"
-                  zIndex={1}
-                >
-                  <Box
-                    w="24px"
-                    h="24px"
-                    borderRadius="full"
-                    bg="rgba(255,255,255,0.9)"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Box
-                      w={0}
-                      h={0}
-                      borderLeft="8px solid black"
-                      borderTop="6px solid transparent"
-                      borderBottom="6px solid transparent"
-                      ml="2px"
-                    />
-                  </Box>
-                </Box>
-              </Box>
-              {productImages.map((img, idx) => (
-                <Box
-                  key={idx}
-                  flexShrink={0}
-                  w="80px"
-                  h="60px"
-                  borderRadius="md"
-                  overflow="hidden"
-                  cursor="pointer"
-                  border={
-                    selectedImage === img
-                      ? "2px solid"
-                      : "1px solid rgba(59, 130, 246, 0.15)"
-                  }
-                  borderColor={
-                    selectedImage === img ? SNT_BLUE : "rgba(59, 130, 246, 0.15)"
-                  }
-                  onClick={() => handleImageClick(img)}
-                  _hover={{ borderColor: SNT_BLUE }}
-                  transition="all 0.2s"
-                >
-                  <Image
-                    src={img}
-                    alt={`Produktbild ${idx + 1}`}
-                    w="100%"
-                    h="100%"
-                    objectFit="cover"
-                  />
-                </Box>
-              ))}
-            </HStack>
-          </Box>
-
-          {/* Community Stats Banner - direkt unter Galerie */}
-          <Box
-            p={3}
-            w="full"
-            bg="rgba(10, 14, 10, 0.6)"
-            backdropFilter="blur(12px)"
-            borderRadius="lg"
-            border="1px solid rgba(59, 130, 246, 0.12)"
-            boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.08)"
-          >
-            <Stack direction="row" align="center" gap={2} justify="center">
-              <Stack direction="row" gap="-2">
-                <Box
-                  w="6"
-                  h="6"
-                  borderRadius="full"
-                  border="2px solid rgba(59, 130, 246, 0.25)"
-                  overflow="hidden"
-                  bg="gray.200"
-                  boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                >
-                  <img
-                    src="/assets/community-stats/user_6819319_6ec853ff-5777-4398-8fcc-06e2621cbcf8.avif"
-                    alt="Community member"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </Box>
-                <Box
-                  w="6"
-                  h="6"
-                  borderRadius="full"
-                  border="2px solid rgba(59, 130, 246, 0.25)"
-                  overflow="hidden"
-                  bg="gray.200"
-                  boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                >
-                  <img
-                    src="/assets/community-stats/4208db19763848b131989eadba9899aa.avif"
-                    alt="Community member"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </Box>
-                <Box
-                  w="6"
-                  h="6"
-                  borderRadius="full"
-                  border="2px solid rgba(59, 130, 246, 0.25)"
-                  overflow="hidden"
-                  bg="gray.200"
-                  boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                >
-                  <img
-                    src="/assets/community-stats/393d1b15978eed96285cf196b2f51eda.avif"
-                    alt="Community member"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </Box>
-              </Stack>
-              <Text
-                fontSize="xs"
-                color="gray.200"
-                fontWeight="medium"
-                textShadow="0 1px 2px rgba(0,0,0,0.3)"
-              >
-                ...Bereits über{" "}
-                <Text as="span" fontWeight="bold">
-                  1000+ Trader
-                </Text>{" "}
-                auf ihrem Weg begleitet und ausgebildet.
-              </Text>
-            </Stack>
+            <BrandedVimeoPlayer videoId="1177003953" autoplay={true} muted={true} />
           </Box>
 
           {/* Product Details */}
           <VStack align="start" gap={3}>
-            <HStack
-              mx={1.5}
-              justifyContent="flex-start"
-              animation={`${keyframes({
-                from: { opacity: 0, transform: "translateY(-6%) scale(0.96)", filter: "blur(2px)" },
-                to: { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
-              })} 1600ms ease-out both`}
-            >
-              <ApprovedIcon boxSize={{ base: 5, md: 6 }} />
-              <Heading
-                as="h2"
-                color="white"
-                textAlign="left"
-                fontWeight="600"
-                fontSize={{ base: "sm", md: "md" }}
-                lineHeight="1"
-              >
-                SNTTRADES™
-              </Heading>
-            </HStack>
-            <Heading
-              as="h1"
-              px={1}
-              fontSize={{ base: "2xl", md: "3xl" }}
-              fontWeight="bold"
-              color="white"
-              lineHeight="tight"
-            >
-              LERNE WIE DU{" "}
-              <Box
-                as="span"
-                background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-                color="white"
-                px={1}
-                py={1}
-                borderRadius="md"
-                fontWeight="bold"
-                display="inline-block"
-                border="1px solid rgba(59, 130, 246, 0.2)"
-                boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-                backdropFilter="blur(6px)"
-              >
-                PROFITABEL TRADEST
-              </Box>
-            </Heading>
-
             {/* Rating */}
             <HStack gap={2}>
               <HStack gap={0.5}>
                 {[...Array(5)].map((_, i) => {
-                  // Durchschnitt: (13 × 5 + 3 × 4) / 16 = 4.8125 ≈ 4.8
                   const averageRating = 4.8;
                   return (
                     <Star
@@ -550,7 +348,7 @@ export function ProductPageSection() {
                 })}
               </HStack>
               <Text fontSize="sm" color="gray.300">
-                4.8 (16)
+                4.8
               </Text>
             </HStack>
 
@@ -585,23 +383,48 @@ export function ProductPageSection() {
           </VStack>
 
           {/* Features Section */}
-          <VStack gap={3} w="full" align="stretch" mt={4}>
-            {/* Trennstrich */}
-            <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={2} />
-
-            <Text fontSize="sm" fontWeight="semibold" color="white" mb={2} textAlign="left">
+          <VStack gap={2} w="full" align="stretch" mt={4}>
+            <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={1} />
+            <Text fontSize="sm" fontWeight="semibold" color="white" mb={1} textAlign="left">
               Was du bekommst
             </Text>
-            {features.map((feature, idx) => (
-              <HStack key={idx} align="start" gap={3} justify="flex-start">
-                <Box flexShrink={0} w="20px" h="20px" display="flex" alignItems="flex-start" justifyContent="flex-start" pt="2px">
-                  <CheckCircle size={20} color={SNT_BLUE} weight="fill" />
-                </Box>
-                <Text fontSize="sm" color="gray.300" textAlign="left" flex={1}>
-                  {feature}
-                </Text>
-              </HStack>
-            ))}
+            {LANDING_PAID_PRODUCT_FEATURES.map((feat, idx) => {
+              const FeatIcon = feat.icon;
+              return (
+                <HStack
+                  key={idx}
+                  p={3}
+                  borderRadius="xl"
+                  border="1px solid rgba(59, 130, 246, 0.2)"
+                  bg="rgba(10, 14, 10, 0.7)"
+                  backdropFilter="blur(8px)"
+                  gap={3}
+                  align="center"
+                >
+                  <Box
+                    p="6px"
+                    borderRadius="lg"
+                    bg="rgba(59, 130, 246, 0.18)"
+                    flexShrink={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <FeatIcon size={18} color={SNT_BLUE} weight="fill" />
+                  </Box>
+                  <VStack align="start" gap={0}>
+                    <Text fontSize="sm" fontWeight="semibold" color="white" lineHeight="1.3">
+                      {feat.label}
+                    </Text>
+                    {feat.detail && (
+                      <Text fontSize="xs" color="gray.400" lineHeight="1.3">
+                        {feat.detail}
+                      </Text>
+                    )}
+                  </VStack>
+                </HStack>
+              );
+            })}
           </VStack>
         </VStack>
 
@@ -613,9 +436,8 @@ export function ProductPageSection() {
           display={{ base: "none", md: "flex" }}
           align="start"
         >
-          {/* Left Side: Video & Gallery */}
+          {/* Left Side: Video */}
           <VStack gap={4} flex={{ base: 1, md: "0 0 55%" }} maxW="55%" align="stretch">
-            {/* Main Video Player / Image Display */}
             <Box
               w="100%"
               aspectRatio={16 / 9}
@@ -626,243 +448,17 @@ export function ProductPageSection() {
               border="1px solid rgba(59, 130, 246, 0.3)"
               boxShadow="0 8px 32px rgba(59, 130, 246, 0.2)"
             >
-              {selectedImage ? (
-                <Image
-                  src={selectedImage}
-                  alt="Produktbild"
-                  w="100%"
-                  h="100%"
-                  objectFit="cover"
-                />
-              ) : (
-                <BrandedVimeoPlayer videoId="1104311683" autoplay={true} muted={true} />
-              )}
-            </Box>
-
-            {/* Thumbnail Gallery */}
-            <Box
-              w="full"
-              overflowX="auto"
-              css={{
-                "&::-webkit-scrollbar": {
-                  display: "none",
-                },
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-              }}
-            >
-              <HStack gap={3} w="max-content">
-                {/* Video Thumbnail */}
-                <Box
-                  w="120px"
-                  h="80px"
-                  flexShrink={0}
-                  borderRadius="md"
-                  overflow="hidden"
-                  cursor="pointer"
-                  border={
-                    selectedImage === null
-                      ? "2px solid"
-                      : "1px solid rgba(59, 130, 246, 0.3)"
-                  }
-                  borderColor={
-                    selectedImage === null ? SNT_BLUE : "rgba(59, 130, 246, 0.3)"
-                  }
-                  onClick={handleVideoClick}
-                  _hover={{ borderColor: SNT_BLUE }}
-                  transition="all 0.2s"
-                  position="relative"
-                  bg="black"
-                >
-                  <Box
-                    position="absolute"
-                    inset={0}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    bg="rgba(0,0,0,0.5)"
-                    zIndex={1}
-                  >
-                    <Box
-                      w="32px"
-                      h="32px"
-                      borderRadius="full"
-                      bg="rgba(255,255,255,0.9)"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Box
-                        w={0}
-                        h={0}
-                        borderLeft="10px solid black"
-                        borderTop="8px solid transparent"
-                        borderBottom="8px solid transparent"
-                        ml="3px"
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-                {productImages.map((img, idx) => (
-                  <Box
-                    key={idx}
-                    w="120px"
-                    h="80px"
-                    flexShrink={0}
-                    borderRadius="md"
-                    overflow="hidden"
-                    cursor="pointer"
-                    border={
-                      selectedImage === img
-                        ? "2px solid"
-                        : "1px solid rgba(59, 130, 246, 0.3)"
-                    }
-                    borderColor={
-                      selectedImage === img ? SNT_BLUE : "rgba(59, 130, 246, 0.3)"
-                    }
-                    onClick={() => handleImageClick(img)}
-                    _hover={{ borderColor: SNT_BLUE }}
-                    transition="all 0.2s"
-                  >
-                    <Image
-                      src={img}
-                      alt={`Produktbild ${idx + 1}`}
-                      w="100%"
-                      h="100%"
-                      objectFit="cover"
-                    />
-                  </Box>
-                ))}
-              </HStack>
-            </Box>
-
-            {/* Community Stats Banner - direkt unter Galerie */}
-            <Box
-              p={3}
-              w="full"
-              bg="rgba(10, 14, 10, 0.6)"
-              backdropFilter="blur(12px)"
-              borderRadius="lg"
-              border="1px solid rgba(59, 130, 246, 0.25)"
-              boxShadow="0 8px 32px 0 rgba(59, 130, 246, 0.20)"
-            >
-              <Stack direction="row" align="center" gap={2} justify="center">
-                <Stack direction="row" gap="-2">
-                  <Box
-                    w="6"
-                    h="6"
-                    borderRadius="full"
-                    border="2px solid rgba(59, 130, 246, 0.25)"
-                    overflow="hidden"
-                    bg="gray.200"
-                    boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                  >
-                    <img
-                      src="/assets/community-stats/user_6819319_6ec853ff-5777-4398-8fcc-06e2621cbcf8.avif"
-                      alt="Community member"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  </Box>
-                  <Box
-                    w="6"
-                    h="6"
-                    borderRadius="full"
-                    border="2px solid rgba(59, 130, 246, 0.25)"
-                    overflow="hidden"
-                    bg="gray.200"
-                    boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                  >
-                    <img
-                      src="/assets/community-stats/4208db19763848b131989eadba9899aa.avif"
-                      alt="Community member"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  </Box>
-                  <Box
-                    w="6"
-                    h="6"
-                    borderRadius="full"
-                    border="2px solid rgba(59, 130, 246, 0.25)"
-                    overflow="hidden"
-                    bg="gray.200"
-                    boxShadow="0 4px 8px rgba(0,0,0,0.1)"
-                  >
-                    <img
-                      src="/assets/community-stats/393d1b15978eed96285cf196b2f51eda.avif"
-                      alt="Community member"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  </Box>
-                </Stack>
-                <Text
-                  fontSize="xs"
-                  color="gray.200"
-                  fontWeight="medium"
-                  textShadow="0 1px 2px rgba(0,0,0,0.3)"
-                >
-                  ...Bereits über{" "}
-                  <Text as="span" fontWeight="bold">
-                    1000+ Trader
-                  </Text>{" "}
-                  auf ihrem Weg begleitet und ausgebildet.
-                </Text>
-              </Stack>
+              <BrandedVimeoPlayer videoId="1177003953" autoplay={true} muted={true} />
             </Box>
           </VStack>
 
           {/* Right Side: Product Details */}
           <VStack gap={6} flex={1} align="stretch" minW={0}>
             <VStack align="start" gap={3}>
-              <HStack
-                mx={1.5}
-                justifyContent="flex-start"
-                animation={`${keyframes({
-                  from: { opacity: 0, transform: "translateY(-6%) scale(0.96)", filter: "blur(2px)" },
-                  to: { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
-                })} 1600ms ease-out both`}
-              >
-                <ApprovedIcon boxSize={{ base: 5, md: 6 }} />
-                <Heading
-                  as="h2"
-                  color="white"
-                  textAlign="left"
-                  fontWeight="600"
-                  fontSize={{ base: "sm", md: "md" }}
-                  lineHeight="1"
-                >
-                  SNTTRADES™
-                </Heading>
-              </HStack>
-              <Heading
-                as="h1"
-                fontSize="3xl"
-                fontWeight="bold"
-                color="white"
-                lineHeight="tight"
-              >
-                LERNE WIE DU{" "}
-                <Box
-                  as="span"
-                  background="linear-gradient(90deg, rgba(59, 130, 246,0.28), transparent 95%)"
-                  color="white"
-                  px={1}
-                  py={1}
-                  borderRadius="md"
-                  fontWeight="bold"
-                  display="inline-block"
-                  border="1px solid rgba(59, 130, 246, 0.2)"
-                  boxShadow="0 0 0 1px rgba(59, 130, 246, 0.25) inset, 0 0 24px rgba(59, 130, 246, 0.25)"
-                  backdropFilter="blur(6px)"
-                >
-                  PROFITABEL TRADEST
-                </Box>
-              </Heading>
-
               {/* Rating */}
               <HStack gap={2}>
                 <HStack gap={0.5}>
                   {[...Array(5)].map((_, i) => {
-                    // Durchschnitt: (13 × 5 + 3 × 4) / 16 = 4.8125 ≈ 4.8
                     const averageRating = 4.8;
                     return (
                       <Star
@@ -875,7 +471,7 @@ export function ProductPageSection() {
                   })}
                 </HStack>
                 <Text fontSize="sm" color="gray.300">
-                  4.8 (16)
+                  4.8
                 </Text>
               </HStack>
 
@@ -966,7 +562,7 @@ export function ProductPageSection() {
                 </HStack>
               </Box>
 
-              {/* SNT-PREMIUM Quartal */}
+              {/* SNT-PREMIUM Quartal - Empfehlung */}
               <Box
                 as="button"
                 onClick={() => setSelectedPricing("quarterly")}
@@ -994,7 +590,22 @@ export function ProductPageSection() {
                 transition="all 0.2s"
                 textAlign="left"
                 w="full"
+                position="relative"
               >
+                <Box
+                  position="absolute"
+                  top={-2}
+                  right={-2}
+                  bg="red.500"
+                  color="white"
+                  px={2}
+                  py={0.5}
+                  borderRadius="full"
+                  fontSize="2xs"
+                  fontWeight="bold"
+                >
+                  EMPFEHLUNG
+                </Box>
                 <HStack gap={3}>
                   <Box
                     w={5}
@@ -1021,7 +632,7 @@ export function ProductPageSection() {
                 </HStack>
               </Box>
 
-              {/* SNT-PREMIUM Jährlich - Empfehlung */}
+              {/* SNT-PREMIUM Jährlich */}
               <Box
                 as="button"
                 onClick={() => setSelectedPricing("annual")}
@@ -1049,22 +660,7 @@ export function ProductPageSection() {
                 transition="all 0.2s"
                 textAlign="left"
                 w="full"
-                position="relative"
               >
-                <Box
-                  position="absolute"
-                  top={-2}
-                  right={-2}
-                  bg="red.500"
-                  color="white"
-                  px={2}
-                  py={0.5}
-                  borderRadius="full"
-                  fontSize="2xs"
-                  fontWeight="bold"
-                >
-                  EMPFEHLUNG
-                </Box>
                 <HStack gap={3}>
                   <Box
                     w={5}
@@ -1358,14 +954,6 @@ export function ProductPageSection() {
                 </svg>
               </Box>
             </HStack>
-
-            {/* Community Stats */}
-            <HStack justify="center" gap={2}>
-              <Users size={16} color="gray.400" />
-              <Text fontSize="xs" color="gray.400">
-                Join 213 members
-              </Text>
-            </HStack>
           </VStack>
         </Stack>
 
@@ -1377,33 +965,59 @@ export function ProductPageSection() {
           mt={8}
           display={{ base: "none", md: "block" }}
         >
-          {/* Trennstrich - volle Breite */}
           <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" mb={6} />
 
           <Stack direction="row" gap={8} align="start">
-            {/* Links: Features Überschrift */}
-            <Box flex="0 0 200px">
-              <Text fontSize="sm" fontWeight="semibold" color="white" textAlign="left">
-                WAS DU BEKOMMST
+            <Box flex="0 0 180px" pt={1}>
+              <Text fontSize="sm" fontWeight="semibold" color="white" textTransform="uppercase" letterSpacing="wider">
+                Was du<br />bekommst
               </Text>
             </Box>
 
-            {/* Rechts: Features Liste */}
-            <VStack gap={0} align="stretch" flex={1}>
-              {features.map((feature, idx) => (
-                <Box key={idx}>
-                  <HStack align="start" gap={3} justify="flex-start" py={2}>
-                    <CheckCircle size={20} color={SNT_BLUE} weight="fill" style={{ marginTop: "2px", flexShrink: 0 }} />
-                    <Text fontSize="sm" color="gray.300" textAlign="left">
-                      {feature}
-                    </Text>
+            <SimpleGrid columns={2} gap={3} flex={1}>
+              {LANDING_PAID_PRODUCT_FEATURES.map((feat, idx) => {
+                const FeatIcon = feat.icon;
+                return (
+                  <HStack
+                    key={idx}
+                    p={4}
+                    borderRadius="xl"
+                    border="1px solid rgba(59, 130, 246, 0.2)"
+                    bg="rgba(10, 14, 10, 0.7)"
+                    backdropFilter="blur(12px)"
+                    gap={3}
+                    align="center"
+                    _hover={{
+                      borderColor: "rgba(59, 130, 246, 0.45)",
+                      bg: "rgba(59, 130, 246, 0.06)",
+                    }}
+                    transition="all 0.2s ease"
+                  >
+                    <Box
+                      p="8px"
+                      borderRadius="lg"
+                      bg="rgba(59, 130, 246, 0.18)"
+                      flexShrink={0}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <FeatIcon size={20} color={SNT_BLUE} weight="fill" />
+                    </Box>
+                    <VStack align="start" gap={0.5}>
+                      <Text fontSize="sm" fontWeight="semibold" color="white" lineHeight="1.3">
+                        {feat.label}
+                      </Text>
+                      {feat.detail && (
+                        <Text fontSize="xs" color="gray.400" lineHeight="1.3">
+                          {feat.detail}
+                        </Text>
+                      )}
+                    </VStack>
                   </HStack>
-                  {idx < features.length - 1 && (
-                    <Box w="100%" h="1px" bg="rgba(255, 255, 255, 0.1)" />
-                  )}
-                </Box>
-              ))}
-            </VStack>
+                );
+              })}
+            </SimpleGrid>
           </Stack>
         </Box>
 
