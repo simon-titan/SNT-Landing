@@ -10,7 +10,7 @@ const SNT_BLUE = "#068CEF";
 
 export function MobilePricingFooter() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly" | "annual" | null>("quarterly");
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly" | "annual" | null>("monthly");
   const [skipToCheckout, setSkipToCheckout] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
@@ -81,10 +81,12 @@ export function MobilePricingFooter() {
 
 
   useEffect(() => {
-    if (paypalLoaded && !paypalButtonRendered) {
-      renderPayPalButtons();
-    }
-  }, [paypalLoaded, paypalButtonRendered]);
+    if (!paypalLoaded) return;
+    setPaypalButtonRendered(false);
+    const container = document.getElementById("paypal-hidden-container");
+    if (container) container.innerHTML = "";
+    renderPayPalButtons();
+  }, [paypalLoaded, selectedPlan]);
 
   // Listen for SDK reload events from modal
   useEffect(() => {
@@ -135,12 +137,26 @@ export function MobilePricingFooter() {
     // Clear existing buttons to prevent conflicts
     container.innerHTML = '';
     
+    const plan = selectedPlan ?? "monthly";
+    let planId = pricing.monthly.paypal.planId;
+    let planName = "MONTHLY";
+    let productParam: "monthly" | "quarterly" | "annual" = "monthly";
+    if (plan === "quarterly") {
+      planId = pricing.quarterly.paypal.planId;
+      planName = "QUARTERLY";
+      productParam = "quarterly";
+    } else if (plan === "annual") {
+      planId = pricing.annual.paypal.planId;
+      planName = "ANNUAL";
+      productParam = "annual";
+    }
+
     const telegramUserId = localStorage.getItem("telegram_user_id");
     const customId = telegramUserId
-      ? `TG_USER_${telegramUserId}|SNTTRADES_QUARTERLY_PLAN`
-      : "SNTTRADES_QUARTERLY_PLAN";
+      ? `TG_USER_${telegramUserId}|SNTTRADES_${planName}_PLAN`
+      : `SNTTRADES_${planName}_PLAN`;
 
-    console.log("Mobile Footer: Rendering PayPal Quarterly Subscription Button...");
+    console.log(`Mobile Footer: Rendering PayPal ${planName} Subscription Button...`);
 
     const buttonConfig = {
       style: {
@@ -152,9 +168,9 @@ export function MobilePricingFooter() {
         tagline: false,
       },
       createSubscription: function (data: any, actions: any) {
-        console.log("PayPal createSubscription aufgerufen für Quarterly");
+        console.log(`PayPal createSubscription aufgerufen für ${planName}`);
         return actions.subscription.create({
-          plan_id: pricing.quarterly.paypal.planId,
+          plan_id: planId,
           custom_id: customId,
           application_context: {
             brand_name: "SNTTRADES",
@@ -167,11 +183,11 @@ export function MobilePricingFooter() {
         });
       },
       onApprove: function (data: any) {
-        console.log("PayPal Quarterly Subscription genehmigt:", data.subscriptionID);
+        console.log(`PayPal ${planName} Subscription genehmigt:`, data.subscriptionID);
         const telegramUserId =
           localStorage.getItem("telegram_user_id") ||
           sessionStorage.getItem("telegram_user_id");
-        let redirectUrl = `/thank-you-3?source=paypal_subscription&provider=paypal&product=quarterly&subscription_id=${data.subscriptionID}`;
+        let redirectUrl = `/thank-you-3?source=paypal_subscription&provider=paypal&product=${productParam}&subscription_id=${data.subscriptionID}`;
 
         if (telegramUserId) {
           redirectUrl += `&telegram_user_id=${telegramUserId}`;
@@ -185,7 +201,7 @@ export function MobilePricingFooter() {
         window.location.href = redirectUrl;
       },
       onError: function (err: any) {
-        console.error("PayPal Quarterly Subscription Fehler:", err);
+        console.error(`PayPal ${planName} Subscription Fehler:`, err);
         alert(
           "Es gab einen Fehler beim Erstellen der Zahlung. Bitte versuchen Sie es erneut."
         );
@@ -198,7 +214,7 @@ export function MobilePricingFooter() {
       buttons
         .render("#paypal-hidden-container")
         .then(() => {
-          console.log("Mobile Footer: PayPal Quarterly Button erfolgreich gerendert");
+          console.log(`Mobile Footer: PayPal ${planName} Button erfolgreich gerendert`);
           setPaypalButtonRendered(true);
         })
         .catch((error: any) => {
@@ -231,7 +247,7 @@ export function MobilePricingFooter() {
   };
 
   const handleJoin = () => {
-    setSelectedPlan("quarterly");
+    setSelectedPlan("monthly");
     setSkipToCheckout(true);
     setIsModalOpen(true);
   };
@@ -258,7 +274,9 @@ export function MobilePricingFooter() {
           <HStack justify="space-between" align="center" w="full">
             {/* Monatlich Preis Links */}
             <Text color="white" fontSize="md" fontWeight="medium">
-              {formatPrice(pricing.quarterly.price)} alle 3 Monate
+              {(selectedPlan ?? "monthly") === "monthly" && <>{formatPrice(pricing.monthly.price)} pro Monat</>}
+              {(selectedPlan ?? "monthly") === "quarterly" && <>{formatPrice(pricing.quarterly.price)} alle 3 Monate</>}
+              {(selectedPlan ?? "monthly") === "annual" && <>{formatPrice(pricing.annual.price)} pro Jahr</>}
             </Text>
 
             {/* 3 Optionen Rechts */}
@@ -437,7 +455,7 @@ export function MobilePricingFooter() {
         onClose={() => {
           setIsModalOpen(false);
           setSkipToCheckout(false);
-          setSelectedPlan("quarterly");
+          setSelectedPlan("monthly");
         }}
         initialPlan={selectedPlan || "monthly"}
         skipToCheckout={skipToCheckout}

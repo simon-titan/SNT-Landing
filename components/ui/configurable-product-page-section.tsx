@@ -37,7 +37,7 @@ export function ConfigurableProductPageSection({
   courseType 
 }: ConfigurableProductPageSectionProps) {
   const router = useRouter();
-  const [selectedPricing, setSelectedPricing] = useState<string>("quarterly");
+  const [selectedPricing, setSelectedPricing] = useState<string>("monthly");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -713,7 +713,7 @@ export function ConfigurableProductPageSection({
             {/* Pricing Options - nur für Paid Course */}
             {courseType === 'paid' && (
               <VStack gap={3} align="stretch">
-                {/* SNT-PREMIUM Monatlich */}
+                {/* SNT-PREMIUM Monatlich - Empfehlung */}
                 <Box
                   as="button"
                   onClick={() => setSelectedPricing("monthly")}
@@ -741,7 +741,22 @@ export function ConfigurableProductPageSection({
                   transition="all 0.2s"
                   textAlign="left"
                   w="full"
+                  position="relative"
                 >
+                  <Box
+                    position="absolute"
+                    top={-2}
+                    right={-2}
+                    bg="red.500"
+                    color="white"
+                    px={2}
+                    py={0.5}
+                    borderRadius="full"
+                    fontSize="2xs"
+                    fontWeight="bold"
+                  >
+                    EMPFEHLUNG
+                  </Box>
                   <HStack gap={3}>
                     <Box
                       w={5}
@@ -768,7 +783,7 @@ export function ConfigurableProductPageSection({
                   </HStack>
                 </Box>
 
-                {/* SNT-PREMIUM Quartal - Empfehlung */}
+                {/* SNT-PREMIUM Quartal */}
                 <Box
                   as="button"
                   onClick={() => setSelectedPricing("quarterly")}
@@ -796,22 +811,7 @@ export function ConfigurableProductPageSection({
                   transition="all 0.2s"
                   textAlign="left"
                   w="full"
-                  position="relative"
                 >
-                  <Box
-                    position="absolute"
-                    top={-2}
-                    right={-2}
-                    bg="red.500"
-                    color="white"
-                    px={2}
-                    py={0.5}
-                    borderRadius="full"
-                    fontSize="2xs"
-                    fontWeight="bold"
-                  >
-                    EMPFEHLUNG
-                  </Box>
                   <HStack gap={3}>
                     <Box
                       w={5}
