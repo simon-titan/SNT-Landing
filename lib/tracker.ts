@@ -48,8 +48,6 @@ export const tracker = {
 
     this._interval = setInterval(() => this.flush(), FLUSH_INTERVAL);
     window.addEventListener("beforeunload", () => this.flush());
-
-    this.trackEvent("page_view");
   },
 
   setVariant(variant: string) {

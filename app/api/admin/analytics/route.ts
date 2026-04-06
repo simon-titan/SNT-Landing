@@ -20,44 +20,76 @@ export async function GET(request: NextRequest) {
   const sinceStr = since.toISOString().split("T")[0];
 
   try {
-    const [statsResult, salesResult, recentEventsResult] = await Promise.all([
+    const [eventsResult, salesResult] = await Promise.all([
       supabaseAdmin
-        .from("page_stats_daily")
-        .select("*")
-        .gte("date", sinceStr)
-        .order("date", { ascending: false }),
+        .from("page_events")
+        .select("page_variant, event_type, session_id, created_at")
+        .gte("created_at", since.toISOString())
+        .order("created_at", { ascending: true }),
 
       supabaseAdmin
         .from("sales_events")
         .select("*")
         .gte("created_at", since.toISOString())
         .order("created_at", { ascending: false }),
-
-      supabaseAdmin
-        .from("page_events")
-        .select("page_variant, event_type, session_id, created_at")
-        .gte("created_at", since.toISOString())
-        .order("created_at", { ascending: false })
-        .limit(5000),
     ]);
 
-    if (statsResult.error) {
-      console.error("[analytics] stats error:", statsResult.error.message);
+    if (eventsResult.error) {
+      console.error("[analytics] events error:", eventsResult.error.message);
     }
     if (salesResult.error) {
       console.error("[analytics] sales error:", salesResult.error.message);
     }
 
-    const stats = statsResult.data || [];
+    const allEvents = eventsResult.data || [];
     const sales = salesResult.data || [];
-    const recentEvents = recentEventsResult.data || [];
+
+    // Aggregiere page_events direkt (kein Umweg ueber page_stats_daily)
+    // Nur "page_view" Events zaehlen als View; alle Events einer Session = 1 unique Session
+    const variantMap: Record<string, {
+      views: number;
+      sessions: Set<string>;
+      ctaClicks: number;
+      checkoutStarts: number;
+      conversions: number;
+      revenueCents: number;
+    }> = {};
+
+    const viewsByDateRaw: Record<string, Record<string, { views: number; sessions: Set<string> }>> = {};
+
+    for (const e of allEvents) {
+      const variant = e.page_variant || "default";
+      if (!variantMap[variant]) {
+        variantMap[variant] = { views: 0, sessions: new Set(), ctaClicks: 0, checkoutStarts: 0, conversions: 0, revenueCents: 0 };
+      }
+      variantMap[variant].sessions.add(e.session_id);
+      if (e.event_type === "page_view") variantMap[variant].views++;
+      if (e.event_type === "cta_click") variantMap[variant].ctaClicks++;
+      if (e.event_type === "checkout_start") variantMap[variant].checkoutStarts++;
+
+      // Views by date
+      const date = e.created_at.split("T")[0];
+      if (!viewsByDateRaw[date]) viewsByDateRaw[date] = {};
+      if (!viewsByDateRaw[date][variant]) viewsByDateRaw[date][variant] = { views: 0, sessions: new Set() };
+      viewsByDateRaw[date][variant].sessions.add(e.session_id);
+      if (e.event_type === "page_view") viewsByDateRaw[date][variant].views++;
+    }
+
+    for (const sale of sales) {
+      const variant = sale.page_variant || "default";
+      if (!variantMap[variant]) {
+        variantMap[variant] = { views: 0, sessions: new Set(), ctaClicks: 0, checkoutStarts: 0, conversions: 0, revenueCents: 0 };
+      }
+      variantMap[variant].conversions++;
+      variantMap[variant].revenueCents += sale.amount_cents || 0;
+    }
 
     // KPIs
-    const totalViews = stats.reduce((s, r) => s + (r.views || 0), 0);
-    const totalSessions = stats.reduce((s, r) => s + (r.unique_sessions || 0), 0);
+    const totalViews = Object.values(variantMap).reduce((s, v) => s + v.views, 0);
+    const totalSessions = new Set(allEvents.map((e) => e.session_id)).size;
     const totalConversions = sales.length;
     const totalRevenueCents = sales.reduce((s, r) => s + (r.amount_cents || 0), 0);
-    const totalCheckoutStarts = stats.reduce((s, r) => s + (r.checkout_starts || 0), 0);
+    const totalCheckoutStarts = Object.values(variantMap).reduce((s, v) => s + v.checkoutStarts, 0);
 
     // Sales by date
     const salesByDate: Record<string, { count: number; revenue: number; products: Record<string, number> }> = {};
@@ -70,69 +102,25 @@ export async function GET(request: NextRequest) {
       salesByDate[date].products[p] = (salesByDate[date].products[p] || 0) + 1;
     }
 
-    // Views by date (from page_stats_daily)
+    // Views by date (serialisierbar machen: Set -> number)
     const viewsByDate: Record<string, Record<string, { views: number; sessions: number }>> = {};
-    for (const row of stats) {
-      if (!viewsByDate[row.date]) viewsByDate[row.date] = {};
-      viewsByDate[row.date][row.page_variant] = {
-        views: row.views || 0,
-        sessions: row.unique_sessions || 0,
-      };
-    }
-
-    // Also count from recent events if today's stats haven't been aggregated
-    const today = new Date().toISOString().split("T")[0];
-    const todayEvents = recentEvents.filter((e) => e.created_at.startsWith(today));
-    if (todayEvents.length > 0 && !viewsByDate[today]) {
-      viewsByDate[today] = {};
-      const byVariant: Record<string, { views: number; sessions: Set<string> }> = {};
-      for (const e of todayEvents) {
-        if (!byVariant[e.page_variant]) byVariant[e.page_variant] = { views: 0, sessions: new Set() };
-        byVariant[e.page_variant].sessions.add(e.session_id);
-        if (e.event_type === "page_view") byVariant[e.page_variant].views++;
+    for (const [date, variants] of Object.entries(viewsByDateRaw)) {
+      viewsByDate[date] = {};
+      for (const [v, d] of Object.entries(variants)) {
+        viewsByDate[date][v] = { views: d.views, sessions: d.sessions.size };
       }
-      for (const [v, d] of Object.entries(byVariant)) {
-        viewsByDate[today][v] = { views: d.views, sessions: d.sessions.size };
-      }
-    }
-
-    // Variant comparison
-    const variantMap: Record<string, {
-      views: number; sessions: number; ctaClicks: number;
-      checkoutStarts: number; conversions: number; revenueCents: number;
-    }> = {};
-
-    for (const row of stats) {
-      if (!variantMap[row.page_variant]) {
-        variantMap[row.page_variant] = {
-          views: 0, sessions: 0, ctaClicks: 0,
-          checkoutStarts: 0, conversions: 0, revenueCents: 0,
-        };
-      }
-      const v = variantMap[row.page_variant];
-      v.views += row.views || 0;
-      v.sessions += row.unique_sessions || 0;
-      v.ctaClicks += row.cta_clicks || 0;
-      v.checkoutStarts += row.checkout_starts || 0;
-    }
-
-    for (const sale of sales) {
-      const variant = sale.page_variant || "default";
-      if (!variantMap[variant]) {
-        variantMap[variant] = {
-          views: 0, sessions: 0, ctaClicks: 0,
-          checkoutStarts: 0, conversions: 0, revenueCents: 0,
-        };
-      }
-      variantMap[variant].conversions++;
-      variantMap[variant].revenueCents += sale.amount_cents || 0;
     }
 
     const variants = Object.entries(variantMap)
       .map(([name, d]) => ({
         name,
-        ...d,
-        conversionRate: d.sessions > 0 ? (d.conversions / d.sessions) * 100 : 0,
+        views: d.views,
+        sessions: d.sessions.size,
+        ctaClicks: d.ctaClicks,
+        checkoutStarts: d.checkoutStarts,
+        conversions: d.conversions,
+        revenueCents: d.revenueCents,
+        conversionRate: d.sessions.size > 0 ? (d.conversions / d.sessions.size) * 100 : 0,
         abandonRate: d.checkoutStarts > 0 ? ((d.checkoutStarts - d.conversions) / d.checkoutStarts) * 100 : 0,
       }))
       .sort((a, b) => b.conversionRate - a.conversionRate);
@@ -144,16 +132,12 @@ export async function GET(request: NextRequest) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split("T")[0];
-      const dayStats = stats.filter((r) => r.date === dateStr);
       const daySales = sales.filter((s) => s.created_at.startsWith(dateStr));
 
       const dayVariants: Record<string, { views: number; sales: number; checkoutStarts: number }> = {};
-      for (const r of dayStats) {
-        dayVariants[r.page_variant] = {
-          views: r.views || 0,
-          sales: 0,
-          checkoutStarts: r.checkout_starts || 0,
-        };
+      const dayData = viewsByDateRaw[dateStr] || {};
+      for (const [v, data] of Object.entries(dayData)) {
+        dayVariants[v] = { views: data.views, sales: 0, checkoutStarts: 0 };
       }
       for (const s of daySales) {
         const v = s.page_variant || "default";
