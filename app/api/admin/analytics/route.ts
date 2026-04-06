@@ -114,8 +114,6 @@ export async function GET(request: NextRequest) {
       v.sessions += row.unique_sessions || 0;
       v.ctaClicks += row.cta_clicks || 0;
       v.checkoutStarts += row.checkout_starts || 0;
-      v.conversions += row.conversions || 0;
-      v.revenueCents += row.revenue_cents || 0;
     }
 
     for (const sale of sales) {

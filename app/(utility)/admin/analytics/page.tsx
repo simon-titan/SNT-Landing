@@ -183,42 +183,143 @@ export default function AnalyticsDashboard() {
 
         {data && (
           <>
-            {/* Sektion 1: KPI Karten */}
-            <Grid templateColumns={{ base: "1fr 1fr", md: "repeat(4, 1fr)" }} gap="4">
+            {/* HERO: Conversion Rate + Beste Landing Page */}
+            {(() => {
+              const overallRate = data.kpis.totalSessions > 0
+                ? (data.kpis.totalConversions / data.kpis.totalSessions) * 100
+                : 0;
+              const best = data.variants.filter((v) => v.sessions > 0).sort((a, b) => b.conversionRate - a.conversionRate)[0];
+              return (
+                <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap="4">
+                  <Box
+                    bg="gray.900"
+                    borderRadius="xl"
+                    p="6"
+                    borderLeft="4px solid"
+                    borderColor={SNT_BLUE}
+                  >
+                    <Text fontSize="sm" color="gray.400" mb="1">Gesamt Conversion Rate</Text>
+                    <Text fontSize="4xl" fontWeight="extrabold" color={overallRate > 0 ? "white" : "gray.500"} lineHeight="1.1">
+                      {overallRate.toFixed(2)}%
+                    </Text>
+                    <HStack gap="4" mt="3">
+                      <Text fontSize="sm" color="gray.400">
+                        {data.kpis.totalConversions} Sales aus {data.kpis.totalSessions.toLocaleString("de-DE")} Sessions
+                      </Text>
+                    </HStack>
+                    <Text fontSize="xs" color="gray.500" mt="1">
+                      Revenue: {fmt(data.kpis.totalRevenueCents)}
+                    </Text>
+                  </Box>
+
+                  {best ? (
+                    <Box
+                      bg="gray.900"
+                      borderRadius="xl"
+                      p="6"
+                      borderLeft="4px solid"
+                      borderColor="green.400"
+                    >
+                      <Text fontSize="sm" color="gray.400" mb="1">Beste Landing Page</Text>
+                      <Text fontSize="3xl" fontWeight="extrabold" color="green.400" lineHeight="1.1">
+                        {best.name}
+                      </Text>
+                      <HStack gap="4" mt="3" flexWrap="wrap">
+                        <VStack gap="0" align="start">
+                          <Text fontSize="xl" fontWeight="bold">{best.conversionRate.toFixed(2)}%</Text>
+                          <Text fontSize="xs" color="gray.500">Conv. Rate</Text>
+                        </VStack>
+                        <VStack gap="0" align="start">
+                          <Text fontSize="xl" fontWeight="bold">{best.conversions}</Text>
+                          <Text fontSize="xs" color="gray.500">Sales</Text>
+                        </VStack>
+                        <VStack gap="0" align="start">
+                          <Text fontSize="xl" fontWeight="bold">{best.views.toLocaleString("de-DE")}</Text>
+                          <Text fontSize="xs" color="gray.500">Views</Text>
+                        </VStack>
+                        <VStack gap="0" align="start">
+                          <Text fontSize="xl" fontWeight="bold">{fmt(best.revenueCents)}</Text>
+                          <Text fontSize="xs" color="gray.500">Revenue</Text>
+                        </VStack>
+                      </HStack>
+                    </Box>
+                  ) : (
+                    <Box bg="gray.900" borderRadius="xl" p="6">
+                      <Text color="gray.500">Noch keine Varianten-Daten</Text>
+                    </Box>
+                  )}
+                </Grid>
+              );
+            })()}
+
+            {/* KPI Karten */}
+            <Grid templateColumns={{ base: "1fr 1fr", md: "repeat(5, 1fr)" }} gap="4">
               {[
-                { label: "Page Views", value: data.kpis.totalViews.toLocaleString("de-DE") },
-                { label: "Unique Sessions", value: data.kpis.totalSessions.toLocaleString("de-DE") },
-                { label: "Conversions", value: data.kpis.totalConversions.toString() },
-                { label: "Revenue", value: fmt(data.kpis.totalRevenueCents) },
+                { label: "Page Views", value: data.kpis.totalViews.toLocaleString("de-DE"), color: "white" },
+                { label: "Sessions", value: data.kpis.totalSessions.toLocaleString("de-DE"), color: "white" },
+                { label: "Sales", value: data.kpis.totalConversions.toString(), color: "green.400" },
+                { label: "Revenue", value: fmt(data.kpis.totalRevenueCents), color: "green.400" },
+                { label: "Checkout-Abbrecher", value: `${Math.max(0, data.kpis.totalCheckoutStarts - data.kpis.totalConversions)} (${data.kpis.abandonRate.toFixed(0)}%)`, color: data.kpis.abandonRate > 80 ? "red.400" : "yellow.400" },
               ].map((kpi) => (
-                <Box key={kpi.label} bg="gray.900" p="5" borderRadius="lg">
-                  <Text fontSize="sm" color="gray.400">{kpi.label}</Text>
-                  <Text fontSize="2xl" fontWeight="bold">{kpi.value}</Text>
+                <Box key={kpi.label} bg="gray.900" p="4" borderRadius="lg">
+                  <Text fontSize="xs" color="gray.500">{kpi.label}</Text>
+                  <Text fontSize="lg" fontWeight="bold" color={kpi.color}>{kpi.value}</Text>
                 </Box>
               ))}
             </Grid>
 
-            {/* Checkout-Abbrecher KPIs */}
-            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap="4">
-              <Box bg="gray.900" p="5" borderRadius="lg">
-                <Text fontSize="sm" color="gray.400">Checkout Starts</Text>
-                <Text fontSize="2xl" fontWeight="bold">{data.kpis.totalCheckoutStarts}</Text>
-              </Box>
-              <Box bg="gray.900" p="5" borderRadius="lg">
-                <Text fontSize="sm" color="gray.400">Abbrecher</Text>
-                <Text fontSize="2xl" fontWeight="bold" color={data.kpis.abandonRate > 80 ? "red.400" : "yellow.400"}>
-                  {Math.max(0, data.kpis.totalCheckoutStarts - data.kpis.totalConversions)}
-                </Text>
-              </Box>
-              <Box bg="gray.900" p="5" borderRadius="lg">
-                <Text fontSize="sm" color="gray.400">Abbrecher-Rate</Text>
-                <Text fontSize="2xl" fontWeight="bold" color={data.kpis.abandonRate > 80 ? "red.400" : "yellow.400"}>
-                  {data.kpis.abandonRate.toFixed(1)}%
-                </Text>
-              </Box>
-            </Grid>
+            {/* A/B Varianten Ranking */}
+            <Box borderWidth="1px" borderRadius="lg" p="6">
+              <Text fontWeight="semibold" mb="4" fontSize="lg">Varianten Ranking</Text>
+              <VStack gap="2" align="stretch">
+                {data.variants.map((v, i) => {
+                  const maxConvRate = data.variants[0]?.conversionRate || 1;
+                  const barWidth = maxConvRate > 0 ? (v.conversionRate / maxConvRate) * 100 : 0;
+                  return (
+                    <Box key={v.name} position="relative" bg="gray.900" borderRadius="md" overflow="hidden">
+                      <Box
+                        position="absolute"
+                        top="0"
+                        left="0"
+                        bottom="0"
+                        width={`${barWidth}%`}
+                        bg={i === 0 ? "green.400" : SNT_BLUE}
+                        opacity={0.15}
+                        transition="width 0.5s"
+                      />
+                      <Flex justify="space-between" align="center" p="3" position="relative">
+                        <HStack gap="3">
+                          <Text fontWeight="bold" fontSize="lg" color="gray.400" minW="24px">{i + 1}.</Text>
+                          <VStack gap="0" align="start">
+                            <HStack gap="2">
+                              <Text fontWeight="semibold">{v.name}</Text>
+                              {i === 0 && <Badge colorPalette="green" size="sm">Beste</Badge>}
+                            </HStack>
+                            <Text fontSize="xs" color="gray.500">
+                              {v.views.toLocaleString("de-DE")} Views / {v.sessions.toLocaleString("de-DE")} Sessions / {v.conversions} Sales
+                            </Text>
+                          </VStack>
+                        </HStack>
+                        <HStack gap="6">
+                          <VStack gap="0" align="end">
+                            <Text fontWeight="bold" color={i === 0 ? "green.400" : "white"}>
+                              {v.conversionRate.toFixed(2)}%
+                            </Text>
+                            <Text fontSize="xs" color="gray.500">Conv. Rate</Text>
+                          </VStack>
+                          <VStack gap="0" align="end">
+                            <Text fontWeight="bold">{fmt(v.revenueCents)}</Text>
+                            <Text fontSize="xs" color="gray.500">Revenue</Text>
+                          </VStack>
+                        </HStack>
+                      </Flex>
+                    </Box>
+                  );
+                })}
+              </VStack>
+            </Box>
 
-            {/* Sektion 2: Sales nach Datum */}
+            {/* Sales nach Datum */}
             <Box borderWidth="1px" borderRadius="lg" p="6">
               <Text fontWeight="semibold" mb="4" fontSize="lg">Sales nach Datum</Text>
               {sortedSalesDates.length === 0 ? (
@@ -324,103 +425,48 @@ export default function AnalyticsDashboard() {
               )}
             </Box>
 
-            {/* Sektion 4: Checkout-Abbrecher pro Variante */}
+            {/* Detail-Tabelle: Alle Varianten */}
             <Box borderWidth="1px" borderRadius="lg" p="6">
-              <Text fontWeight="semibold" mb="4" fontSize="lg">Checkout-Abbrecher pro Variante</Text>
+              <Text fontWeight="semibold" mb="4" fontSize="lg">Varianten Detail</Text>
               <Box overflowX="auto">
                 <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row>
                       <Table.ColumnHeader>Variante</Table.ColumnHeader>
-                      <Table.ColumnHeader>Checkout Starts</Table.ColumnHeader>
-                      <Table.ColumnHeader>Conversions</Table.ColumnHeader>
-                      <Table.ColumnHeader>Abbrecher</Table.ColumnHeader>
-                      <Table.ColumnHeader>Abbrecher-Rate</Table.ColumnHeader>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    {data.variants
-                      .filter((v) => v.checkoutStarts > 0)
-                      .sort((a, b) => b.abandonRate - a.abandonRate)
-                      .map((v) => (
-                        <Table.Row key={v.name}>
-                          <Table.Cell>
-                            <Badge>{v.name}</Badge>
-                          </Table.Cell>
-                          <Table.Cell>{v.checkoutStarts}</Table.Cell>
-                          <Table.Cell>{v.conversions}</Table.Cell>
-                          <Table.Cell>{Math.max(0, v.checkoutStarts - v.conversions)}</Table.Cell>
-                          <Table.Cell>
-                            <Text
-                              fontWeight="bold"
-                              color={v.abandonRate > 80 ? "red.400" : v.abandonRate > 50 ? "yellow.400" : "green.400"}
-                            >
-                              {v.abandonRate.toFixed(1)}%
-                            </Text>
-                          </Table.Cell>
-                        </Table.Row>
-                      ))}
-                    {data.variants.filter((v) => v.checkoutStarts > 0).length === 0 && (
-                      <Table.Row>
-                        <Table.Cell colSpan={5}>
-                          <Text color="gray.500" textAlign="center" py="3">
-                            Noch keine Checkout-Daten vorhanden
-                          </Text>
-                        </Table.Cell>
-                      </Table.Row>
-                    )}
-                  </Table.Body>
-                </Table.Root>
-              </Box>
-            </Box>
-
-            {/* Sektion 5: A/B Varianten Vergleich */}
-            <Box borderWidth="1px" borderRadius="lg" p="6">
-              <Text fontWeight="semibold" mb="4" fontSize="lg">A/B Varianten Vergleich</Text>
-              <Box overflowX="auto">
-                <Table.Root size="sm">
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.ColumnHeader>Variante</Table.ColumnHeader>
-                      <Table.ColumnHeader>Views</Table.ColumnHeader>
-                      <Table.ColumnHeader>Sessions</Table.ColumnHeader>
-                      <Table.ColumnHeader>CTA Clicks</Table.ColumnHeader>
-                      <Table.ColumnHeader>Checkouts</Table.ColumnHeader>
-                      <Table.ColumnHeader>Käufe</Table.ColumnHeader>
-                      <Table.ColumnHeader>Conv. Rate</Table.ColumnHeader>
-                      <Table.ColumnHeader>Abbrecher</Table.ColumnHeader>
-                      <Table.ColumnHeader>Revenue</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Views</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Sessions</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">CTA</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Checkouts</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Sales</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Conv.</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Abbruch</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="right">Revenue</Table.ColumnHeader>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
                     {data.variants.map((v, i) => (
-                      <Table.Row
-                        key={v.name}
-                        borderLeft={i === 0 ? "3px solid" : undefined}
-                        borderColor={i === 0 ? "green.400" : undefined}
-                      >
+                      <Table.Row key={v.name} bg={i === 0 ? "green.400/5" : undefined}>
                         <Table.Cell>
                           <HStack gap="2">
                             <Badge colorPalette={i === 0 ? "green" : "gray"}>{v.name}</Badge>
-                            {i === 0 && <Badge colorPalette="green" size="sm">Beste</Badge>}
                           </HStack>
                         </Table.Cell>
-                        <Table.Cell>{v.views}</Table.Cell>
-                        <Table.Cell>{v.sessions}</Table.Cell>
-                        <Table.Cell>{v.ctaClicks}</Table.Cell>
-                        <Table.Cell>{v.checkoutStarts}</Table.Cell>
-                        <Table.Cell fontWeight="bold">{v.conversions}</Table.Cell>
-                        <Table.Cell>
-                          <Text fontWeight="bold" color={v.conversionRate > 0 ? "green.400" : "gray.400"}>
+                        <Table.Cell textAlign="right">{v.views.toLocaleString("de-DE")}</Table.Cell>
+                        <Table.Cell textAlign="right">{v.sessions.toLocaleString("de-DE")}</Table.Cell>
+                        <Table.Cell textAlign="right">{v.ctaClicks}</Table.Cell>
+                        <Table.Cell textAlign="right">{v.checkoutStarts}</Table.Cell>
+                        <Table.Cell textAlign="right" fontWeight="bold">{v.conversions}</Table.Cell>
+                        <Table.Cell textAlign="right">
+                          <Text fontWeight="bold" color={v.conversionRate > 0 ? "green.400" : "gray.500"}>
                             {v.conversionRate.toFixed(2)}%
                           </Text>
                         </Table.Cell>
-                        <Table.Cell>
-                          <Text color={v.abandonRate > 80 ? "red.400" : "gray.400"}>
-                            {v.abandonRate.toFixed(1)}%
+                        <Table.Cell textAlign="right">
+                          <Text color={v.abandonRate > 80 ? "red.400" : v.abandonRate > 50 ? "yellow.400" : "gray.500"}>
+                            {v.checkoutStarts > 0 ? `${v.abandonRate.toFixed(0)}%` : "–"}
                           </Text>
                         </Table.Cell>
-                        <Table.Cell fontWeight="bold">{fmt(v.revenueCents)}</Table.Cell>
+                        <Table.Cell textAlign="right" fontWeight="bold">{fmt(v.revenueCents)}</Table.Cell>
                       </Table.Row>
                     ))}
                   </Table.Body>
@@ -428,7 +474,7 @@ export default function AnalyticsDashboard() {
               </Box>
             </Box>
 
-            {/* Sektion 6: Timeline Chart */}
+            {/* Timeline Chart */}
             <Box borderWidth="1px" borderRadius="lg" p="6">
               <Text fontWeight="semibold" mb="4" fontSize="lg">Timeline (letzte 14 Tage)</Text>
               <HStack gap="4" mb="3" flexWrap="wrap">
