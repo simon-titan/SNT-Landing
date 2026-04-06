@@ -20,29 +20,40 @@ export async function GET(request: NextRequest) {
   const sinceStr = since.toISOString().split("T")[0];
 
   try {
-    const [eventsResult, salesResult] = await Promise.all([
-      supabaseAdmin
-        .from("page_events")
-        .select("page_variant, event_type, session_id, created_at")
-        .gte("created_at", since.toISOString())
-        .order("created_at", { ascending: true }),
+    // Pagination helper um das Supabase-1000-Zeilen-Limit zu umgehen
+    async function fetchAllPaged<T>(
+      query: () => ReturnType<typeof supabaseAdmin.from>
+    ): Promise<T[]> {
+      const PAGE = 1000;
+      const all: T[] = [];
+      let offset = 0;
+      while (true) {
+        const { data, error } = await query().range(offset, offset + PAGE - 1);
+        if (error) { console.error("[analytics] pagination error:", error.message); break; }
+        if (!data || data.length === 0) break;
+        all.push(...(data as T[]));
+        if (data.length < PAGE) break;
+        offset += PAGE;
+      }
+      return all;
+    }
 
-      supabaseAdmin
-        .from("sales_events")
-        .select("*")
-        .gte("created_at", since.toISOString())
-        .order("created_at", { ascending: false }),
+    const [allEvents, sales] = await Promise.all([
+      fetchAllPaged(() =>
+        supabaseAdmin
+          .from("page_events")
+          .select("page_variant, event_type, session_id, created_at")
+          .gte("created_at", since.toISOString())
+          .order("created_at", { ascending: true })
+      ),
+      fetchAllPaged(() =>
+        supabaseAdmin
+          .from("sales_events")
+          .select("*")
+          .gte("created_at", since.toISOString())
+          .order("created_at", { ascending: false })
+      ),
     ]);
-
-    if (eventsResult.error) {
-      console.error("[analytics] events error:", eventsResult.error.message);
-    }
-    if (salesResult.error) {
-      console.error("[analytics] sales error:", salesResult.error.message);
-    }
-
-    const allEvents = eventsResult.data || [];
-    const sales = salesResult.data || [];
 
     // Aggregiere page_events direkt (kein Umweg ueber page_stats_daily)
     // Nur "page_view" Events zaehlen als View; alle Events einer Session = 1 unique Session
