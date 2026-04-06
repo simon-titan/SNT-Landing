@@ -78,6 +78,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unable to track sale." }, { status: 500 });
     }
 
+    // Dual-Write: auch in neue Analytics-Tabellen schreiben
+    const amountCents = Math.round(amount * 100);
+    const sessionId = request.cookies.get("snt_session")?.value || null;
+
+    await supabaseAdmin
+      .from("sales_events")
+      .insert({
+        session_id: sessionId,
+        page_variant: landingSlug,
+        plan_name: product,
+        product,
+        amount_cents: amountCents,
+        currency: body.currency ?? "EUR",
+        provider,
+        transaction_id: body.transactionId ?? null,
+        created_at: saleAt,
+      })
+      .then(({ error: saleErr }) => {
+        if (saleErr) console.error("[tracking.sale] sales_events insert error:", saleErr.message);
+      });
+
+    const today = new Date(saleAt).toISOString().split("T")[0];
+    await supabaseAdmin
+      .from("page_stats_daily")
+      .upsert(
+        {
+          date: today,
+          page_variant: landingSlug,
+          conversions: 1,
+          revenue_cents: amountCents,
+        },
+        { onConflict: "date,page_variant" }
+      )
+      .then(({ error: statsErr }) => {
+        if (statsErr) console.error("[tracking.sale] page_stats_daily upsert error:", statsErr.message);
+      });
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[tracking.sale] unexpected error", error);

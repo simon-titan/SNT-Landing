@@ -6,6 +6,7 @@ import Provider from "@/components/provider/provider";
 import Head from "next/head";
 import { projectConfig } from "@/config";
 import { useChatVisibility } from "@/utils/use-chat-visibility";
+import { tracker } from "@/lib/tracker";
 import "vanilla-cookieconsent/dist/cookieconsent.css";
 import "@/styles/cookie-banner-styles.css";
 import "@/styles/outseta-styles.css";
@@ -34,6 +35,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     } else {
       console.warn("Cookie banner options are not defined in projectConfig.");
     }
+    tracker.init();
   }, []);
 
   return (
@@ -48,6 +50,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </noscript>
       </Head>
       <body className={`${inter.className} ${horizon.variable}`}>
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            defer
+            src="https://cloud.umami.is/script.js"
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          />
+        )}
         <Script
           id="outseta-config"
           strategy="beforeInteractive"

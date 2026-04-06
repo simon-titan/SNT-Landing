@@ -68,6 +68,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unable to track pageview." }, { status: 500 });
     }
 
+    // Dual-Write: auch in neue Analytics-Tabelle schreiben
+    await supabaseAdmin
+      .from("page_events")
+      .insert({
+        session_id: sessionId,
+        page_variant: slug,
+        event_type: "page_view",
+        referrer: body.referrer ?? null,
+        metadata: {},
+      })
+      .then(({ error: evtErr }) => {
+        if (evtErr) console.error("[tracking.pageview] page_events insert error:", evtErr.message);
+      });
+
     return NextResponse.json({ success: true, deduplicated: false });
   } catch (error) {
     console.error("[tracking.pageview] unexpected error", error);

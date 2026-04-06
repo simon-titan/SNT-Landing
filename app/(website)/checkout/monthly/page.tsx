@@ -6,6 +6,7 @@ import { CreditCard, GoogleLogo, AppleLogo, CheckCircle } from "@phosphor-icons/
 import { pricingConfig, isDiscountActive } from "@/config/pricing-config";
 import { getPersistedAffiliateCode } from "@/lib/affiliate/affiliate-storage";
 import { OutsetaCheckoutEmbed } from "@/components/ui/OutsetaCheckoutEmbed";
+import { CheckoutTracker } from "@/components/tracking/CheckoutTracker";
 
 const SNT_BLUE = "#068CEF";
 
@@ -190,6 +191,7 @@ export default function MonthlyCheckoutPage() {
 
     return (
         <>
+            <CheckoutTracker product="monthly" />
             <style jsx global>{`
                 .item-header {
                     display: none !important;
