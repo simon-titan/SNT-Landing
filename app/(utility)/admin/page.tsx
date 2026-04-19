@@ -19,7 +19,7 @@ import {
 import { Collapsible } from "@chakra-ui/react";
 import { NativeSelectField, NativeSelectRoot } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
-import { Trash, Eye, PencilSimple, CaretDown, CaretUp, TelegramLogo, Users, Check, X, Plus, MagnifyingGlass } from "@phosphor-icons/react";
+import { Trash, Eye, PencilSimple, CaretDown, CaretUp, TelegramLogo, Users, Check, X, Plus, MagnifyingGlass, ChartBar, UserCircle, CalendarCheck, Copy } from "@phosphor-icons/react";
 
 type OverviewResponse = {
   affiliates: Array<{
@@ -139,6 +139,59 @@ type TelegramFaq = {
   created_at: string;
 };
 
+// Protocol Types
+type ProtocolLead = {
+  id: string;
+  lead_id: string;
+  status: "submitted" | "booked" | "completed" | "no_show";
+  trading_duration: string;
+  current_level: string;
+  holding_back: string;
+  snt_duration: string;
+  snt_source: string | null;
+  investment_willingness: string;
+  why_candidate: string;
+  invitee_name: string | null;
+  invitee_email: string | null;
+  invitee_phone: string | null;
+  scheduled_at: string | null;
+  cancelled_at: string | null;
+  created_at: string;
+  booked_at: string | null;
+};
+
+type ProtocolStats = {
+  period: string;
+  funnel: {
+    page_views: number;
+    form_opens: number;
+    step_1_complete: number;
+    step_2_complete: number;
+    step_3_complete: number;
+    form_submits: number;
+    calendly_redirects: number;
+    calendly_booked: number;
+  };
+  leads: {
+    total: number;
+    submitted: number;
+    booked: number;
+    completed: number;
+    no_show: number;
+  };
+  conversion: {
+    view_to_form: string;
+    form_to_submit: string;
+    submit_to_book: string;
+    view_to_book: string;
+  };
+};
+
+type ProtocolSettings = {
+  vimeo_video_id: string;
+  calendly_url: string;
+};
+
 const ADMIN_USERNAME = process.env.NEXT_PUBLIC_AFFILIATE_ADMIN_USERNAME ?? "admin";
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_AFFILIATE_ADMIN_PASSWORD ?? "sntsecure";
 
@@ -210,6 +263,22 @@ export default function AffiliateAdminPage() {
     is_active: true,
   });
   const [telegramActiveTab, setTelegramActiveTab] = useState<"members" | "faq">("members");
+
+  // Protocol States
+  const [isProtocolCollapsed, setIsProtocolCollapsed] = useState(false);
+  const [protocolLeads, setProtocolLeads] = useState<ProtocolLead[]>([]);
+  const [protocolStats, setProtocolStats] = useState<ProtocolStats | null>(null);
+  const [protocolSettings, setProtocolSettings] = useState<ProtocolSettings>({
+    vimeo_video_id: "1177003953",
+    calendly_url: "https://calendly.com/websitetitan110/30min",
+  });
+  const [isLoadingProtocol, setIsLoadingProtocol] = useState(false);
+  const [protocolStatsPeriod, setProtocolStatsPeriod] = useState<"today" | "week" | "month" | "all">("all");
+  const [protocolStatusFilter, setProtocolStatusFilter] = useState("all");
+  const [selectedLead, setSelectedLead] = useState<ProtocolLead | null>(null);
+  const [protocolVimeoInput, setProtocolVimeoInput] = useState("");
+  const [protocolCalendlyInput, setProtocolCalendlyInput] = useState("");
+  const [isSavingProtocolSettings, setIsSavingProtocolSettings] = useState(false);
 
   const baseUrl = useMemo(() => {
     if (typeof window === "undefined") return "https://www.snt-mentorship-platform.de";
@@ -301,6 +370,7 @@ export default function AffiliateAdminPage() {
       fetchLandingStats();
       fetchTelegramData();
       fetchTelegramFaqs();
+      fetchProtocolData();
     }
   }, [adminCredentials]);
 
@@ -850,6 +920,88 @@ export default function AffiliateAdminPage() {
     }
   };
 
+  // ─── Protocol Functions ────────────────────────────────────────────
+  const fetchProtocolData = async (period: "today" | "week" | "month" | "all" = protocolStatsPeriod) => {
+    if (!adminCredentials) return;
+    setIsLoadingProtocol(true);
+    try {
+      const [leadsRes, statsRes, settingsRes] = await Promise.all([
+        fetch(`/api/admin/protocol/leads?status=${protocolStatusFilter}&limit=100`, { headers: headers ?? undefined }),
+        fetch(`/api/admin/protocol/stats?period=${period}`, { headers: headers ?? undefined }),
+        fetch("/api/admin/protocol/settings", { headers: headers ?? undefined }),
+      ]);
+      if (leadsRes.ok) {
+        const data = await leadsRes.json();
+        setProtocolLeads(data.leads ?? []);
+      }
+      if (statsRes.ok) {
+        const data = await statsRes.json();
+        setProtocolStats(data);
+      }
+      if (settingsRes.ok) {
+        const data = await settingsRes.json();
+        setProtocolSettings(data);
+        setProtocolVimeoInput(data.vimeo_video_id ?? "");
+        setProtocolCalendlyInput(data.calendly_url ?? "");
+      }
+    } catch (error) {
+      console.error("Fehler beim Laden der Protocol-Daten:", error);
+    } finally {
+      setIsLoadingProtocol(false);
+    }
+  };
+
+  const handleSaveProtocolSettings = async () => {
+    if (!adminCredentials) return;
+    setIsSavingProtocolSettings(true);
+    try {
+      const res = await fetch("/api/admin/protocol/settings", {
+        method: "PUT",
+        headers: headers ?? undefined,
+        body: JSON.stringify({
+          vimeo_video_id: protocolVimeoInput,
+          calendly_url: protocolCalendlyInput,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProtocolSettings(data);
+        notify("Protocol-Einstellungen gespeichert");
+      } else {
+        const data = await res.json();
+        notify(data.error ?? "Fehler beim Speichern");
+      }
+    } catch {
+      notify("Fehler beim Speichern der Einstellungen");
+    } finally {
+      setIsSavingProtocolSettings(false);
+    }
+  };
+
+  const handleUpdateLeadStatus = async (leadId: string, status: string) => {
+    if (!adminCredentials) return;
+    // optimistic update
+    setProtocolLeads((prev) =>
+      prev.map((l) => (l.lead_id === leadId ? { ...l, status: status as ProtocolLead["status"] } : l))
+    );
+    if (selectedLead?.lead_id === leadId) {
+      setSelectedLead((prev) => prev ? { ...prev, status: status as ProtocolLead["status"] } : null);
+    }
+    // Hinweis: Es gibt keine dedizierte PATCH-Route, daher nur lokal
+    notify(`Status auf "${status}" gesetzt (nur lokal, direkt in Supabase anpassen für permanente Änderungen)`);
+  };
+
+  const filteredProtocolLeads = protocolLeads.filter(
+    (l) => protocolStatusFilter === "all" || l.status === protocolStatusFilter
+  );
+
+  const statusColor: Record<string, string> = {
+    submitted: "blue",
+    booked: "green",
+    completed: "purple",
+    no_show: "red",
+  };
+
   return (
     <Box p="8" maxW="1200px" mx="auto">
       <VStack gap="8" align="stretch">
@@ -1108,7 +1260,7 @@ export default function AffiliateAdminPage() {
             {(overview?.latestSales ?? []).map((sale) => (
               <Flex key={sale.id} justify="space-between">
                 <Text>{new Date(sale.saleAt).toLocaleString("de-DE")}</Text>
-                <Text>{sale.affiliateCode ?? "—"}</Text>
+                <Text>{sale.affiliateCode ?? "-"}</Text>
                 <Text>
                   {sale.amount.toFixed(2)}
                   {sale.currency ?? "€"}
@@ -1201,7 +1353,7 @@ export default function AffiliateAdminPage() {
                         Standard Landing Page (Hauptseite)
                       </Text>
                       <Text fontSize="sm" color="gray.700" mb="3">
-                        Tracking für die Startseite <Badge colorPalette="cyan">/</Badge> — getrennt von den Slug-Seiten unter <Badge>/landing/…</Badge>
+                        Tracking für die Startseite <Badge colorPalette="cyan">/</Badge>, getrennt von den Slug-Seiten unter <Badge>/landing/…</Badge>
                       </Text>
                       {(() => {
                         const version = standardLandingVersion;
@@ -1982,6 +2134,395 @@ export default function AffiliateAdminPage() {
             </Box>
           </Box>
         )}
+
+        {/* ─── SNT APEX Section ──────────────────────────────────── */}
+        {isAuthenticated && (
+          <Box borderWidth="1px" borderRadius="md" p="6">
+            <HStack justify="space-between" align="center" mb="4">
+              <HStack gap="2">
+                <ChartBar size={22} color="#068CEF" weight="fill" />
+                <Text fontWeight="semibold">SNT APEX · Bewerbungs-Funnel</Text>
+                <Badge colorPalette="blue" fontSize="xs">NEU</Badge>
+              </HStack>
+              <IconButton
+                aria-label="Toggle Protocol Section"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsProtocolCollapsed(!isProtocolCollapsed)}
+              >
+                {isProtocolCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
+              </IconButton>
+            </HStack>
+
+            <Collapsible.Root open={!isProtocolCollapsed}>
+              <Collapsible.Content>
+
+                {/* Calendly Setup Hinweis */}
+                <Box mb="6" p="4" borderRadius="md" bg="blue.50" borderWidth="1px" borderColor="blue.200">
+                  <Text fontWeight="semibold" color="blue.800" mb="2" fontSize="sm">
+                    Calendly Setup, Einmalig erforderlich
+                  </Text>
+                  <VStack align="start" gap="2" fontSize="xs" color="blue.700">
+                    <Text>
+                      <strong>1. Redirect URL eintragen:</strong>{" "}
+                      <Box
+                        as="span"
+                        fontFamily="mono"
+                        bg="blue.100"
+                        px="1"
+                        borderRadius="sm"
+                        cursor="pointer"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            `${typeof window !== "undefined" ? window.location.origin : "https://www.snt-mentorship-platform.de"}/apex/booked`
+                          ).then(() => notify("URL kopiert!"))
+                        }
+                      >
+                        {typeof window !== "undefined" ? window.location.origin : "https://www.snt-mentorship-platform.de"}/apex/booked
+                      </Box>
+                      {" "}→ in Calendly im Event-Type unter {"\""}Confirmation page → Redirect to an external site{"\""}
+                    </Text>
+                    <Text>
+                      <strong>2. &quot;Pass event details&quot; aktivieren:</strong>{" "}
+                      Auf der gleichen Seite den Schalter {"\""}Pass event details to your redirected page{"\""}
+                      einschalten. Calendly hängt dann Name, E-Mail und Buchungszeit automatisch an die URL.
+                    </Text>
+                    <Text color="blue.600">
+                      Kein Webhook, kein Signing Key nötig, die Buchungsdaten kommen direkt über die Weiterleitungs-URL.
+                    </Text>
+                  </VStack>
+                </Box>
+
+                {/* Stats Controls */}
+                <HStack justify="space-between" mb="4" flexWrap="wrap" gap="3">
+                  <Text color="gray.500" fontSize="sm">Funnel-Metriken</Text>
+                  <HStack gap="2">
+                    <NativeSelectRoot>
+                      <NativeSelectField
+                        value={protocolStatsPeriod}
+                        onChange={(e) => {
+                          const p = e.target.value as "today" | "week" | "month" | "all";
+                          setProtocolStatsPeriod(p);
+                          fetchProtocolData(p);
+                        }}
+                      >
+                        <option value="today">Heute</option>
+                        <option value="week">7 Tage</option>
+                        <option value="month">30 Tage</option>
+                        <option value="all">Gesamt</option>
+                      </NativeSelectField>
+                    </NativeSelectRoot>
+                    <Button size="sm" variant="outline" onClick={() => fetchProtocolData(protocolStatsPeriod)} loading={isLoadingProtocol}>
+                      Aktualisieren
+                    </Button>
+                  </HStack>
+                </HStack>
+
+                {/* Funnel Metrics */}
+                {protocolStats && (
+                  <>
+                    <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap="3" mb="4">
+                      <Box bg="gray.900" p="4" borderRadius="md">
+                        <Text fontSize="xs" color="gray.400">Pageviews</Text>
+                        <Text fontSize="2xl" fontWeight="bold">{protocolStats.funnel.page_views}</Text>
+                      </Box>
+                      <Box bg="gray.900" p="4" borderRadius="md">
+                        <Text fontSize="xs" color="gray.400">Form-Starts</Text>
+                        <Text fontSize="2xl" fontWeight="bold" color="blue.400">{protocolStats.funnel.form_opens}</Text>
+                      </Box>
+                      <Box bg="gray.900" p="4" borderRadius="md">
+                        <Text fontSize="xs" color="gray.400">Bewerbungen</Text>
+                        <Text fontSize="2xl" fontWeight="bold" color="yellow.400">{protocolStats.leads.total}</Text>
+                      </Box>
+                      <Box bg="gray.900" p="4" borderRadius="md">
+                        <Text fontSize="xs" color="gray.400">Calls gebucht</Text>
+                        <Text fontSize="2xl" fontWeight="bold" color="green.400">
+                          {protocolStats.leads.booked + protocolStats.leads.completed}
+                        </Text>
+                      </Box>
+                    </Grid>
+
+                    {/* Funnel Steps */}
+                    <Box borderWidth="1px" borderRadius="md" p="4" mb="4" bg="gray.50">
+                      <Text fontWeight="semibold" mb="3" color="gray.800" fontSize="sm">Funnel-Analyse, Wo brechen Bewerber ab?</Text>
+                      {[
+                        { label: "Pageview → Form geöffnet", value: protocolStats.conversion.view_to_form, from: protocolStats.funnel.page_views, to: protocolStats.funnel.form_opens },
+                        { label: "Form geöffnet → Bewerbung abgesendet", value: protocolStats.conversion.form_to_submit, from: protocolStats.funnel.form_opens, to: protocolStats.leads.total },
+                        { label: "Bewerbung → Call gebucht", value: protocolStats.conversion.submit_to_book, from: protocolStats.leads.total, to: protocolStats.leads.booked + protocolStats.leads.completed },
+                        { label: "Gesamt: View → Gebucht", value: protocolStats.conversion.view_to_book, from: protocolStats.funnel.page_views, to: protocolStats.leads.booked + protocolStats.leads.completed },
+                      ].map(({ label, value, from, to }) => (
+                        <Box key={label} mb="3">
+                          <Flex justify="space-between" mb="1">
+                            <Text fontSize="xs" color="gray.700">{label}</Text>
+                            <Text fontSize="xs" fontWeight="bold" color="gray.800">{to} / {from} ({value}%)</Text>
+                          </Flex>
+                          <Box h="6px" bg="gray.200" borderRadius="full" overflow="hidden">
+                            <Box
+                              h="full"
+                              borderRadius="full"
+                              bg="blue.400"
+                              w={`${Math.min(parseFloat(value), 100)}%`}
+                            />
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+
+                    {/* Step Completion */}
+                    <Grid templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap="3" mb="6">
+                      {[
+                        { label: "Step 1 ✓", value: protocolStats.funnel.step_1_complete },
+                        { label: "Step 2 ✓", value: protocolStats.funnel.step_2_complete },
+                        { label: "Step 3 ✓", value: protocolStats.funnel.step_3_complete },
+                        { label: "→ Calendly", value: protocolStats.funnel.calendly_redirects },
+                      ].map(({ label, value }) => (
+                        <Box key={label} borderWidth="1px" borderRadius="md" p="3">
+                          <Text fontSize="xs" color="gray.500">{label}</Text>
+                          <Text fontWeight="bold">{value}</Text>
+                        </Box>
+                      ))}
+                    </Grid>
+                  </>
+                )}
+
+                {/* Lead Table */}
+                <Box mb="6">
+                  <HStack justify="space-between" mb="3" flexWrap="wrap" gap="2">
+                    <Text fontWeight="semibold" fontSize="sm">Bewerbungen</Text>
+                    <NativeSelectRoot maxW="160px">
+                      <NativeSelectField
+                        value={protocolStatusFilter}
+                        onChange={(e) => setProtocolStatusFilter(e.target.value)}
+                      >
+                        <option value="all">Alle</option>
+                        <option value="submitted">Eingereicht</option>
+                        <option value="booked">Gebucht</option>
+                        <option value="completed">Abgeschlossen</option>
+                        <option value="no_show">No-Show</option>
+                      </NativeSelectField>
+                    </NativeSelectRoot>
+                  </HStack>
+
+                  {isLoadingProtocol ? (
+                    <Flex justify="center" py="6"><Spinner size="lg" color="blue.500" /></Flex>
+                  ) : (
+                    <Box borderWidth="1px" borderRadius="md" overflow="hidden">
+                      <Table.Root size="sm">
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.ColumnHeader>Datum</Table.ColumnHeader>
+                            <Table.ColumnHeader>Status</Table.ColumnHeader>
+                            <Table.ColumnHeader>Dauer</Table.ColumnHeader>
+                            <Table.ColumnHeader>Level</Table.ColumnHeader>
+                            <Table.ColumnHeader>Investition</Table.ColumnHeader>
+                            <Table.ColumnHeader>Termin</Table.ColumnHeader>
+                            <Table.ColumnHeader>Aktion</Table.ColumnHeader>
+                          </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                          {filteredProtocolLeads.length === 0 ? (
+                            <Table.Row>
+                              <Table.Cell colSpan={7}>
+                                <Text textAlign="center" py="4" color="gray.500">Keine Bewerbungen gefunden</Text>
+                              </Table.Cell>
+                            </Table.Row>
+                          ) : (
+                            filteredProtocolLeads.map((lead) => (
+                              <Table.Row key={lead.id}>
+                                <Table.Cell fontSize="xs" color="gray.600">
+                                  {new Date(lead.created_at).toLocaleDateString("de-DE")}
+                                </Table.Cell>
+                                <Table.Cell>
+                                  <Badge colorPalette={statusColor[lead.status] ?? "gray"} fontSize="xs">
+                                    {lead.status}
+                                  </Badge>
+                                </Table.Cell>
+                                <Table.Cell fontSize="xs" color="gray.600">{lead.trading_duration}</Table.Cell>
+                                <Table.Cell fontSize="xs" color="gray.600" maxW="120px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+                                  {lead.current_level}
+                                </Table.Cell>
+                                <Table.Cell fontSize="xs" color="gray.600">{lead.investment_willingness}</Table.Cell>
+                                <Table.Cell fontSize="xs" color={lead.scheduled_at ? "green.500" : "gray.400"}>
+                                  {lead.scheduled_at
+                                    ? new Date(lead.scheduled_at).toLocaleDateString("de-DE")
+                                    : lead.invitee_name ? lead.invitee_name : "-"}
+                                </Table.Cell>
+                                <Table.Cell>
+                                  <Button size="xs" variant="outline" onClick={() => setSelectedLead(lead)}>
+                                    <Eye size={14} />
+                                  </Button>
+                                </Table.Cell>
+                              </Table.Row>
+                            ))
+                          )}
+                        </Table.Body>
+                      </Table.Root>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Protocol Settings */}
+                <Box borderWidth="1px" borderRadius="md" p="4" bg="gray.50">
+                  <Text fontWeight="semibold" mb="4" color="gray.800" fontSize="sm">
+                    Video & Calendly einstellungen
+                  </Text>
+                  <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap="4" mb="4">
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">Vimeo Video ID (nur Zahlen)</Text>
+                      <Input
+                        placeholder="z.B. 1177003953"
+                        value={protocolVimeoInput}
+                        onChange={(e) => setProtocolVimeoInput(e.target.value)}
+                        bg="white"
+                        color="gray.800"
+                        borderColor="gray.300"
+                      />
+                    </Stack>
+                    <Stack gap="1">
+                      <Text fontSize="sm" color="gray.600" fontWeight="medium">Calendly URL</Text>
+                      <Input
+                        placeholder="https://calendly.com/..."
+                        value={protocolCalendlyInput}
+                        onChange={(e) => setProtocolCalendlyInput(e.target.value)}
+                        bg="white"
+                        color="gray.800"
+                        borderColor="gray.300"
+                      />
+                    </Stack>
+                  </Grid>
+                  <Button colorScheme="blue" size="sm" onClick={handleSaveProtocolSettings} loading={isSavingProtocolSettings}>
+                    Einstellungen speichern
+                  </Button>
+                </Box>
+
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </Box>
+        )}
+
+        {/* Lead Detail Modal */}
+        {selectedLead && (
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            bg="blackAlpha.700"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            zIndex="1000"
+            onClick={() => setSelectedLead(null)}
+          >
+            <Box
+              bg="white"
+              p="6"
+              borderRadius="xl"
+              maxW="600px"
+              w="full"
+              mx="4"
+              maxH="90vh"
+              overflowY="auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <VStack gap="4" align="stretch">
+                <Flex justify="space-between" align="center">
+                  <Heading size="md" color="gray.800">Bewerbung Detail</Heading>
+                  <HStack gap="2">
+                    <Badge colorPalette={statusColor[selectedLead.status] ?? "gray"}>
+                      {selectedLead.status}
+                    </Badge>
+                    <Button size="sm" variant="ghost" onClick={() => setSelectedLead(null)}>✕</Button>
+                  </HStack>
+                </Flex>
+
+                {/* Calendly Data */}
+                {selectedLead.invitee_name && (
+                  <Box p="3" borderRadius="md" bg="green.50" borderWidth="1px" borderColor="green.200">
+                    <Text fontWeight="semibold" color="green.800" mb="2" fontSize="sm">Gebuchter Termin</Text>
+                    <Grid templateColumns="repeat(2, 1fr)" gap="2" fontSize="sm" color="green.700">
+                      <Text><strong>Name:</strong> {selectedLead.invitee_name}</Text>
+                      <Text><strong>E-Mail:</strong> {selectedLead.invitee_email}</Text>
+                      {selectedLead.invitee_phone && <Text><strong>Telefon:</strong> {selectedLead.invitee_phone}</Text>}
+                      {selectedLead.scheduled_at && (
+                        <Text><strong>Termin:</strong> {new Date(selectedLead.scheduled_at).toLocaleString("de-DE")}</Text>
+                      )}
+                    </Grid>
+                  </Box>
+                )}
+
+                {/* Meta */}
+                <Grid templateColumns="repeat(2, 1fr)" gap="3">
+                  <Box>
+                    <Text fontSize="xs" color="gray.500" mb="1">Trading-Erfahrung</Text>
+                    <Text fontSize="sm" color="gray.800">{selectedLead.trading_duration}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="xs" color="gray.500" mb="1">Aktuelles Level</Text>
+                    <Text fontSize="sm" color="gray.800">{selectedLead.current_level}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="xs" color="gray.500" mb="1">SNT-Zugehörigkeit</Text>
+                    <Text fontSize="sm" color="gray.800">{selectedLead.snt_duration}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="xs" color="gray.500" mb="1">Investitionsbereitschaft</Text>
+                    <Text fontSize="sm" color="gray.800">{selectedLead.investment_willingness}</Text>
+                  </Box>
+                  {selectedLead.snt_source && (
+                    <Box>
+                      <Text fontSize="xs" color="gray.500" mb="1">Quelle</Text>
+                      <Text fontSize="sm" color="gray.800">{selectedLead.snt_source}</Text>
+                    </Box>
+                  )}
+                </Grid>
+
+                {/* Freitexte */}
+                <Box>
+                  <Text fontSize="xs" color="gray.500" mb="1">Was hält ihn zurück?</Text>
+                  <Box p="3" bg="gray.50" borderRadius="md" borderWidth="1px" fontSize="sm" color="gray.800" lineHeight="1.6">
+                    {selectedLead.holding_back}
+                  </Box>
+                </Box>
+                <Box>
+                  <Text fontSize="xs" color="gray.500" mb="1">Warum der richtige Kandidat?</Text>
+                  <Box p="3" bg="gray.50" borderRadius="md" borderWidth="1px" fontSize="sm" color="gray.800" lineHeight="1.6">
+                    {selectedLead.why_candidate}
+                  </Box>
+                </Box>
+
+                {/* Status-Änderung */}
+                <Box>
+                  <Text fontSize="xs" color="gray.500" mb="2">Status ändern</Text>
+                  <HStack gap="2" flexWrap="wrap">
+                    {(["submitted", "booked", "completed", "no_show"] as const).map((s) => (
+                      <Button
+                        key={s}
+                        size="xs"
+                        colorScheme={selectedLead.status === s ? "blue" : "gray"}
+                        variant={selectedLead.status === s ? "solid" : "outline"}
+                        onClick={() => handleUpdateLeadStatus(selectedLead.lead_id, s)}
+                      >
+                        {s}
+                      </Button>
+                    ))}
+                  </HStack>
+                </Box>
+
+                <HStack justify="space-between">
+                  <Text fontSize="xs" color="gray.400">
+                    Eingereicht: {new Date(selectedLead.created_at).toLocaleString("de-DE")}
+                  </Text>
+                  <Button variant="outline" size="sm" onClick={() => setSelectedLead(null)}>
+                    Schließen
+                  </Button>
+                </HStack>
+              </VStack>
+            </Box>
+          </Box>
+        )}
+
       </VStack>
     </Box>
   );

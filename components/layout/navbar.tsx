@@ -309,11 +309,13 @@ export const Navbar = ({ type }: { type: "website" | "app" }) => {
       <Box
         as="header"
         w="100vw"
-        background="#000000"
+        background="rgba(0, 0, 0, 0.72)"
+        backdropFilter="blur(20px) saturate(180%)"
+        css={{ WebkitBackdropFilter: "blur(20px) saturate(180%)" }}
         px="0"
         py="0"
-        boxShadow="0 14px 40px -14px rgba(255,255,255,0.25)"
-        borderBottom="1px solid rgba(255,255,255,0.15)"
+        boxShadow="0 1px 0 rgba(6,140,239,0.18), 0 12px 40px -16px rgba(0,0,0,0.8)"
+        borderBottom="1px solid rgba(255,255,255,0.06)"
       >
         <Box w="100%" mx="auto" px="4" py="2">
           <Box position="relative" w="full" h="44px" display="flex" alignItems="center">
