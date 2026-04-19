@@ -10,7 +10,6 @@ import {
   SpeakerSlash,
   ArrowsOut,
   ArrowsIn,
-  X,
   CaretDown,
 } from "@phosphor-icons/react/dist/ssr";
 // @ts-ignore - Vimeo Player has no bundled types
@@ -81,9 +80,6 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
   const [showControls, setShowControls] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const [mobileFsOpen, setMobileFsOpen] = useState(false);
-  const [mobileFsStart, setMobileFsStart] = useState(0);
-  const [mobileFsMuted, setMobileFsMuted] = useState(initialMuted);
   const [hasEnded, setHasEnded] = useState(false);
 
   const revealControls = useCallback(() => {
@@ -165,7 +161,7 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Listen to native fullscreen changes (Desktop)
+  // Listen to native fullscreen changes (browser-level + Vimeo SDK level)
   useEffect(() => {
     const onFsChange = () => {
       const inFs = !!(
@@ -182,6 +178,25 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
       document.removeEventListener("webkitfullscreenchange", onFsChange);
     };
   }, [revealControls]);
+
+  // Listen to Vimeo SDK fullscreen events (iOS native player)
+  useEffect(() => {
+    const p = playerRef.current;
+    if (!p || typeof p.on !== "function") return;
+    const handler = (data: { fullscreen?: boolean }) => {
+      if (data && typeof data.fullscreen === "boolean") {
+        setIsFullscreen(data.fullscreen);
+      }
+    };
+    try {
+      p.on("fullscreenchange", handler);
+    } catch {}
+    return () => {
+      try {
+        p.off?.("fullscreenchange", handler);
+      } catch {}
+    };
+  }, []);
 
   const handlePlayPause = useCallback(
     async (e?: React.MouseEvent) => {
@@ -228,15 +243,12 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
       const container = containerRef.current;
       if (!p || !container) return;
 
-      // Currently in any fullscreen (desktop or mobile modal) → exit
-      if (mobileFsOpen) {
-        setMobileFsOpen(false);
-        return;
-      }
-      if (
+      // ── Already in fullscreen → exit ────────────────────────────────
+      const browserInFs = !!(
         document.fullscreenElement ||
         (document as any).webkitFullscreenElement
-      ) {
+      );
+      if (browserInFs) {
         try {
           await (
             document.exitFullscreen ||
@@ -245,20 +257,47 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
         } catch {}
         return;
       }
+      try {
+        const vimeoFs = await p.getFullscreen?.().catch(() => false);
+        if (vimeoFs) {
+          await p.exitFullscreen?.();
+          return;
+        }
+      } catch {}
 
+      // ── Enter fullscreen ────────────────────────────────────────────
       if (isMobileDevice()) {
-        // Mobile: open native Vimeo player in a fullscreen overlay
+        // Mobile: let Vimeo SDK handle it
+        //  - iOS Safari: webkitEnterFullscreen on the internal <video> → opens native QuickTime
+        //  - Android Chrome: requestFullscreen on the iframe → native browser fullscreen
+        let ok = false;
         try {
-          const t = await p.getCurrentTime().catch(() => 0);
-          const v = await p.getVolume().catch(() => 0);
-          setMobileFsStart(t || 0);
-          setMobileFsMuted(v === 0);
-          try {
-            await p.pause();
-          } catch {}
-          setMobileFsOpen(true);
-        } catch (err) {
-          console.error("[ProtocolVideoPlayer] mobile fs failed", err);
+          if (typeof p.requestFullscreen === "function") {
+            await p.requestFullscreen();
+            ok = true;
+          }
+        } catch {}
+        if (!ok) {
+          // Fallback: try fullscreen on the iframe element directly
+          const iframe = container.querySelector("iframe") as
+            | (HTMLIFrameElement & {
+                webkitRequestFullscreen?: () => Promise<void>;
+                webkitEnterFullscreen?: () => void;
+              })
+            | null;
+          if (iframe) {
+            try {
+              if (iframe.requestFullscreen) {
+                await iframe.requestFullscreen();
+              } else if (iframe.webkitRequestFullscreen) {
+                await iframe.webkitRequestFullscreen();
+              } else if (iframe.webkitEnterFullscreen) {
+                iframe.webkitEnterFullscreen();
+              }
+            } catch (err) {
+              console.error("[ProtocolVideoPlayer] mobile fs failed", err);
+            }
+          }
         }
       } else {
         // Desktop: fullscreen the whole container so custom controls remain
@@ -270,21 +309,8 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
         }
       }
     },
-    [mobileFsOpen],
+    [],
   );
-
-  const closeMobileFs = useCallback(async () => {
-    setMobileFsOpen(false);
-    // Optionally resume original player
-    const p = playerRef.current;
-    if (p) {
-      try {
-        // Sync time back from the native player would require iframe message exchange.
-        // Just resume from where we left off, browser may keep state, otherwise user can re-seek.
-        await p.play().catch(() => {});
-      } catch {}
-    }
-  }, []);
 
   const seekFromEvent = useCallback(
     (clientX: number) => {
@@ -824,9 +850,7 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
             </HStack>
 
             <IconButton
-              aria-label={
-                isFullscreen || mobileFsOpen ? "Vollbild verlassen" : "Vollbild"
-              }
+              aria-label={isFullscreen ? "Vollbild verlassen" : "Vollbild"}
               onClick={handleFullscreen}
               variant="ghost"
               color="white"
@@ -839,7 +863,7 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
                 color: SNT_PURPLE_LIGHT,
               }}
             >
-              {isFullscreen || mobileFsOpen ? (
+              {isFullscreen ? (
                 <ArrowsIn size={20} weight="bold" />
               ) : (
                 <ArrowsOut size={20} weight="bold" />
@@ -849,53 +873,6 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
         </Box>
       </Box>
 
-      {/* Mobile fullscreen overlay with native Vimeo controls */}
-      {mobileFsOpen && (
-        <Box
-          position="fixed"
-          inset={0}
-          zIndex={9999}
-          bg="black"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <iframe
-            src={`https://player.vimeo.com/video/${videoId}?controls=1&autoplay=1&muted=${
-              mobileFsMuted ? 1 : 0
-            }&playsinline=1&title=0&byline=0&portrait=0&dnt=1#t=${Math.floor(
-              mobileFsStart,
-            )}s`}
-            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-            allowFullScreen
-            style={{
-              width: "100%",
-              height: "100%",
-              border: 0,
-            }}
-            title="SNT ELITE Video · Vollbild"
-          />
-          <IconButton
-            aria-label="Vollbild schließen"
-            onClick={closeMobileFs}
-            position="absolute"
-            top="env(safe-area-inset-top, 12px)"
-            right="env(safe-area-inset-right, 12px)"
-            mt={3}
-            mr={3}
-            size="lg"
-            borderRadius="full"
-            bg="rgba(0,0,0,0.6)"
-            color="white"
-            border={`1px solid rgba(139, 92, 246, 0.5)`}
-            backdropFilter="blur(10px)"
-            zIndex={10000}
-            _hover={{ bg: "rgba(0,0,0,0.85)" }}
-          >
-            <X size={22} weight="bold" />
-          </IconButton>
-        </Box>
-      )}
     </>
   );
 };
