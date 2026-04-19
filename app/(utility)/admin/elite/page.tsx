@@ -117,7 +117,7 @@ const numberPulse = keyframes({
 
 // ─── Page Component ──────────────────────────────────────────────────────────
 
-export default function ApexAdminPage() {
+export default function EliteAdminPage() {
   const [adminCredentials, setAdminCredentials] = useState<{
     username: string;
     password: string;
@@ -125,7 +125,7 @@ export default function ApexAdminPage() {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  // Protocol / Apex states
+  // Funnel states
   const [leads, setLeads] = useState<ProtocolLead[]>([]);
   const [stats, setStats] = useState<ProtocolStats | null>(null);
   const [settings, setSettings] = useState<ProtocolSettings>({
@@ -234,7 +234,7 @@ export default function ApexAdminPage() {
           setCalendlyInput(data.calendly_url ?? "");
         }
       } catch (err) {
-        console.error("Fehler beim Laden der APEX-Daten:", err);
+        console.error("Fehler beim Laden der ELITE-Daten:", err);
         notify("Fehler beim Laden der Daten.");
       } finally {
         setIsLoading(false);
@@ -279,7 +279,7 @@ export default function ApexAdminPage() {
     (l) => statusFilter === "all" || l.status === statusFilter
   );
 
-  const calendlyRedirectUrl = `${baseUrl}/apex/booked`;
+  const calendlyRedirectUrl = `${baseUrl}/elite/booked`;
 
   const handleCopyCalendly = () => {
     navigator.clipboard.writeText(calendlyRedirectUrl).then(() => {
@@ -340,7 +340,7 @@ export default function ApexAdminPage() {
                 <Lock size={22} color="white" weight="fill" />
               </Box>
               <Heading size="lg" color="white" mt="2">
-                SNT APEX Admin
+                SNT ELITE Admin
               </Heading>
               <Text fontSize="sm" color="gray.400">
                 Bitte einloggen, um fortzufahren.
@@ -449,7 +449,7 @@ export default function ApexAdminPage() {
                 <HStack gap="2">
                   <ChartBar size={22} color={PURPLE} weight="fill" />
                   <Heading size="md" color="white">
-                    SNT APEX, Funnel
+                    SNT ELITE, Funnel
                   </Heading>
                   <Badge
                     bg="rgba(139, 92, 246, 0.18)"
@@ -470,7 +470,7 @@ export default function ApexAdminPage() {
               </VStack>
             </HStack>
             <HStack gap="2">
-              <NextLink href="/apex" target="_blank">
+              <NextLink href="/elite" target="_blank">
                 <Button
                   size="sm"
                   variant="outline"
@@ -588,7 +588,7 @@ export default function ApexAdminPage() {
             <HeroMetric
               icon={<Eye size={28} color={PURPLE_LIGHT} weight="fill" />}
               label="Pageviews"
-              sublabel={`Besucher der /apex Seite`}
+              sublabel={`Besucher der /elite Seite`}
               value={totalPageviews}
               accentColor={PURPLE_LIGHT}
               animated
@@ -1037,7 +1037,7 @@ export default function ApexAdminPage() {
           {/* Footer */}
           <HStack justify="center" pt="4" pb="2">
             <Text fontSize="2xs" color="gray.600" textTransform="uppercase" letterSpacing="wider">
-              SNT APEX Admin · {settings.calendly_url ? "Calendly verbunden" : "Kein Calendly konfiguriert"}
+              SNT ELITE Admin · {settings.calendly_url ? "Calendly verbunden" : "Kein Calendly konfiguriert"}
             </Text>
           </HStack>
         </VStack>

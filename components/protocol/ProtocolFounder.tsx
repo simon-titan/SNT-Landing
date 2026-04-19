@@ -22,7 +22,7 @@ export function ProtocolFounder() {
 
   const handleApply = () => {
     trackProtocolEvent("form_open", { source: "founder_cta" });
-    router.push("/apex/apply");
+    router.push("/elite/apply");
   };
 
   return (
@@ -150,7 +150,7 @@ export function ProtocolFounder() {
                 begleitet.
               </Text>
               <Text fontWeight="bold" color="white">
-                Das SNT APEX ist das intensivste, was ich je angeboten habe.{" "}
+                Das SNT ELITE ist das intensivste, was ich je angeboten habe.{" "}
                 <Box as="span" color={SNT_PURPLE}>
                   Ich nehme nicht jeden.
                 </Box>{" "}

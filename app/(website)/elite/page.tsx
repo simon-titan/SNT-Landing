@@ -10,9 +10,9 @@ import { ProtocolFinalCta } from "@/components/protocol/ProtocolFinalCta";
 import { supabaseAdmin } from "@/lib/supabase/client";
 
 export const metadata: Metadata = {
-  title: "SNT APEX | Exklusives 1:1 Coaching",
+  title: "SNT ELITE | Exklusives 1:1 Coaching",
   description:
-    "Bewerbe dich für einen der limitierten Plätze im SNT APEX. Persönliche 1:1-Betreuung, ein bewährtes System und echter Wandel, aber nur für ausgewählte Kandidaten.",
+    "Bewerbe dich für einen der limitierten Plätze im SNT ELITE. Persönliche 1:1-Betreuung, ein bewährtes System und echter Wandel, aber nur für ausgewählte Kandidaten.",
 };
 
 async function getProtocolSettings() {

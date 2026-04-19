@@ -45,7 +45,7 @@ export function getProtocolSession() {
 
 export function ProtocolTracker() {
   useEffect(() => {
-    trackProtocolEvent("page_view", { path: "/apex" });
+    trackProtocolEvent("page_view", { path: "/elite" });
   }, []);
   return null;
 }

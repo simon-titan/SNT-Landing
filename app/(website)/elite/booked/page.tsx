@@ -168,7 +168,7 @@ export default function ProtocolBookedPage() {
             <HStack justify="center" gap={2}>
               <ApprovedIcon boxSize={4} />
               <Text fontSize="xs" color="gray.500" fontWeight="semibold" letterSpacing="widest" textTransform="uppercase">
-                SNT APEX™
+                SNT ELITE™
               </Text>
             </HStack>
             <Heading
@@ -269,7 +269,7 @@ export default function ProtocolBookedPage() {
 
           {/* Back to Page */}
           <Box animation={`${fadeIn} 0.8s ease-out 0.9s both`}>
-            <NextLink href="/apex" passHref legacyBehavior>
+            <NextLink href="/elite" passHref legacyBehavior>
               <Button
                 variant="ghost"
                 color="gray.500"

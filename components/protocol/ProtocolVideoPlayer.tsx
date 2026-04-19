@@ -360,7 +360,7 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
           }}
           allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
           allowFullScreen
-          title="SNT APEX Video"
+          title="SNT ELITE Video"
         />
 
         {/* Click capture layer (toggle play/pause) */}
@@ -484,7 +484,7 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
                   maxW="320px"
                   lineHeight="1.6"
                 >
-                  Scroll weiter und sichere dir deinen Platz im SNT APEX.
+                  Scroll weiter und sichere dir deinen Platz im SNT ELITE.
                 </Text>
 
                 <Box
@@ -873,7 +873,7 @@ export const ProtocolVideoPlayer: React.FC<ProtocolVideoPlayerProps> = ({
               height: "100%",
               border: 0,
             }}
-            title="SNT APEX Video · Vollbild"
+            title="SNT ELITE Video · Vollbild"
           />
           <IconButton
             aria-label="Vollbild schließen"

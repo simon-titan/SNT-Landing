@@ -39,7 +39,7 @@ export function ProtocolHero({ vimeoId = "1177003953" }: ProtocolHeroProps) {
 
   const handleApply = () => {
     trackProtocolEvent("form_open", { source: "hero_cta" });
-    router.push("/apex/apply");
+    router.push("/elite/apply");
   };
 
   return (
@@ -172,7 +172,7 @@ export function ProtocolHero({ vimeoId = "1177003953" }: ProtocolHeroProps) {
               animation={`${shimmer} 6s linear infinite`}
               filter="drop-shadow(0 0 24px rgba(139, 92, 246,0.5))"
             >
-              SNT APEX
+              SNT ELITE
             </Box>
           </Heading>
         </VStack>

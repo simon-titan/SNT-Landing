@@ -2135,10 +2135,10 @@ export default function AffiliateAdminPage() {
           </Box>
         )}
 
-        {/* ─── SNT APEX Quick Link to dedicated sub-page ─────────────── */}
+        {/* ─── SNT ELITE Quick Link to dedicated sub-page ─────────────── */}
         {isAuthenticated && (
           <a
-            href="/admin/apex"
+            href="/admin/elite"
             style={{ textDecoration: "none", display: "block" }}
           >
             <Box
@@ -2157,7 +2157,7 @@ export default function AffiliateAdminPage() {
                   <VStack align="start" gap="0">
                     <HStack gap="2">
                       <Text fontWeight="semibold" color="purple.900">
-                        SNT APEX · Bewerbungs-Funnel
+                        SNT ELITE · Bewerbungs-Funnel
                       </Text>
                       <Badge colorPalette="purple" fontSize="xs">DEDIZIERTE PAGE</Badge>
                     </HStack>
@@ -2196,11 +2196,11 @@ export default function AffiliateAdminPage() {
                         cursor="pointer"
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            `${typeof window !== "undefined" ? window.location.origin : "https://www.snt-mentorship-platform.de"}/apex/booked`
+                            `${typeof window !== "undefined" ? window.location.origin : "https://www.snt-mentorship-platform.de"}/elite/booked`
                           ).then(() => notify("URL kopiert!"))
                         }
                       >
-                        {typeof window !== "undefined" ? window.location.origin : "https://www.snt-mentorship-platform.de"}/apex/booked
+                        {typeof window !== "undefined" ? window.location.origin : "https://www.snt-mentorship-platform.de"}/elite/booked
                       </Box>
                       {" "}→ in Calendly im Event-Type unter {"\""}Confirmation page → Redirect to an external site{"\""}
                     </Text>

@@ -300,7 +300,7 @@ export function ProtocolGoals() {
             letterSpacing="widest"
             textShadow="0 0 12px rgba(139, 92, 246,0.5)"
           >
-            Was SNT APEX dir gibt
+            Was SNT ELITE dir gibt
           </Text>
 
           {/* Multi-line headline so highlights don't overlap */}

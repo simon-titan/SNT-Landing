@@ -26,7 +26,7 @@ export function ProtocolFinalCta() {
 
   const handleApply = () => {
     trackProtocolEvent("form_open", { source: "final_cta" });
-    router.push("/apex/apply");
+    router.push("/elite/apply");
   };
 
   return (
@@ -99,7 +99,7 @@ export function ProtocolFinalCta() {
             maxW="600px"
             lineHeight="1.7"
           >
-            Das SNT APEX ist kein offenes Angebot. Wir arbeiten nur mit Kandidaten,
+            Das SNT ELITE ist kein offenes Angebot. Wir arbeiten nur mit Kandidaten,
             die wirklich bereit sind, und die wir persönlich für das Programm geeignet
             sehen. Deine Bewerbung ist der erste Schritt.
           </Text>

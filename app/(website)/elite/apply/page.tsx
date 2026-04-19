@@ -302,7 +302,7 @@ function Step3({
           Dein Commitment
         </Heading>
         <Text fontSize="sm" color="gray.500">
-          Jetzt wird es ernst. Dieser Schritt entscheidet, ob du für das SNT APEX in Frage kommst.
+          Jetzt wird es ernst. Dieser Schritt entscheidet, ob du für das SNT ELITE in Frage kommst.
         </Text>
       </VStack>
 
@@ -327,7 +327,7 @@ function Step3({
 
       <VStack align="start" gap={3}>
         <Text fontSize="sm" fontWeight="semibold" color="gray.300">
-          Warum bist du der richtige Kandidat für das SNT APEX?{" "}
+          Warum bist du der richtige Kandidat für das SNT ELITE?{" "}
           <Box as="span" color="gray.600" fontWeight="normal">
             (mind. 50 Zeichen)
           </Box>
