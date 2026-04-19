@@ -11,14 +11,14 @@ export async function GET() {
 
     if (error) {
       return NextResponse.json(
-        { vimeo_video_id: "1177003953", calendly_url: "https://calendly.com/websitetitan110/30min" }
+        { vimeo_video_id: "1184569668", calendly_url: "https://calendly.com/websitetitan110/30min" }
       );
     }
 
     return NextResponse.json(data);
   } catch {
     return NextResponse.json(
-      { vimeo_video_id: "1177003953", calendly_url: "https://calendly.com/websitetitan110/30min" }
+      { vimeo_video_id: "1184569668", calendly_url: "https://calendly.com/websitetitan110/30min" }
     );
   }
 }

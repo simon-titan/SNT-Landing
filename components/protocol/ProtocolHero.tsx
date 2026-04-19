@@ -34,7 +34,7 @@ interface ProtocolHeroProps {
   vimeoId?: string;
 }
 
-export function ProtocolHero({ vimeoId = "1177003953" }: ProtocolHeroProps) {
+export function ProtocolHero({ vimeoId = "1184569668" }: ProtocolHeroProps) {
   const router = useRouter();
 
   const handleApply = () => {

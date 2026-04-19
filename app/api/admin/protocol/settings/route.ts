@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       return NextResponse.json(
-        { id: 1, vimeo_video_id: "1177003953", calendly_url: "https://calendly.com/websitetitan110/30min" }
+        { id: 1, vimeo_video_id: "1184569668", calendly_url: "https://calendly.com/websitetitan110/30min" }
       );
     }
 

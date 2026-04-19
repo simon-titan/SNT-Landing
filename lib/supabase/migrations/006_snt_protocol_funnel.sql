@@ -59,14 +59,14 @@ CREATE TABLE IF NOT EXISTS protocol_funnel_events (
 -- 3. Settings-Tabelle (Single-Row Config)
 CREATE TABLE IF NOT EXISTS protocol_settings (
   id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
-  vimeo_video_id TEXT NOT NULL DEFAULT '1177003953',
+  vimeo_video_id TEXT NOT NULL DEFAULT '1184569668',
   calendly_url TEXT NOT NULL DEFAULT 'https://calendly.com/websitetitan110/30min',
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- Initial-Row einfügen (falls nicht vorhanden)
 INSERT INTO protocol_settings (id, vimeo_video_id, calendly_url)
-VALUES (1, '1177003953', 'https://calendly.com/websitetitan110/30min')
+VALUES (1, '1184569668', 'https://calendly.com/websitetitan110/30min')
 ON CONFLICT (id) DO NOTHING;
 
 -- Performance-Indizes

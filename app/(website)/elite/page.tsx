@@ -22,9 +22,9 @@ async function getProtocolSettings() {
       .select("vimeo_video_id")
       .eq("id", 1)
       .single();
-    return data?.vimeo_video_id ?? "1177003953";
+    return data?.vimeo_video_id ?? "1184569668";
   } catch {
-    return "1177003953";
+    return "1184569668";
   }
 }
 
