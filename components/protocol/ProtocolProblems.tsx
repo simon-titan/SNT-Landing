@@ -134,8 +134,7 @@ function ProblemCard({ Icon, title, description, highlight, num }: ProblemCardPr
         transition="all 0.35s ease"
         _groupHover={{
           background: `linear-gradient(180deg, rgba(${ACCENT}, 0.85) 0%, ${SNT_PURPLE} 100%)`,
-          WebkitBackgroundClip: "text",
-          WebkitTextStroke: `1px rgba(139, 92, 246, 0.5)`,
+          backgroundClip: "text",
         }}
       >
         {num}

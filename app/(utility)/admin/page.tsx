@@ -2137,39 +2137,41 @@ export default function AffiliateAdminPage() {
 
         {/* ─── SNT APEX Quick Link to dedicated sub-page ─────────────── */}
         {isAuthenticated && (
-          <Box
-            as="a"
+          <a
             href="/admin/apex"
-            display="block"
-            borderWidth="1px"
-            borderRadius="md"
-            p="5"
-            bg="purple.50"
-            borderColor="purple.200"
-            cursor="pointer"
-            transition="all 0.2s"
-            _hover={{ bg: "purple.100", transform: "translateY(-1px)", boxShadow: "md" }}
+            style={{ textDecoration: "none", display: "block" }}
           >
-            <HStack justify="space-between" align="center">
-              <HStack gap="3">
-                <ChartBar size={26} color="#8B5CF6" weight="fill" />
-                <VStack align="start" gap="0">
-                  <HStack gap="2">
-                    <Text fontWeight="semibold" color="purple.900">
-                      SNT APEX · Bewerbungs-Funnel
+            <Box
+              borderWidth="1px"
+              borderRadius="md"
+              p="5"
+              bg="purple.50"
+              borderColor="purple.200"
+              cursor="pointer"
+              transition="all 0.2s"
+              _hover={{ bg: "purple.100", transform: "translateY(-1px)", boxShadow: "md" }}
+            >
+              <HStack justify="space-between" align="center">
+                <HStack gap="3">
+                  <ChartBar size={26} color="#8B5CF6" weight="fill" />
+                  <VStack align="start" gap="0">
+                    <HStack gap="2">
+                      <Text fontWeight="semibold" color="purple.900">
+                        SNT APEX · Bewerbungs-Funnel
+                      </Text>
+                      <Badge colorPalette="purple" fontSize="xs">DEDIZIERTE PAGE</Badge>
+                    </HStack>
+                    <Text fontSize="xs" color="purple.700">
+                      Pageviews, Funnel-Analyse, Bewerbungen & Settings
                     </Text>
-                    <Badge colorPalette="purple" fontSize="xs">DEDIZIERTE PAGE</Badge>
-                  </HStack>
-                  <Text fontSize="xs" color="purple.700">
-                    Pageviews, Funnel-Analyse, Bewerbungen & Settings
-                  </Text>
-                </VStack>
+                  </VStack>
+                </HStack>
+                <Text fontSize="sm" color="purple.700" fontWeight="semibold">
+                  Öffnen →
+                </Text>
               </HStack>
-              <Text fontSize="sm" color="purple.700" fontWeight="semibold">
-                Öffnen →
-              </Text>
-            </HStack>
-          </Box>
+            </Box>
+          </a>
         )}
 
         {false && (
