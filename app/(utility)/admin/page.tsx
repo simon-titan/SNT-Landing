@@ -2135,25 +2135,45 @@ export default function AffiliateAdminPage() {
           </Box>
         )}
 
-        {/* ─── SNT APEX Section ──────────────────────────────────── */}
+        {/* ─── SNT APEX Quick Link to dedicated sub-page ─────────────── */}
         {isAuthenticated && (
-          <Box borderWidth="1px" borderRadius="md" p="6">
-            <HStack justify="space-between" align="center" mb="4">
-              <HStack gap="2">
-                <ChartBar size={22} color="#068CEF" weight="fill" />
-                <Text fontWeight="semibold">SNT APEX · Bewerbungs-Funnel</Text>
-                <Badge colorPalette="blue" fontSize="xs">NEU</Badge>
+          <Box
+            as="a"
+            href="/admin/apex"
+            display="block"
+            borderWidth="1px"
+            borderRadius="md"
+            p="5"
+            bg="purple.50"
+            borderColor="purple.200"
+            cursor="pointer"
+            transition="all 0.2s"
+            _hover={{ bg: "purple.100", transform: "translateY(-1px)", boxShadow: "md" }}
+          >
+            <HStack justify="space-between" align="center">
+              <HStack gap="3">
+                <ChartBar size={26} color="#8B5CF6" weight="fill" />
+                <VStack align="start" gap="0">
+                  <HStack gap="2">
+                    <Text fontWeight="semibold" color="purple.900">
+                      SNT APEX · Bewerbungs-Funnel
+                    </Text>
+                    <Badge colorPalette="purple" fontSize="xs">DEDIZIERTE PAGE</Badge>
+                  </HStack>
+                  <Text fontSize="xs" color="purple.700">
+                    Pageviews, Funnel-Analyse, Bewerbungen & Settings
+                  </Text>
+                </VStack>
               </HStack>
-              <IconButton
-                aria-label="Toggle Protocol Section"
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsProtocolCollapsed(!isProtocolCollapsed)}
-              >
-                {isProtocolCollapsed ? <CaretDown size={20} /> : <CaretUp size={20} />}
-              </IconButton>
+              <Text fontSize="sm" color="purple.700" fontWeight="semibold">
+                Öffnen →
+              </Text>
             </HStack>
+          </Box>
+        )}
 
+        {false && (
+          <Box>
             <Collapsible.Root open={!isProtocolCollapsed}>
               <Collapsible.Content>
 
